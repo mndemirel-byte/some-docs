@@ -1,0 +1,937 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Matt Pocock Skills ile Sıfırdan Proje Geliştirme</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
+<style>
+:root{
+  --bg:#F7F4EC;--surface:#FFF;--surface2:#F0EBDF;
+  --border:#E4DECF;--border-strong:#D2C9B4;
+  --accent:#C2613F;--accent-bg:rgba(194,97,63,.07);--accent-border:rgba(194,97,63,.22);--accent-text:#A8502F;
+  --blue:#3D5A73;--blue-bg:rgba(61,90,115,.07);--blue-border:rgba(61,90,115,.22);--blue-text:#2F4759;
+  --green:#5F7A41;--green-bg:rgba(95,122,65,.07);--green-border:rgba(95,122,65,.22);--green-text:#4C6234;
+  --red:#A8412F;--red-bg:rgba(168,65,47,.07);--red-border:rgba(168,65,47,.22);--red-text:#8E3526;
+  --amber:#9C6B1F;--amber-bg:rgba(156,107,31,.07);--amber-border:rgba(156,107,31,.22);--amber-text:#7F5614;
+  --text:#211D17;--muted:#8A8270;--subtle:#5C5648;
+  --mono:'JetBrains Mono','Fira Code',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);line-height:1.7;font-size:15px}
+a{color:var(--accent-text);text-decoration:none}a:hover{text-decoration:underline}
+.wrap{max-width:860px;margin:0 auto;padding:0 24px 80px}
+
+/* ─── Hero ─── */
+.hero{padding:48px 0 36px;border-bottom:1px solid var(--border);margin-bottom:40px}
+.hero-eyebrow{font-family:var(--mono);font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:12px}
+.hero h1{font-size:28px;font-weight:700;line-height:1.2;color:var(--text);margin-bottom:12px}
+.hero h1 em{font-style:normal;color:var(--accent-text)}
+.hero-desc{font-size:14px;color:var(--subtle);max-width:700px;line-height:1.7}
+.hero-author{display:flex;align-items:center;gap:8px;margin-top:16px;padding:10px 14px;background:var(--surface);border:1px solid var(--border);border-radius:8px;width:fit-content;font-size:13px;color:var(--subtle)}
+.hero-author strong{color:var(--text)}
+.tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:14px}
+.tag{font-family:var(--mono);font-size:11px;padding:3px 9px;border-radius:4px;background:var(--surface2);border:1px solid var(--border);color:var(--muted)}
+
+/* ─── TOC ─── */
+.toc{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px 24px;margin-bottom:48px}
+.toc-title{font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:14px;display:flex;align-items:center;gap:6px}
+.toc-list{list-style:none;padding:0;columns:2;column-gap:32px}
+.toc-list li{margin-bottom:2px;break-inside:avoid}
+.toc-list a{display:flex;align-items:center;gap:8px;padding:5px 8px;font-size:13px;color:var(--subtle);border-radius:6px;transition:all .15s}
+.toc-list a:hover{color:var(--accent-text);background:var(--accent-bg);text-decoration:none}
+.toc-num{font-family:var(--mono);font-size:10px;color:var(--accent-text);min-width:24px}
+
+/* ─── General ─── */
+.section{margin-bottom:56px;scroll-margin-top:20px}
+.sec-head{display:flex;align-items:center;gap:10px;margin-bottom:20px;padding-bottom:14px;border-bottom:1px solid var(--border)}
+.sec-num{font-family:var(--mono);font-size:10px;background:var(--accent-bg);color:var(--accent-text);border:1px solid var(--accent-border);padding:2px 8px;border-radius:4px;letter-spacing:.04em}
+.sec-head h2{font-size:22px;font-weight:600;color:var(--text)}
+h3{font-size:16px;font-weight:600;color:var(--text);margin:24px 0 10px}
+h4{font-size:14px;font-weight:600;color:var(--text);margin:14px 0 6px}
+p{color:var(--subtle);font-size:14px;margin-bottom:12px;line-height:1.7}
+ul,ol{padding-left:20px;margin-bottom:12px}
+li{font-size:14px;color:var(--subtle);margin-bottom:5px;line-height:1.6}
+strong{color:var(--text);font-weight:600}
+hr.sep{border:none;border-top:2px dashed var(--border);margin:44px 0}
+code{font-family:var(--mono);font-size:12px;background:var(--surface2);border:1px solid var(--border);padding:1px 5px;border-radius:4px;color:var(--blue-text)}
+
+/* ─── Skill command pill ─── */
+.cmd{display:inline-flex;align-items:center;gap:5px;font-family:var(--mono);font-size:12px;background:var(--accent-bg);color:var(--accent-text);border:1px solid var(--accent-border);padding:2px 9px;border-radius:20px;font-weight:600}
+
+/* ─── Grid ─── */
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:14px 0}
+.gcard{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px}
+.gcard h4{font-size:13px;font-weight:600;color:var(--text);margin:0 0 10px;display:flex;align-items:center;gap:6px}
+.gcard ul{padding-left:16px;margin:0}
+.gcard li{font-size:13px;margin-bottom:4px}
+
+/* ─── Code / terminal blocks ─── */
+.cb{background:var(--surface);border:1px solid var(--border);border-radius:12px;margin:14px 0;overflow:hidden}
+.cb-head{display:flex;align-items:center;justify-content:space-between;padding:9px 16px;border-bottom:1px solid var(--border);background:var(--surface2)}
+.cb-lang{font-family:var(--mono);font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;display:flex;align-items:center;gap:5px}
+.cb-lang.lp{color:var(--accent-text)}
+.cb-lang.lt{color:var(--blue-text)}
+.cb-copy{background:none;border:1px solid var(--border);color:var(--muted);font-size:11px;font-family:var(--mono);padding:3px 10px;border-radius:4px;cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:4px}
+.cb-copy:hover{background:var(--surface);color:var(--text);border-color:var(--border-strong)}
+.cb pre{padding:15px 18px;overflow-x:auto;font-family:var(--mono);font-size:12.5px;line-height:1.75;color:var(--subtle);max-height:440px;overflow-y:auto}
+
+/* Terminal header (macOS-style dots) */
+.term-head{display:flex;align-items:center;gap:10px;padding:9px 16px;border-bottom:1px solid var(--border);background:#F0EBDF}
+.term-dots{display:flex;gap:5px}
+.td{width:11px;height:11px;border-radius:50%}
+.td-r{background:#FF5F57}.td-y{background:#FEBC2E}.td-g{background:#28C840}
+.term-label{font-family:var(--mono);font-size:11px;color:var(--muted);flex:1;text-align:center}
+
+/* ─── Collapsible examples ─── */
+.ex-wrap{margin:10px 0}
+.ex-btn{display:flex;align-items:center;gap:8px;padding:10px 16px;background:var(--blue-bg);border:1px solid var(--blue-border);border-radius:8px;cursor:pointer;font-size:13px;color:var(--blue-text);user-select:none;transition:background .15s}
+.ex-btn:hover{background:rgba(3,105,161,.12)}
+.ex-btn i.ch{margin-left:auto;transition:transform .2s}
+.ex-wrap.open .ex-btn i.ch{transform:rotate(180deg)}
+.ex-content{display:none}
+.ex-wrap.open .ex-content{display:block}
+
+/* ─── Step (Adım) sections ─── */
+.adim{margin-bottom:52px;scroll-margin-top:20px}
+.adim-head{display:flex;align-items:center;gap:16px;margin-bottom:16px;padding-bottom:16px;border-bottom:2px solid var(--accent-border)}
+.adim-num{width:52px;height:52px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:22px;font-weight:700;background:var(--accent-bg);color:var(--accent-text);border:2px solid var(--accent-border);flex-shrink:0}
+.adim-info h2{font-size:20px;font-weight:700;color:var(--text);margin-bottom:4px}
+.adim-skill-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.adim-when{font-size:12px;color:var(--muted);font-family:var(--mono)}
+.badge-z{font-size:10px;padding:2px 7px;border-radius:4px;font-family:var(--mono);font-weight:600;background:var(--green-bg);color:var(--green-text);border:1px solid var(--green-border)}
+.badge-o{font-size:10px;padding:2px 7px;border-radius:4px;font-family:var(--mono);font-weight:600;background:var(--amber-bg);color:var(--amber-text);border:1px solid var(--amber-border)}
+
+/* ─── Skill haritası tables ─── */
+.shtbl{width:100%;border-collapse:collapse;margin:12px 0;font-size:13px}
+.shtbl th{text-align:left;padding:8px 12px;font-size:11px;color:var(--muted);font-family:var(--mono);border-bottom:1px solid var(--border-strong);font-weight:500;text-transform:uppercase;letter-spacing:.05em}
+.shtbl td{padding:10px 12px;border-bottom:1px solid var(--border);vertical-align:top}
+.shtbl tr:last-child td{border-bottom:none}
+.shtbl tr:hover td{background:var(--surface2)}
+.shtbl .sira{font-family:var(--mono);font-size:11px;color:var(--muted);text-align:center;width:36px}
+.shtbl .scmd{white-space:nowrap}
+.shtbl .swhat{color:var(--subtle)}
+.shtbl .swhen{color:var(--muted);font-size:12px}
+.tbl-box{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:16px}
+.tbl-title{padding:12px 16px;font-size:13px;font-weight:600;color:var(--text);display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--border)}
+.tbl-title.green{background:var(--green-bg)}
+.tbl-title.amber{background:var(--amber-bg)}
+.tbl-title.green i{color:var(--green-text)}
+.tbl-title.amber i{color:var(--amber-text)}
+
+/* ─── ADR value callouts ─── */
+.value-row{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:16px 0}
+.vcard{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 16px;text-align:center}
+.vcard-num{font-family:var(--mono);font-size:24px;font-weight:700;color:var(--accent-text);line-height:1}
+.vcard-label{font-size:12px;color:var(--muted);margin-top:4px}
+
+/* ─── TDD principle cards ─── */
+.principle-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:14px 0}
+.pcard{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 16px;border-left:3px solid var(--accent-border)}
+.pcard h4{font-size:13px;font-weight:600;color:var(--accent-text);font-family:var(--mono);margin:0 0 6px}
+.pcard p{font-size:13px;color:var(--subtle);margin:0}
+
+/* ─── State machine ─── */
+.state-flow{display:flex;align-items:center;flex-wrap:wrap;gap:8px;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px 20px;margin:14px 0;font-family:var(--mono);font-size:12px}
+.state{padding:4px 10px;border-radius:4px;white-space:nowrap}
+.s-start{background:var(--surface2);color:var(--muted);border:1px solid var(--border)}
+.s-mid{background:var(--blue-bg);color:var(--blue-text);border:1px solid var(--blue-border)}
+.s-ok{background:var(--green-bg);color:var(--green-text);border:1px solid var(--green-border)}
+.s-hold{background:var(--amber-bg);color:var(--amber-text);border:1px solid var(--amber-border)}
+.s-end{background:var(--surface2);color:var(--muted);border:1px solid var(--border)}
+.sarr{color:var(--muted);font-size:14px}
+
+/* ─── Secondary skill cards ─── */
+.sec-skill-grid{display:grid;grid-template-columns:1fr;gap:16px}
+.ssc{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden}
+.ssc-head{display:flex;align-items:center;gap:12px;padding:14px 18px;border-bottom:1px solid var(--border);background:var(--surface2)}
+.ssc-icon{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;background:var(--accent-bg);color:var(--accent-text);border:1px solid var(--accent-border)}
+.ssc-meta h4{font-size:14px;font-weight:600;color:var(--text);margin:0 0 2px}
+.ssc-meta .when{font-size:12px;color:var(--muted)}
+.ssc-body{padding:16px 18px}
+.ssc-body p{font-size:14px}
+
+/* ─── Özet flow ─── */
+.flow-phase{background:var(--surface);border:1px solid var(--border);border-radius:12px;margin-bottom:12px;overflow:hidden}
+.fp-head{padding:12px 18px;display:flex;align-items:center;gap:10px;font-size:13px;font-weight:600;border-bottom:1px solid var(--border)}
+.fp-head.once{background:var(--blue-bg)}
+.fp-head.each{background:var(--green-bg)}
+.fp-head.when{background:var(--amber-bg)}
+.fp-head.once i,.fp-head.once span{color:var(--blue-text)}
+.fp-head.each i,.fp-head.each span{color:var(--green-text)}
+.fp-head.when i,.fp-head.when span{color:var(--amber-text)}
+.fp-body{padding:14px 18px;display:flex;flex-direction:column;gap:8px}
+.fp-step{display:flex;align-items:flex-start;gap:12px}
+.fp-arrow{font-family:var(--mono);font-size:12px;color:var(--muted);flex-shrink:0;padding-top:3px}
+.fp-content{font-size:13px}
+.fp-content strong{color:var(--text);display:block}
+.fp-content span{color:var(--muted);font-size:12px}
+.flow-connector{text-align:center;color:var(--muted);font-size:18px;margin:4px 0}
+
+/* ─── Callouts ─── */
+.callout{border-radius:10px;padding:13px 16px;margin:14px 0;display:flex;gap:10px;align-items:flex-start;line-height:1.55}
+.callout i{font-size:17px;flex-shrink:0;margin-top:1px}
+.callout p{margin:0;font-size:13px;color:var(--subtle)}
+.ci{background:var(--blue-bg);border:1px solid var(--blue-border)}
+.ci i{color:var(--blue-text)}
+.ct{background:var(--green-bg);border:1px solid var(--green-border)}
+.ct i{color:var(--green-text)}
+.cw{background:var(--amber-bg);border:1px solid var(--amber-border)}
+.cw i{color:var(--amber-text)}
+
+/* ─── Resources ─── */
+.res-list{list-style:none;padding:0;margin:0}
+.res-list li{display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);font-size:14px;color:var(--subtle)}
+.res-list li:last-child{border-bottom:none}
+.res-list i{color:var(--accent-text);font-size:16px;flex-shrink:0;margin-top:1px}
+
+@media(max-width:620px){
+  .grid2,.principle-grid,.value-row{grid-template-columns:1fr}
+  .toc-list{columns:1}
+  .hero h1{font-size:22px}
+  .wrap{padding:0 16px 60px}
+  .adim-head{flex-wrap:wrap}
+  .state-flow{gap:4px;font-size:11px}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-eyebrow">Claude Code · Skill Serisi</div>
+  <h1>Matt Pocock Skills ile <em>Sıfırdan</em> Proje Geliştirme</h1>
+  <p class="hero-desc">Pocock'un açık kaynak skill seti, Claude Code'a slash command olarak eklenen yapılandırılmış prompt şablonlarıdır. Amaçları agent'ı hızlandırmak değil, <strong>disipline sokmaktır</strong>: koddan önce düşünmeye zorlamak, test feedback loop'u kurmak, mimariyi korumak ve kararları belgelemek. Bu yazıda URL Shortener örneği üzerinden komple akışı adım adım gösteriyoruz.</p>
+  <div class="hero-author"><i class="ti ti-user-circle"></i><span><strong>Matt Pocock</strong> — TypeScript eğitmeni, Total TypeScript yaratıcısı, eski Vercel &amp; Stately mühendisi</span></div>
+  <div class="tags">
+    <span class="tag">claude-code</span><span class="tag">slash-commands</span>
+    <span class="tag">TDD</span><span class="tag">ADR</span><span class="tag">vertical-slice</span>
+    <span class="tag">url-shortener</span><span class="tag">TypeScript</span>
+  </div>
+</div>
+
+<!-- TOC -->
+<div class="toc">
+  <div class="toc-title"><i class="ti ti-list"></i> İçindekiler</div>
+  <ul class="toc-list">
+    <li><a href="#s1"><span class="toc-num">1</span>Ön Koşullar ve Kurulum</a></li>
+    <li><a href="#s2"><span class="toc-num">2</span>Proje Tanımı: URL Shortener</a></li>
+    <li><a href="#s3"><span class="toc-num">3</span>Skill Haritası</a></li>
+    <li><a href="#a0"><span class="toc-num">4</span>Adım 0 — /setup-matt-pocock-skills</a></li>
+    <li><a href="#a1"><span class="toc-num">5</span>Adım 1 — /grill-with-docs</a></li>
+    <li><a href="#a2"><span class="toc-num">6</span>Adım 2 — /to-prd</a></li>
+    <li><a href="#a3"><span class="toc-num">7</span>Adım 3 — /to-issues</a></li>
+    <li><a href="#a4"><span class="toc-num">8</span>Adım 4 — /tdd</a></li>
+    <li><a href="#a5"><span class="toc-num">9</span>Adım 5 — /triage</a></li>
+    <li><a href="#a6"><span class="toc-num">10</span>Adım 6 — /improve-codebase-architecture</a></li>
+    <li><a href="#s11"><span class="toc-num">11</span>İhtiyaç Halinde: /diagnose, /zoom-out, /prototype</a></li>
+    <li><a href="#s12"><span class="toc-num">12</span>Özet: Komple Akış</a></li>
+  </ul>
+</div>
+
+<!-- S1 -->
+<div class="section" id="s1">
+  <div class="sec-head"><span class="sec-num">01</span><h2>Ön Koşullar ve Kurulum</h2></div>
+  <div class="grid2">
+    <div class="gcard">
+      <h4><i class="ti ti-tool" style="color:var(--accent-text)"></i>Gerekli araçlar</h4>
+      <ul>
+        <li><strong>Claude Code</strong> — <code>npm install -g @anthropic-ai/claude-code</code></li>
+        <li><strong>Node.js</strong> v18+ — skill installer ve örnek proje için</li>
+        <li><strong>Git + GitHub</strong> — skill'ler GitHub Issues ile entegre çalışır</li>
+        <li><strong>GitHub CLI (<code>gh</code>)</strong> — issue tracker'a yazması için gerekli</li>
+      </ul>
+    </div>
+    <div class="gcard">
+      <h4><i class="ti ti-terminal" style="color:var(--blue-text)"></i>gh CLI kurulum</h4>
+      <div class="cb" style="margin:0"><div class="cb-head"><span class="cb-lang">bash</span><button class="cb-copy" onclick="cp(this)"><i class="ti ti-copy"></i> Kopyala</button></div>
+<pre># macOS
+brew install gh
+
+# Linux
+sudo apt install gh
+
+# Authenticate
+gh auth login</pre></div>
+    </div>
+  </div>
+
+  <h3>Skill'leri Yükleme</h3>
+  <p>Pocock'un skill'leri tek komutla yüklenir. Hangi skill'leri istediğinizi ve hangi agent'a yükleyeceğinizi sorar:</p>
+  <div class="cb"><div class="cb-head"><span class="cb-lang">bash</span><button class="cb-copy" onclick="cp(this)"><i class="ti ti-copy"></i> Kopyala</button></div>
+<pre>npx skills@latest add mattpocock/skills</pre></div>
+  <div class="callout ci"><i class="ti ti-info-circle"></i><p>Kurulum sırasında yüklemek istediğiniz skill'leri seçin. <strong>/setup-matt-pocock-skills'i mutlaka seçin</strong> — diğer skill'ler bunun çıktısına bağımlıdır. Hedef agent olarak Claude Code'u seçin. Skill'ler projenizin <code>.claude/</code> dizinine yüklenir.</p></div>
+  <div class="cb"><div class="cb-head"><span class="cb-lang">bash — projeyi başlat</span><button class="cb-copy" onclick="cp(this)"><i class="ti ti-copy"></i> Kopyala</button></div>
+<pre>cd your-project
+claude
+# Artık /grill-with-docs, /tdd, /to-prd gibi komutlar aktif</pre></div>
+</div>
+
+<!-- S2 -->
+<div class="section" id="s2">
+  <div class="sec-head"><span class="sec-num">02</span><h2>Proje Tanımı: URL Shortener</h2></div>
+  <p>Örnek projemiz basit bir URL kısaltma servisi. Yeterince küçük (bir yazıda tamamlanabilir) ama yeterince derin (database, API, redirect mantığı, analytics) — skill'lerin her birini göstermek için ideal senaryo.</p>
+  <div class="grid2">
+    <div class="gcard">
+      <h4><i class="ti ti-link" style="color:var(--accent-text)"></i>Özellikler</h4>
+      <ul>
+        <li>Kullanıcı uzun URL verir, sistem kısa link döndürür</li>
+        <li>Kısa link ziyaretinde orijinal URL'ye yönlendirme</li>
+        <li>Her yönlendirme kayıt altına alınır (tıklama, tarih)</li>
+        <li>Basit dashboard tıklama istatistiklerini gösterir</li>
+      </ul>
+    </div>
+    <div class="gcard">
+      <h4><i class="ti ti-terminal-2" style="color:var(--green-text)"></i>Repo oluşturma</h4>
+      <div class="cb" style="margin:0"><div class="cb-head"><span class="cb-lang">bash</span><button class="cb-copy" onclick="cp(this)"><i class="ti ti-copy"></i> Kopyala</button></div>
+<pre>mkdir url-shortener && cd url-shortener
+git init
+gh repo create url-shortener \
+  --public --source=. --push</pre></div>
+    </div>
+  </div>
+</div>
+
+<!-- S3 -->
+<div class="section" id="s3">
+  <div class="sec-head"><span class="sec-num">03</span><h2>Skill Haritası: Hangisi Ne Zaman Kullanılır?</h2></div>
+
+  <div class="tbl-box">
+    <div class="tbl-title green"><i class="ti ti-route"></i><span>Zorunlu akış — her feature için</span></div>
+    <table class="shtbl">
+      <thead><tr><th>#</th><th>Skill</th><th>Ne yapar</th><th>Ne zaman</th></tr></thead>
+      <tbody>
+        <tr><td class="sira">0</td><td class="scmd"><span class="cmd">/setup-matt-pocock-skills</span></td><td class="swhat">Repo'yu konfigüre eder</td><td class="swhen">Proje başında bir kez</td></tr>
+        <tr><td class="sira">1</td><td class="scmd"><span class="cmd">/grill-with-docs</span></td><td class="swhat">Fikri sorgular, CONTEXT.md ve ADR oluşturur</td><td class="swhen">Her yeni feature'dan önce</td></tr>
+        <tr><td class="sira">2</td><td class="scmd"><span class="cmd">/to-prd</span></td><td class="swhat">Konuşma bağlamından PRD üretir</td><td class="swhen">Grilling tamamlanınca</td></tr>
+        <tr><td class="sira">3</td><td class="scmd"><span class="cmd">/to-issues</span></td><td class="swhat">PRD'yi vertical slice issue'lara böler</td><td class="swhen">PRD onaylanınca</td></tr>
+        <tr><td class="sira">4</td><td class="scmd"><span class="cmd">/tdd</span></td><td class="swhat">Red-Green-Refactor ile implement eder</td><td class="swhen">Her issue için</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="tbl-box">
+    <div class="tbl-title amber"><i class="ti ti-tools"></i><span>İhtiyaç halinde kullanılan skill'ler</span></div>
+    <table class="shtbl">
+      <thead><tr><th>Skill</th><th>Ne yapar</th><th>Ne zaman</th></tr></thead>
+      <tbody>
+        <tr><td class="scmd"><span class="cmd">/triage</span></td><td class="swhat">Issue'ları state machine ile yönetir</td><td class="swhen">Biriken issue'lar varsa</td></tr>
+        <tr><td class="scmd"><span class="cmd">/improve-codebase-architecture</span></td><td class="swhat">Shallow module'ları tespit eder, deepening önerir</td><td class="swhen">Feature sonrası veya mimari bozulduğunda</td></tr>
+        <tr><td class="scmd"><span class="cmd">/diagnose</span></td><td class="swhat">Yapılandırılmış debugging loop çalıştırır</td><td class="swhen">Zor bug'larda</td></tr>
+        <tr><td class="scmd"><span class="cmd">/zoom-out</span></td><td class="swhat">Agent'a üst düzey bakış açısı kazandırır</td><td class="swhen">Tanımadığın kod alanında çalışırken</td></tr>
+        <tr><td class="scmd"><span class="cmd">/prototype</span></td><td class="swhat">Throwaway prototype ile tasarım kararı doğrular</td><td class="swhen">Mimari kararsızlıkta</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<hr class="sep">
+
+<!-- ADIM 0 -->
+<div class="adim" id="a0">
+  <div class="adim-head">
+    <div class="adim-num">0</div>
+    <div class="adim-info">
+      <h2>Repo'yu Skill'ler İçin Hazırla</h2>
+      <div class="adim-skill-row">
+        <span class="cmd"><i class="ti ti-terminal-2"></i>/setup-matt-pocock-skills</span>
+        <span class="adim-when">· Proje başında bir kez</span>
+        <span class="badge-z">Zorunlu</span>
+      </div>
+    </div>
+  </div>
+  <p>Bu skill, repo'yu diğer skill'lerin çalışması için yapılandırır. <strong>Diğer tüm engineering skill'leri bu adımın çıktısına bağımlıdır.</strong> Üç karar alınır: issue tracker konumu, triage label'ları ve domain doc konumu.</p>
+
+  <div class="ex-wrap" id="ex0"><div class="ex-btn" onclick="toggleEx('ex0')"><i class="ti ti-terminal"></i><span>Terminal çıktısı — /setup-matt-pocock-skills</span><i class="ti ti-chevron-down ch"></i></div>
+  <div class="ex-content"><div class="cb"><div class="term-head"><div class="term-dots"><div class="td td-r"></div><div class="td td-y"></div><div class="td td-g"></div></div><div class="term-label">claude — url-shortener</div></div>
+<pre>&gt; /setup-matt-pocock-skills
+
+Claude: Repo'yu inceliyorum...
+- git remote: github.com/username/url-shortener ✓
+- CLAUDE.md: mevcut değil
+- CONTEXT.md: mevcut değil
+- docs/adr/: mevcut değil
+
+─── Section A: Issue Tracker ───
+
+GitHub'da olduğu için GitHub Issues öneriyorum.
+Seçenekler: 1) GitHub Issues  2) Local markdown  3) Diğer
+
+Siz: 1
+
+─── Section B: Triage Label'ları ───
+
+Varsayılan label'lar:
+- needs-triage → değerlendirme bekliyor
+- needs-info → reporter'dan bilgi bekleniyor
+- ready-for-agent → AFK agent alabilir
+- ready-for-human → insan implementasyonu gerekli
+- wontfix → yapılmayacak
+
+Bu label'ları kullanayım mı?
+Siz: Varsayılanlar iyi.
+
+─── Section C: Domain Docs ───
+
+Önerilen: CONTEXT.md → repo kökünde, ADR'lar → docs/adr/
+Siz: Tamam.
+
+Claude: Oluşturulan dosyalar:
+✓ CLAUDE.md (agent skills konfigürasyonu eklendi)
+✓ docs/agents/issue-tracker.md
+✓ docs/agents/triage-labels.md
+✓ docs/agents/domain-docs.md</pre></div></div></div>
+
+  <div class="callout ct"><i class="ti ti-lightbulb"></i><p>Bu adımdan sonra diğer skill'ler issue tracker'a nasıl yazacaklarını, hangi label'ları kullanacaklarını ve domain doc'ları nerede bulacaklarını bilir. Setup olmadan diğer skill'ler çalışmaz.</p></div>
+</div>
+
+<hr class="sep">
+
+<!-- ADIM 1 -->
+<div class="adim" id="a1">
+  <div class="adim-head">
+    <div class="adim-num">1</div>
+    <div class="adim-info">
+      <h2>Fikri Sorgula ve Domain Dilini Kur</h2>
+      <div class="adim-skill-row">
+        <span class="cmd"><i class="ti ti-terminal-2"></i>/grill-with-docs</span>
+        <span class="adim-when">· Her yeni feature'dan önce</span>
+        <span class="badge-z">Zorunlu</span>
+      </div>
+    </div>
+  </div>
+  <p><span class="cmd">/grill-with-docs</span> sizi relentlessly interview eder — ama bunu yaparken iki ek şey yapar: <strong>(1)</strong> projenin domain dilini oluşturur/günceller (<code>CONTEXT.md</code>) ve <strong>(2)</strong> mimari kararları <code>docs/adr/</code> altında ADR olarak belgeler.</p>
+
+  <div class="ex-wrap" id="ex1"><div class="ex-btn" onclick="toggleEx('ex1')"><i class="ti ti-terminal"></i><span>Terminal çıktısı — /grill-with-docs</span><i class="ti ti-chevron-down ch"></i></div>
+  <div class="ex-content"><div class="cb"><div class="term-head"><div class="term-dots"><div class="td td-r"></div><div class="td td-y"></div><div class="td td-g"></div></div><div class="term-label">claude — url-shortener</div></div>
+<pre>&gt; /grill-with-docs Basit bir URL shortener yapacağız.
+  Kullanıcı URL verir, kısa link döner. Tıklamalar
+  sayılır ve dashboard'da gösterilir.
+
+Claude: Hemen plan üretmeyeceğim, önce netleştirmem gereken şeyler var.
+
+Soru 1/N: Kısa URL'lerin formatı nasıl olacak?
+Rastgele string mi (abc123), yoksa sequential sayı mı?
+Önerim: 6 karakterli rastgele alfanumerik — çakışma riski düşük.
+
+Siz: Rastgele 6 karakter, alfanumerik.
+
+Claude: [CONTEXT.md'ye ekleniyor]
+  slug — Kısa URL'deki 6 karakterlik rastgele alfanumerik
+  tanımlayıcı. Ör: abc123 → example.com/abc123
+
+Soru 2/N: Aynı URL ikinci kez kısaltılırsa ne olacak?
+Yeni slug mı üretilsin, yoksa mevcut slug mu dönsün?
+Önerim: Her seferinde yeni slug — analytics açısından her
+kampanya için ayrı link istenebilir.
+
+Siz: Her seferinde yeni slug.
+
+Claude: [docs/adr/0001-unique-slug-per-submission.md oluşturuluyor]
+  # Aynı URL İçin Her Seferde Yeni Slug
+  Karar: Her URL submission'ı yeni bir slug üretir.
+  Neden: Farklı kaynaklardan tıklamaları ayrı takip etmek için.
+  Alternatif: Idempotent — reddedildi çünkü analytics kaybolur.
+
+Soru 3/N: Tıklama kaydında hangi bilgiler tutulacak?
+Önerim: Her tıklama ayrı kayıt (timestamp, referrer, user-agent).
+
+Siz: Her tıklama ayrı kayıt olsun.
+
+Claude: [CONTEXT.md'ye ekleniyor]
+  click — Bir slug'a gelen tek HTTP isteği.
+  Timestamp, referrer ve user-agent kaydedilir.
+
+(... 8-10 soru daha: auth, rate limit, slug silinebilir mi,
+dashboard içeriği, API-only mı, tech stack ...)
+
+Claude: Oluşturulan/güncellenen dosyalar:
+
+CONTEXT.md:
+  slug, click, link, click count, dashboard terimleri
+  Terimler arası ilişkiler (link has many clicks)
+
+docs/adr/:
+  0001-unique-slug-per-submission.md
+  0002-individual-click-records.md
+  0003-no-auth-for-v1.md
+  0004-api-first-no-ui-for-v1.md</pre></div></div></div>
+
+  <h3>Bu Adımın Değeri</h3>
+  <div class="value-row">
+    <div class="vcard"><div class="vcard-num"><i class="ti ti-handshake" style="font-size:28px;color:var(--accent-text)"></i></div><div class="vcard-label"><strong>Shared Understanding</strong><br>Siz ve agent aynı şeyi aynı kelimelerle anlıyorsunuz</div></div>
+    <div class="vcard"><div class="vcard-num"><i class="ti ti-book" style="font-size:28px;color:var(--green-text)"></i></div><div class="vcard-label"><strong>CONTEXT.md</strong><br>Değişken ve fonksiyon adları domain dilini izleyecek</div></div>
+    <div class="vcard"><div class="vcard-num"><i class="ti ti-git-branch" style="font-size:28px;color:var(--blue-text)"></i></div><div class="vcard-label"><strong>ADR'lar</strong><br>Kararlar belgelenmiş; yeni session'da aynı sorular sorulmaz</div></div>
+  </div>
+</div>
+
+<hr class="sep">
+
+<!-- ADIM 2 -->
+<div class="adim" id="a2">
+  <div class="adim-head">
+    <div class="adim-num">2</div>
+    <div class="adim-info">
+      <h2>PRD Oluştur</h2>
+      <div class="adim-skill-row">
+        <span class="cmd"><i class="ti ti-terminal-2"></i>/to-prd</span>
+        <span class="adim-when">· Grilling tamamlanınca</span>
+        <span class="badge-z">Zorunlu</span>
+      </div>
+    </div>
+  </div>
+  <p><span class="cmd">/to-prd</span> sizi tekrar interview etmez. Konuşma bağlamındaki her şeyi (grilling kararları, CONTEXT.md, ADR'lar) sentezleyerek bir PRD üretir ve doğrudan <strong>GitHub Issues'a publish eder</strong>.</p>
+
+  <div class="ex-wrap" id="ex2"><div class="ex-btn" onclick="toggleEx('ex2')"><i class="ti ti-terminal"></i><span>Terminal çıktısı — /to-prd</span><i class="ti ti-chevron-down ch"></i></div>
+  <div class="ex-content"><div class="cb"><div class="term-head"><div class="term-dots"><div class="td td-r"></div><div class="td td-y"></div><div class="td td-g"></div></div><div class="term-label">claude — url-shortener</div></div>
+<pre>&gt; /to-prd
+
+Claude: Konuşma bağlamını ve domain doc'ları sentezliyorum...
+
+Repo'yu inceliyorum — mevcut seam'ler:
+  - Henüz kod yok, sıfırdan başlıyoruz.
+  - Önerilen test seam'leri:
+    1. LinkService (slug üretimi + persistence)
+    2. RedirectHandler (slug → URL çözümleme + click kaydı)
+    3. AnalyticsService (click count hesaplama)
+
+Bu seam'ler doğru mu?
+Siz: Doğru, devam et.
+
+Claude: PRD'yi GitHub Issues'a publish ediyorum...
+
+✓ Issue #1 oluşturuldu: "PRD: URL Shortener v1"
+  Label: ready-for-agent
+
+PRD içeriği:
+  ## Problem Statement
+  Kullanıcıların uzun URL'leri kısa linklere dönüştürmesi
+  ve tıklama istatistiklerini görmesi gerekiyor.
+
+  ## User Stories
+  1. Uzun URL verip kısa link almak istiyorum.
+  2. Kısa link ziyaretçisi olarak yönlendirilmek istiyorum.
+  3. Toplam tıklama sayısını görmek istiyorum.
+  4. Tıklama geçmişini (tarih, referrer) görmek istiyorum.
+
+  ## Implementation Decisions
+  - Slug: 6 karakter rastgele alfanumerik (ADR-0001)
+  - Her submission yeni slug üretir (ADR-0001)
+  - Click kayıtları individual (ADR-0002)
+  - Auth yok v1'de (ADR-0003)
+  - API-only, UI yok (ADR-0004)
+  - Stack: Node.js + TypeScript + SQLite
+
+  ## Testing Decisions
+  - Seam 1: LinkService — unit test
+  - Seam 2: RedirectHandler — integration test
+  - Seam 3: AnalyticsService — unit test
+  - E2E: create link → visit → check analytics
+
+  ## Definition of Done
+  Testler ✓ | Typecheck ✓ | Build ✓</pre></div></div></div>
+
+  <div class="callout ci"><i class="ti ti-info-circle"></i><p><strong>/to-prd'nin önemli farkı:</strong> "Testing Decisions" bölümü sadece "unit test yazılacak" demez — test sınırlarını (<strong>seam</strong>) açıkça tanımlar. Bu, /tdd adımında agent'ın testleri nereye koyacağını ve neyi test edeceğini bilmesini sağlar.</p></div>
+</div>
+
+<hr class="sep">
+
+<!-- ADIM 3 -->
+<div class="adim" id="a3">
+  <div class="adim-head">
+    <div class="adim-num">3</div>
+    <div class="adim-info">
+      <h2>PRD'yi Issue'lara Böl</h2>
+      <div class="adim-skill-row">
+        <span class="cmd"><i class="ti ti-terminal-2"></i>/to-issues</span>
+        <span class="adim-when">· PRD onaylanınca</span>
+        <span class="badge-z">Zorunlu</span>
+      </div>
+    </div>
+  </div>
+  <p><span class="cmd">/to-issues</span>, PRD'yi <strong>vertical slice</strong> (tracer bullet) issue'lara böler. Her issue tüm katmanları dikey olarak keser. Yatay bölme (önce tüm database, sonra tüm API) yapmaz.</p>
+
+  <div class="ex-wrap" id="ex3"><div class="ex-btn" onclick="toggleEx('ex3')"><i class="ti ti-terminal"></i><span>Terminal çıktısı — /to-issues</span><i class="ti ti-chevron-down ch"></i></div>
+  <div class="ex-content"><div class="cb"><div class="term-head"><div class="term-dots"><div class="td td-r"></div><div class="td td-y"></div><div class="td td-g"></div></div><div class="term-label">claude — url-shortener</div></div>
+<pre>&gt; /to-issues #1
+
+Claude: PRD #1'i okuyorum... Domain dilini CONTEXT.md'den yüklüyorum...
+
+Önerilen vertical slice breakdown:
+
+1. "Create short link and return slug"
+   Type: AFK | Blocked by: none | User stories: #1
+
+2. "Redirect slug to original URL and record click"
+   Type: AFK | Blocked by: #1 | User stories: #2
+
+3. "Get click count for a link"
+   Type: AFK | Blocked by: #2 | User stories: #3
+
+4. "Get click history with timestamps and referrers"
+   Type: AFK | Blocked by: #2 | User stories: #4
+
+5. "Handle edge cases: expired slug, invalid slug, collision"
+   Type: AFK | Blocked by: #1, #2
+
+Granülarite uygun mu? Dependency'ler doğru mu?
+Siz: Uygun, oluştur.
+
+Claude: Issue'ları GitHub'a publish ediyorum...
+✓ Issue #2: Create short link and return slug
+  Label: ready-for-agent
+✓ Issue #3: Redirect slug to original URL and record click
+  Label: ready-for-agent | Blocked by: #2
+✓ Issue #4: Get click count for a link
+  Label: ready-for-agent | Blocked by: #3
+✓ Issue #5: Get click history with timestamps and referrers
+  Label: ready-for-agent | Blocked by: #3
+✓ Issue #6: Handle edge cases
+  Label: ready-for-agent | Blocked by: #2, #3</pre></div></div></div>
+
+  <div class="callout ci"><i class="ti ti-info-circle"></i><p><strong>HITL vs AFK ayrımı:</strong> Her issue "HITL" (Human-in-the-Loop) veya "AFK" olarak etiketlenir. AFK issue'lar agent'ın tek başına tamamlayabileceği, iyi tanımlı işlerdir. HITL issue'lar mimari karar veya insan müdahalesi gerektirir. Bu projede tüm issue'lar AFK — çünkü kararlar grilling sırasında alındı ve PRD'de belgelendi.</p></div>
+</div>
+
+<hr class="sep">
+
+<!-- ADIM 4 -->
+<div class="adim" id="a4">
+  <div class="adim-head">
+    <div class="adim-num">4</div>
+    <div class="adim-info">
+      <h2>TDD ile İmplementasyon</h2>
+      <div class="adim-skill-row">
+        <span class="cmd"><i class="ti ti-terminal-2"></i>/tdd</span>
+        <span class="adim-when">· Her issue için</span>
+        <span class="badge-z">Zorunlu</span>
+      </div>
+    </div>
+  </div>
+  <p><span class="cmd">/tdd</span>, Red-Green-Refactor döngüsüyle çalışır. <strong>Horizontal slicing yapmaz</strong> — "önce tüm testleri yaz, sonra tüm kodu yaz" demez. Bunun yerine vertical slice: bir test yaz → o testi geçir → sonraki test. Her döngüde agent önceki döngüden öğrenir.</p>
+
+  <div class="ex-wrap" id="ex4"><div class="ex-btn" onclick="toggleEx('ex4')"><i class="ti ti-terminal"></i><span>Terminal çıktısı — /tdd #2</span><i class="ti ti-chevron-down ch"></i></div>
+  <div class="ex-content"><div class="cb"><div class="term-head"><div class="term-dots"><div class="td td-r"></div><div class="td td-y"></div><div class="td td-g"></div></div><div class="term-label">claude — url-shortener</div></div>
+<pre>&gt; /tdd #2
+
+Claude: Issue #2: "Create short link and return slug"
+
+Acceptance criteria:
+  POST /links body: { url } → response: { slug, url, createdAt }
+  Slug 6 karakter alfanumerik olmalı
+  Link veritabanına kaydedilmeli
+
+CONTEXT.md'den domain dili:
+  slug: 6 karakterlik rastgele alfanumerik tanımlayıcı
+  link: bir URL + slug çifti
+
+─── RED: İlk test ───
+
+tests/link-service.test.ts oluşturuyorum:
+
+  describe("LinkService", () => {
+    it("should create a link with a 6-char alphanumeric slug", () => {
+      const link = createLink("https://example.com");
+      expect(link.slug).toMatch(/^[a-z0-9]{6}$/);
+      expect(link.url).toBe("https://example.com");
+    });
+  });
+
+npm test → FAIL ✗ (createLink doesn't exist yet)
+
+─── GREEN: Minimal implementation ───
+
+src/link-service.ts oluşturuyorum:
+
+  export function createLink(url: string) {
+    const slug = generateSlug();
+    // ... persist + return
+  }
+
+npm test → PASS ✓
+
+─── RED: Sonraki test ───
+
+  it("should create unique slugs for the same URL", () => {
+    const link1 = createLink("https://example.com");
+    const link2 = createLink("https://example.com");
+    expect(link1.slug).not.toBe(link2.slug);
+  });
+
+npm test → PASS ✓
+
+(... RED-GREEN döngüsü devam eder: API endpoint testi,
+validation testi, her seferinde bir test → bir implementation)
+
+─── REFACTOR ───
+
+generateSlug() ve persistence mantığı aynı fonksiyonda.
+Deep module prensibi gereği LinkService'i ayrıştırıyorum.
+npm test → PASS ✓ (tüm testler hâlâ geçiyor)
+npm run typecheck → PASS ✓
+npm run build → PASS ✓
+
+Implementation Summary:
+- src/link-service.ts (yeni)
+- src/routes/links.ts (yeni)
+- tests/link-service.test.ts (3 test)
+- tests/links-api.test.ts (2 test)</pre></div></div></div>
+
+  <h3>/tdd'nin Temel Prensipleri</h3>
+  <div class="principle-grid">
+    <div class="pcard"><h4>1 · Horizontal slicing yasak</h4><p>"Önce 5 test yaz, sonra 5 implementation" yapmaz. Her test-implementation çifti bir vertical slice'tır.</p></div>
+    <div class="pcard"><h4>2 · Integration-style testler</h4><p>Internal mock'lar yerine public interface üzerinden test yazılır. "checkout calls paymentService" değil, "user can checkout" test edilir.</p></div>
+    <div class="pcard"><h4>3 · Deep module hedeflenilir</h4><p>Küçük interface, zengin implementation. Test sınırı = modül sınırı. Refactor aşamasında bu kontrol edilir.</p></div>
+    <div class="pcard"><h4>4 · Mocking sadece system boundary</h4><p>Kendi modüllerini mock'lama. Sadece harici bağımlılıkları (database, API, filesystem) mock'la.</p></div>
+  </div>
+</div>
+
+<hr class="sep">
+
+<!-- ADIM 5 -->
+<div class="adim" id="a5">
+  <div class="adim-head">
+    <div class="adim-num">5</div>
+    <div class="adim-info">
+      <h2>Issue Yönetimi</h2>
+      <div class="adim-skill-row">
+        <span class="cmd"><i class="ti ti-terminal-2"></i>/triage</span>
+        <span class="adim-when">· Issue'lar biriktiğinde</span>
+        <span class="badge-o">Opsiyonel</span>
+      </div>
+    </div>
+  </div>
+  <p><span class="cmd">/triage</span>, issue'ları bir state machine ile yönetir. Küçük projelerde veya solo çalışmada atlayabilirsiniz. Her issue şu durumlardan birindedir:</p>
+
+  <div class="state-flow">
+    <span class="state s-start">unlabeled</span>
+    <span class="sarr">→</span>
+    <span class="state s-mid">needs-triage</span>
+    <span class="sarr">→</span>
+    <span class="state s-ok">ready-for-agent</span>
+    <span class="sarr">/</span>
+    <span class="state s-ok">ready-for-human</span>
+    <span class="sarr">/</span>
+    <span class="state s-hold">needs-info</span>
+    <span class="sarr">→</span>
+    <span class="state s-mid">needs-triage</span>
+    <span class="sarr">/</span>
+    <span class="state s-end">wontfix</span>
+  </div>
+
+  <div class="ex-wrap" id="ex5"><div class="ex-btn" onclick="toggleEx('ex5')"><i class="ti ti-terminal"></i><span>Terminal çıktısı — /triage</span><i class="ti ti-chevron-down ch"></i></div>
+  <div class="ex-content"><div class="cb"><div class="term-head"><div class="term-dots"><div class="td td-r"></div><div class="td td-y"></div><div class="td td-g"></div></div><div class="term-label">claude — url-shortener</div></div>
+<pre>&gt; /triage Dikkat gerektiren issue'ları göster
+
+Claude: Issue tracker'ı tarıyorum...
+
+ready-for-agent (agent alabilir):
+  #3 Redirect slug to original URL — blocked by #2
+  #4 Get click count — blocked by #3
+  #5 Get click history — blocked by #3
+  #6 Handle edge cases — blocked by #2, #3
+
+needs-triage: (yok)
+
+Önerilen aksiyon: Issue #2 tamamlandığı için
+#3 artık blocker'sız. #3 ile devam edebilirsiniz.
+
+Siz: #3'ü al ve /tdd ile implement et.</pre></div></div></div>
+</div>
+
+<hr class="sep">
+
+<!-- ADIM 6 -->
+<div class="adim" id="a6">
+  <div class="adim-head">
+    <div class="adim-num">6</div>
+    <div class="adim-info">
+      <h2>Mimariyi İyileştir</h2>
+      <div class="adim-skill-row">
+        <span class="cmd"><i class="ti ti-terminal-2"></i>/improve-codebase-architecture</span>
+        <span class="adim-when">· Her 3-5 issue'da bir</span>
+        <span class="badge-o">Opsiyonel ama önerilir</span>
+      </div>
+    </div>
+  </div>
+  <p>Bu skill, CONTEXT.md'deki domain dilini ve ADR'ları kullanarak kod tabanını analiz eder. Shallow module'ları tespit eder ve <strong>deepening önerileri</strong> sunar. Farkı kodu sadece yapısal olarak değil, <strong>domain dili bağlamında</strong> analiz etmesidir.</p>
+
+  <div class="ex-wrap" id="ex6"><div class="ex-btn" onclick="toggleEx('ex6')"><i class="ti ti-terminal"></i><span>Terminal çıktısı — /improve-codebase-architecture</span><i class="ti ti-chevron-down ch"></i></div>
+  <div class="ex-content"><div class="cb"><div class="term-head"><div class="term-dots"><div class="td td-r"></div><div class="td td-y"></div><div class="td td-g"></div></div><div class="term-label">claude — url-shortener</div></div>
+<pre>&gt; /improve-codebase-architecture
+
+Claude: CONTEXT.md'den: slug, link, click, click count
+ADR'lardan: unique slug per submission, individual click records
+
+Tespit edilen deepening fırsatları:
+
+1. [Strong] ClickRecorder + ClickCounter birleştirilebilir
+   → AnalyticsService olarak tek deep module
+
+   Problem: İki ayrı modül aynı click tablosuna erişiyor.
+   Interface'leri birlikte neredeyse tüm click mantığını kapsıyor.
+
+   Deletion test: ClickCounter silinsek, aynı mantık
+   AnalyticsService caller'larına dağılır.
+
+   Before: ClickRecorder + ClickCounter (2 modül, 2 interface)
+   After:  AnalyticsService (1 modül, 2 public method)
+
+2. [Worth exploring] SlugGenerator ayrı modül mü olmalı?
+   Problem: Şu an LinkService içinde ama sadece bir fonksiyon.
+   Deletion test: Silinse complexity kaybolur, yayılmaz.
+   Öneri: Şimdilik LinkService içinde kalsın.
+
+Uygulamak istediğiniz önerileri seçin.</pre></div></div></div>
+</div>
+
+<hr class="sep">
+
+<!-- S11 -->
+<div class="section" id="s11">
+  <div class="sec-head"><span class="sec-num">11</span><h2>İhtiyaç Halinde: Yardımcı Skill'ler</h2></div>
+
+  <div class="sec-skill-grid">
+    <div class="ssc">
+      <div class="ssc-head">
+        <div class="ssc-icon"><i class="ti ti-bug"></i></div>
+        <div class="ssc-meta">
+          <h4><span class="cmd">/diagnose</span> — Yapılandırılmış Debugging</h4>
+          <div class="when">Zor bug'larda — agent'ın veya sizin çözemediğiniz durumlarda</div>
+        </div>
+      </div>
+      <div class="ssc-body">
+        <p><strong>Loop sırası:</strong> feedback loop kur → reproduce et → minimize et → hipotez kur → instrument et → fix et → regression test yaz. En kritik adım ilkidir: agent deterministic, hızlı ve otomatik çalıştırılabilir bir feedback loop kurmadan ilerlemez.</p>
+        <div class="ex-wrap" id="ex11a"><div class="ex-btn" onclick="toggleEx('ex11a')"><i class="ti ti-terminal"></i><span>Örnek çıktı</span><i class="ti ti-chevron-down ch"></i></div>
+        <div class="ex-content"><div class="cb"><div class="term-head"><div class="term-dots"><div class="td td-r"></div><div class="td td-y"></div><div class="td td-g"></div></div><div class="term-label">claude — /diagnose</div></div>
+<pre>&gt; /diagnose Redirect endpoint bazen 404 dönüyor
+  ama slug database'de var.
+
+Claude: Phase 1 — Feedback loop kuruyorum...
+Bug'ı güvenilir şekilde reproduce edecek bir test yazıyorum...
+
+[failing test → bug reproduce → minimize → hipotez
+→ fix → regression test eklendi]</pre></div></div></div>
+      </div>
+    </div>
+
+    <div class="ssc">
+      <div class="ssc-head">
+        <div class="ssc-icon"><i class="ti ti-zoom-out"></i></div>
+        <div class="ssc-meta">
+          <h4><span class="cmd">/zoom-out</span> — Üst Düzey Bakış</h4>
+          <div class="when">Tanımadığınız bir kod alanına girdiğinizde</div>
+        </div>
+      </div>
+      <div class="ssc-body">
+        <p>Agent'a belirli bir dizin veya modül hakkında <strong>CONTEXT.md'deki domain diliyle</strong> üst düzey bakış kazandırır: hangi modüller bağımlı, kim çağırıyor, hangi seam'ler var.</p>
+        <div class="cb"><div class="term-head"><div class="term-dots"><div class="td td-r"></div><div class="td td-y"></div><div class="td td-g"></div></div><div class="term-label">claude — /zoom-out</div></div>
+<pre>&gt; /zoom-out src/analytics/
+
+Claude: Analytics modülü, click kayıtlarını sorgulayan
+servis katmanıdır.
+
+  LinkService → (link oluşturur)
+  RedirectHandler → (click kaydeder) → ClickRepository
+  AnalyticsService → (click'leri okur) ← ClickRepository
+                   → (link meta verisini okur) ← LinkRepository
+
+Caller'lar: GET /links/:slug/stats endpoint'i</pre></div>
+      </div>
+    </div>
+
+    <div class="ssc">
+      <div class="ssc-head">
+        <div class="ssc-icon"><i class="ti ti-flask"></i></div>
+        <div class="ssc-meta">
+          <h4><span class="cmd">/prototype</span> — Tasarım Kararı Doğrulama</h4>
+          <div class="when">Mimari konusunda kararsızlık varsa — "bu strateji doğru mu?" gibi soruları somutlaştırmak için</div>
+        </div>
+      </div>
+      <div class="ssc-body">
+        <p>Throwaway prototype (terminal script, minimal UI veya log analizi) ile tasarım kararını veri ile doğrular. Sonucu ADR olarak belgeleyebilir.</p>
+        <div class="cb"><div class="term-head"><div class="term-dots"><div class="td td-r"></div><div class="td td-y"></div><div class="td td-g"></div></div><div class="term-label">claude — /prototype</div></div>
+<pre>&gt; /prototype Slug collision handling stratejisini test
+  etmek istiyorum — retry mi, sequential fallback mı?
+
+Claude: Bu bir logic sorusu — terminal script oluşturuyorum.
+
+[10,000 slug üretir, collision oranını ölçer,
+retry vs sequential stratejilerini karşılaştırır]
+
+Sonuç: 6 karakter alfanumerik ile 1M slug'da collision
+oranı %0.001. Retry stratejisi yeterli, sequential
+fallback gereksiz karmaşıklık.
+
+Bu sonucu ADR olarak belgeleyelim mi?</pre></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr class="sep">
+
+<!-- S12 -->
+<div class="section" id="s12">
+  <div class="sec-head"><span class="sec-num">12</span><h2>Özet: Komple Akış</h2></div>
+  <p>Skill'lerin gücü tek tek değil, <strong>birlikte çalışmalarındadır.</strong> <span class="cmd">/grill-with-docs</span> CONTEXT.md oluşturur → <span class="cmd">/to-prd</span> bu dili PRD'de kullanır → <span class="cmd">/to-issues</span> aynı dilde issue yazar → <span class="cmd">/tdd</span> testlerde bu dili izler → <span class="cmd">/improve-codebase-architecture</span> domain diliyle mimari analiz yapar. Sonuç: her artefact aynı dili konuşur, aynı kararlara dayanır.</p>
+
+  <div class="flow-phase">
+    <div class="fp-head once"><i class="ti ti-repeat-once"></i><span>Bir kez — proje başında</span></div>
+    <div class="fp-body">
+      <div class="fp-step"><span class="fp-arrow">▸</span><div class="fp-content"><strong><span class="cmd">/setup-matt-pocock-skills</span></strong><span>Issue tracker, triage labels, domain docs yapısı</span></div></div>
+    </div>
+  </div>
+
+  <div class="flow-connector"><i class="ti ti-arrow-down"></i></div>
+
+  <div class="flow-phase">
+    <div class="fp-head each"><i class="ti ti-refresh"></i><span>Her feature için — tekrarlı döngü</span></div>
+    <div class="fp-body">
+      <div class="fp-step"><span class="fp-arrow">1</span><div class="fp-content"><strong><span class="cmd">/grill-with-docs</span></strong><span>CONTEXT.md güncellenir, ADR'lar yazılır</span></div></div>
+      <div class="fp-step"><span class="fp-arrow">2</span><div class="fp-content"><strong><span class="cmd">/to-prd</span></strong><span>PRD issue tracker'a publish edilir</span></div></div>
+      <div class="fp-step"><span class="fp-arrow">3</span><div class="fp-content"><strong><span class="cmd">/to-issues</span></strong><span>Vertical slice issue'lar oluşturulur</span></div></div>
+      <div class="fp-step"><span class="fp-arrow">4</span><div class="fp-content"><strong><span class="cmd">/tdd</span> (her issue için)</strong><span>Red-Green-Refactor, deep module, vertical slice</span></div></div>
+    </div>
+  </div>
+
+  <div class="flow-connector"><i class="ti ti-arrow-down"></i></div>
+
+  <div class="flow-phase">
+    <div class="fp-head when"><i class="ti ti-tools"></i><span>Gerektiğinde</span></div>
+    <div class="fp-body">
+      <div class="fp-step"><span class="fp-arrow">▸</span><div class="fp-content"><strong><span class="cmd">/triage</span></strong><span>Issue state yönetimi</span></div></div>
+      <div class="fp-step"><span class="fp-arrow">▸</span><div class="fp-content"><strong><span class="cmd">/improve-codebase-architecture</span></strong><span>Mimari analiz + deepening önerileri</span></div></div>
+      <div class="fp-step"><span class="fp-arrow">▸</span><div class="fp-content"><strong><span class="cmd">/diagnose</span></strong><span>Yapılandırılmış debugging</span></div></div>
+      <div class="fp-step"><span class="fp-arrow">▸</span><div class="fp-content"><strong><span class="cmd">/zoom-out</span></strong><span>Üst düzey bakış</span></div></div>
+      <div class="fp-step"><span class="fp-arrow">▸</span><div class="fp-content"><strong><span class="cmd">/prototype</span></strong><span>Tasarım kararı doğrulama</span></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- KAYNAKLAR -->
+<div class="section" id="resources">
+  <div class="sec-head"><h2>Kaynaklar</h2></div>
+  <ul class="res-list">
+    <li><i class="ti ti-brand-github"></i><div><strong><a href="https://github.com/mattpocock/skills" target="_blank">github.com/mattpocock/skills</a></strong><br><span style="font-size:12px;color:var(--muted)">Skill'lerin kaynak kodu ve dokümantasyonu</span></div></li>
+    <li><i class="ti ti-book"></i><div><strong>A Philosophy of Software Design</strong> — John Ousterhout<br><span style="font-size:12px;color:var(--muted)">Deep modules, interface tasarımı</span></div></li>
+    <li><i class="ti ti-book"></i><div><strong>Domain-Driven Design</strong> — Eric Evans<br><span style="font-size:12px;color:var(--muted)">Ubiquitous language, CONTEXT.md'nin teorik temeli</span></div></li>
+    <li><i class="ti ti-book"></i><div><strong>The Pragmatic Programmer</strong> — David Thomas &amp; Andrew Hunt<br><span style="font-size:12px;color:var(--muted)">Tracer bullets, small steps</span></div></li>
+  </ul>
+</div>
+
+</div>
+<script>
+function cp(btn){
+  const pre=btn.closest('.cb').querySelector('pre');
+  navigator.clipboard.writeText(pre.textContent.trim()).then(()=>{
+    const o=btn.innerHTML;btn.innerHTML='<i class="ti ti-check"></i> Kopyalandı';
+    setTimeout(()=>{btn.innerHTML=o},2000);
+  });
+}
+function toggleEx(id){
+  document.getElementById(id).classList.toggle('open');
+}
+</script>
+</body>
+</html>

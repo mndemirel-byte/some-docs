@@ -1,0 +1,74 @@
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin: 14px 0;
+}
+
+.box {
+  border-radius: 8px;
+  padding: 14px 16px;
+}
+
+.box p,
+.box li {
+  font-size: 13px;
+  color: var(--subtle);
+  margin: 0;
+  line-height: 1.55;
+}
+
+.box ul {
+  padding-left: 16px;
+  margin: 0;
+}
+
+.label {
+  font-size: 10px;
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 600;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.red {
+  background: var(--red-bg);
+  border: 1px solid var(--red-border);
+}
+
+.red .label {
+  color: var(--red-text);
+}
+
+.green {
+  background: var(--green-bg);
+  border: 1px solid var(--green-border);
+}
+
+.green .label {
+  color: var(--green-text);
+}
+
+.blue {
+  background: var(--blue-bg);
+  border: 1px solid var(--blue-border);
+}
+
+.blue .label {
+  color: var(--blue-text);
+}
+
+.neutral {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+}
+
+@media (max-width: 600px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}

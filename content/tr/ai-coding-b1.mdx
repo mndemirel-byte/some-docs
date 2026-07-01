@@ -1,0 +1,886 @@
+import {
+  IconInfoCircle,
+  IconCircleCheck,
+  IconCirclePlus,
+  IconAlertTriangle,
+  IconBulb,
+  IconMessageDots,
+  IconArrowUpCircle,
+  IconRefresh,
+  IconVideo,
+  IconUserCheck,
+  IconRobot,
+  IconShieldCheck,
+  IconAlertCircle,
+  IconScissors,
+  IconUser,
+  IconFileAlert,
+  IconEdit,
+  IconPlus,
+  IconLayersSubtract,
+  IconLayersIntersect,
+  IconPrompt,
+  IconEye,
+  IconGitBranch,
+  IconFileText,
+  IconX,
+  IconCheck,
+} from "@tabler/icons-react";
+import { Hero, Accent } from "@/components/doc/hero";
+import { KeyQuote } from "@/components/doc/key-quote";
+import { Toc } from "@/components/doc/toc";
+import { Section } from "@/components/doc/section";
+import { Callout } from "@/components/doc/callout";
+import { TwoColGrid, GridCard } from "@/components/doc/two-col-grid";
+import { SkillTable } from "@/components/doc/skill-table";
+import { ChallengeCard } from "@/components/doc/challenge-card";
+import { TwoBoxGrid, Box } from "@/components/doc/two-box-grid";
+import { Phase } from "@/components/doc/phase-header";
+import { CodeBlock } from "@/components/doc/code-block";
+import { ExpandableExample } from "@/components/doc/expandable-example";
+import { FlowSteps, FlowStep } from "@/components/doc/flow-steps";
+
+<Hero
+  badge="AI Coding Serisi · Bölüm 1"
+  variant="eyebrow"
+  title={<>AI Coding Agent'larla <Accent>Disiplinli</Accent> Yazılım Geliştirme</>}
+  description="AI coding yeni bir paradigma gibi görünse de başarılı kullanımın temeli hâlâ klasik yazılım mühendisliği disiplinleridir. Bu doküman, fikirden PRD'ye, PRD'den dikey dilimlere, oradan test destekli AFK agent uygulamasına giden pratik bir yol haritası sunar."
+  tags={["TDD", "vertical-slice", "AFK-agent", "PRD", "deep-module", "claude-code"]}
+/>
+
+<KeyQuote>
+  Büyük işi modele yedirmek yerine, işi modelin akıllı kalabileceği kadar küçük parçalara böl.
+</KeyQuote>
+
+<Toc
+  title="İçindekiler"
+  layout="list"
+  entries={[
+    { id: "intro", num: "—", label: "Bu Doküman Kimin İçin & Ön Gereksinimler" },
+    { id: "terms", num: "—", label: "Kısaltmalar ve Terimler" },
+    { id: "s1", num: "01", label: "Temel Problem: AI Zeki Ama Sınırsız Değil" },
+    {
+      id: "s2",
+      num: "02",
+      label: "AI Coding Esnasında Karşılaşılan Zorluklar",
+      subEntries: [
+        { id: "c1", num: "2.1", label: "Gereksinim Yanlış Anlaşılması" },
+        { id: "c2", num: "2.2", label: "Spec-Driven Geliştirmenin Sınırları" },
+        { id: "c3", num: "2.3", label: "Context Şişmesi" },
+        { id: "c4", num: "2.4", label: "Horizontal Implementation Eğilimi" },
+        { id: "c5", num: "2.5", label: "Test Eksikliği" },
+        { id: "c6", num: "2.6", label: "Kötü Mimari: Shallow Modules" },
+      ],
+    },
+    {
+      id: "s3",
+      num: "03",
+      label: "Önerilen AI Coding Workflow",
+      subEntries: [
+        { id: "p0", num: "A.0", label: "Fikri Feature'lara Ayrıştır (Opsiyonel)" },
+        { id: "p1", num: "A.1", label: "Feature Brief'i Netleştir" },
+        { id: "p2", num: "A.2", label: "PRD / Destination Document Üret" },
+        { id: "p3", num: "A.3", label: "PRD'yi Kanban Issue'larına Böl" },
+        { id: "p4", num: "A.4", label: "Agent'a TDD ile Kod Yazdır" },
+        { id: "p5", num: "A.5", label: "Human-in-the-loop ve AFK Ayrımı" },
+        { id: "p6", num: "A.6", label: "Kod Tabanını İyileştir" },
+      ],
+    },
+    { id: "resources", num: "—", label: "Kaynaklar" },
+  ]}
+/>
+
+<Section id="intro" title="Bu Doküman Kimin İçin?">
+
+AI coding araçlarını günlük iş akışına entegre etmek isteyen yazılım profesyonellerine yöneliktir. Birincil hedef kitle junior'dan senior'a kadar her seviyede **yazılım developer'larıdır**. Gereksinim netleştirme, PRD oluşturma, iş bölme ve review süreci bölümleri **teknik liderler, mimarlar ve ürün yöneticileri** için de doğrudan uygulanabilir.
+
+<Callout icon={IconInfoCircle} kind="info">
+  Doküman belirli bir dile veya araca bağlı değildir. Örnekler TypeScript/Python ekosistemlerinden verilmiştir; prensipler (vertical slice, TDD, deep module, context yönetimi) dil ve araç bağımsızdır.
+</Callout>
+
+<TwoColGrid>
+  <GridCard icon={IconCircleCheck} iconColor="var(--red-text)" title="Zorunlu ön gereksinimler">
+    <ul>
+      <li>En az bir dilde temel yetkinlik</li>
+      <li>Temel Git bilgisi (commit, branch, merge)</li>
+      <li>Herhangi bir AI coding aracıyla tanışıklık</li>
+    </ul>
+  </GridCard>
+  <GridCard icon={IconCirclePlus} iconColor="var(--green-text)" title="Faydalı ama zorunlu değil">
+    <ul>
+      <li>Test yazma deneyimi (unit, integration)</li>
+      <li>Komut satırı: build, test, lint</li>
+      <li>Temel ürün geliştirme anlayışı</li>
+      <li>CI/CD pipeline bilgisi</li>
+    </ul>
+  </GridCard>
+</TwoColGrid>
+
+</Section>
+
+<Section id="terms" title="Kısaltmalar ve Terimler">
+
+<SkillTable
+  skillHeader="Terim"
+  purposeHeader="Açıklama"
+  rows={[
+    { skill: "PRD", purpose: "Product Requirements Document — Feature'ın ne yapacağını, neden yapılacağını, kapsamını ve başarı kriterlerini tanımlayan gereksinim dokümanı." },
+    { skill: "AFK", purpose: "Away From Keyboard — Developer'ın aktif müdahalesi olmadan agent'ın kendi başına çalıştığı mod." },
+    { skill: "TDD", purpose: "Test-Driven Development — Önce test yaz, fail et, kodu yaz, refactor et. Red-Green-Refactor döngüsü." },
+    { skill: "ADR", purpose: "Architecture Decision Record — Mimari kararın ne olduğunu, neden alındığını ve alternatiflerini belgeleyen doküman." },
+    { skill: "LLM", purpose: "Large Language Model — GPT, Claude gibi büyük dil modelleri. AI coding agent'ların temelini oluşturur." },
+    { skill: "Context window", purpose: "Modelin tek seferde işleyebildiği metin miktarı (token). Kod, konuşma geçmişi, system prompt ve dosyalar bu pencereyi paylaşır." },
+    { skill: "Compacting", purpose: "Uzun konuşma geçmişini özetleyerek context window'u küçültme tekniği." },
+    { skill: "Vertical slice", purpose: "Feature'ın database'den UI'a tüm katmanlarını kapsayan ama kapsamı dar tutulan uçtan uca dilim." },
+    { skill: "Horizontal slice", purpose: "Feature'ın sadece tek bir katmanını (ör. sadece database, sadece API) kapsayan iş parçası." },
+    { skill: "Deep module", purpose: "Küçük ve sade public interface'e sahip ama içinde anlamlı miktarda iş yapan modül. Test sınırı nettir." },
+    { skill: "Shallow module", purpose: "Çok küçük, az iş yapan, dışarıya geniş bağımlılık sunan modül. Karmaşık dependency ağı yaratır." },
+    { skill: "Tracer bullet", purpose: "Karanlıkta hedefe ulaşıp ulaşmadığını anlamak için atılan ışıklı mermi metaforu. Minimal schema + servis + API + UI ile erken feedback almayı tanımlar." },
+    { skill: "E2E / CI / QA", purpose: "End-to-End test · Continuous Integration (commit başına otomatik build/test) · Quality Assurance." },
+  ]}
+/>
+
+</Section>
+
+<Section id="s1" num="01" title="Temel Problem: AI Zeki Ama Sınırsız Değil">
+
+LLM tabanlı coding agent'ların en büyük yanılgısı: **"Context window büyükse her şeyi verebilirim."** Oysa pratikte **Smart Zone / Dumb Zone** diye tanımlanabilecek bir dinamik vardır. Model, konuşmanın başında daha iyi çalışır; context büyüdükçe dikkat ilişkileri karmaşıklaşır ve model giderek daha kötü kararlar almaya başlar.
+
+<Callout icon={IconAlertTriangle} kind="warning">
+  Bir modelin context window'u 200K token olabilir; ama 150K token'lık kod + konuşma geçmişi yüklediğinizde model, 20K token'lık session'a kıyasla çok daha fazla hata yapar ve tutarsız kod üretir. <strong>Nominal kapasite ≠ effective attention kapasitesi.</strong>
+</Callout>
+
+Bu düşüş modelden modele ve görev tipine göre farklı hızda gerçekleşir. Pratik kural: context ne kadar küçük tutulursa model o kadar güvenilir çalışır. Sabit bir token eşiği ezberlemek yerine, session boyunca cevap kalitesini gözlemlemek ve kalite düşüşü hissedildiğinde context'i temizleyip yeniden başlamak daha sağlıklıdır.
+
+<KeyQuote>
+  Büyük işi modele yedirmek yerine, işi modelin akıllı kalabileceği kadar küçük parçalara böl.
+</KeyQuote>
+
+</Section>
+
+<Section id="s2" num="02" title="AI Coding Esnasında Karşılaşılan Zorluklar">
+
+Her başlığa tıklayarak açıklama, problem ve çözüme ulaşabilirsiniz.
+
+<ChallengeCard num={1} title="Gereksinim Yanlış Anlaşılması">
+
+AI çoğu zaman çok erken plan üretir. Siz "şöyle bir özellik istiyorum" dersiniz, agent hemen mimari, dosya listesi ve kod önerir. Fakat temel varsayımlar netleşmemiştir.
+
+**Örnek — Gamification:** "Puan sistemi ekle" dediğinizde AI hemen plan üretir; ancak şu sorular cevaplanmamıştır: Puanlar hangi aksiyonlardan kazanılacak? Tamamlanmış dersler geriye dönük puanlanacak mı? Seviye eğrisi nasıl? Puan UI'da nerede gösterilecek?
+
+<TwoBoxGrid>
+  <Box tone="red" label={<><IconX size={12} /> Problem</>}>
+    AI kod yazmaya hazırdır ama ürün kararı, domain kararı ve edge case kararı eksiktir.
+  </Box>
+  <Box tone="green" label={<><IconCheck size={12} /> Çözüm</>}>
+    Koddan önce alignment yapılmalı. AI'ı <strong>"Grill Me" sorgulama partneri</strong> olarak kullan: AI soru sorar, varsayımları açığa çıkarır, ortak tasarım anlayışı oluşturur.
+  </Box>
+</TwoBoxGrid>
+
+</ChallengeCard>
+
+<ChallengeCard num={2} title="Spec-Driven Geliştirmenin Sınırları">
+
+Yaygın yaklaşım: "Spec yaz, AI koda çevirsin; kod yanlışsa spec'i düzelt, tekrar üret." Bu tek başına yeterli değildir çünkü geliştirici koddan kopar. **Kod hâlâ savaş alanıdır.**
+
+**Spec-first'ün güçlü olduğu alanlar:** API contract (OpenAPI/Swagger), database migration planlaması, protokol/interface tanımları, sistem entegrasyon noktaları.
+
+<TwoBoxGrid>
+  <Box tone="red" label={<><IconX size={12} /> Problem</>}>
+    Developer yalnızca spec düzenleme rolüne çekilir, kod kalitesi ve mimari kontrol kaybolur.
+  </Box>
+  <Box tone="green" label={<><IconCheck size={12} /> Çözüm</>}>
+    <strong>Spec yazıyorsan kodu da oku; kod yazıyorsan spec'i de güncelle.</strong> Developer modülleri anlamalı, test sınırlarını belirlemeli ve mimari kaliteyi aktif yönetmelidir.
+  </Box>
+</TwoBoxGrid>
+
+</ChallengeCard>
+
+<ChallengeCard num={3} title="Context Şişmesi ve Compacting'e Aşırı Güven">
+
+Session büyüdükçe modelin performansı düşer. Compacting geçmişi özetler ama sınırlı bir çözümdür. Özetleme sırasında detaylar kaybolabilir ve eski kararların kalıntıları (**sediment / tortu**) agent'ı yanıltabilir.
+
+<TwoBoxGrid>
+  <Box tone="red" label={<><IconX size={12} /> Problem</>}>
+    Uzun konuşmada agent geçmiş kararları, dosya değişikliklerini ve niyeti karıştırabilir.
+  </Box>
+  <Box tone="green" label={<><IconCheck size={12} /> Çözüm</>}>
+    Session'ları küçük tut, context'i gerektiğinde temizle. Önemli kararları kalıcı artefact'lara yaz: PRD, issue, ADR, test planı.
+  </Box>
+</TwoBoxGrid>
+
+</ChallengeCard>
+
+<ChallengeCard num={4} title="Horizontal Implementation Eğilimi">
+
+AI doğal olarak işi yatay katmanlara böler: önce database, sonra API, sonra frontend. Klasik gibi görünür ama feedback çok geç gelir. Entegre çalışan bir şey ancak üçüncü fazda ortaya çıkar.
+
+**Vertical slice / Tracer bullet:** Karanlıkta hedefe ulaşıp ulaşmadığını anlamak için ışıklı mermi atarsınız. Minimal schema + servis + API + küçük UI birlikte yapılır. Agent erken feedback alır ve yanlış gidişat erkenden fark edilir.
+
+<TwoBoxGrid>
+  <Box tone="red" label={<><IconX size={12} /> Problem</>}>
+    Yatay geliştirme geç feedback üretir, AI uzun süre "kör" kod yazar.
+  </Box>
+  <Box tone="green" label={<><IconCheck size={12} /> Çözüm</>}>
+    Her issue mümkün olduğunca uçtan uca, test edilebilir, görünür bir değer üretmeli.
+  </Box>
+</TwoBoxGrid>
+
+</ChallengeCard>
+
+<ChallengeCard num={5} title="Test Eksikliği">
+
+AI test sinyali olmadan çalıştığında hatayı anlamakta zorlanır. Kod üretir, sonra başka hatayı düzeltirken çalışan yeri bozar. **TDD, AI coding için özellikle güçlü bir yöntemdir:** önce failing test yazılır, implementation yapılır, test ve typecheck geçirilir. Bu döngü agent'a sürekli "doğru yolda mısın?" sinyali verir. Ayrıca agent'ın hard-code veya shortcut yapma riskini de azaltır.
+
+<TwoBoxGrid>
+  <Box tone="red" label={<><IconX size={12} /> Problem</>}>
+    Feedback loop yoksa agent'ın doğru yolda olup olmadığı belirsizdir.
+  </Box>
+  <Box tone="green" label={<><IconCheck size={12} /> Çözüm</>}>
+    Unit test, integration test, typecheck, lint, build ve mümkünse e2e testleri agent workflow'unun zorunlu parçası olmalı.
+  </Box>
+</TwoBoxGrid>
+
+</ChallengeCard>
+
+<ChallengeCard num={6} title="Kötü Mimari: Shallow Modules">
+
+*John Ousterhout — "A Philosophy of Software Design"* kitabından gelen kavramlar:
+
+<TwoBoxGrid>
+  <Box tone="red" label={<><IconLayersSubtract size={12} /> Shallow Module</>}>
+    Çok küçük, az iş yapan, geniş bağımlılıklar sunan modül. 10-15 satırlık düzinelerce dosya, hepsi birbirini import ediyor. AI tek bir işi anlamak için onlarca dosyayı context'e yüklemek zorunda kalır.
+  </Box>
+  <Box tone="green" label={<><IconLayersIntersect size={12} /> Deep Module</>}>
+    Küçük ve sade public interface'e sahip ama içinde anlamlı iş yapan modül. Dışarıdan basit görünür; iç karmaşıklığı kapsüller. Test sınırı nettir: public interface'i test edersiniz.
+  </Box>
+</TwoBoxGrid>
+
+<TwoBoxGrid>
+  <Box tone="red" label={<><IconX size={12} /> Problem</>}>
+    Kötü mimari, AI agent'ın hem anlama hem test üretme kapasitesini düşürür.
+  </Box>
+  <Box tone="green" label={<><IconCheck size={12} /> Çözüm</>}>
+    Modül sınırlarını sadeleştir, public interface'i küçült, iç davranışı zenginleştir, test sınırlarını netleştir.
+  </Box>
+</TwoBoxGrid>
+
+</ChallengeCard>
+
+</Section>
+
+<Section id="s3" num="03" title="Önerilen AI Coding Workflow">
+
+Workflow iki katmandan oluşur:
+
+<TwoColGrid>
+  <GridCard icon={IconArrowUpCircle} iconColor="var(--accent-text)" title="Üst katman (bir kez)">
+    <ul>
+      <li>Fikir veya vizyon varsa → Aşama 0 ile başla</li>
+      <li>Bilinen bir feature ekliyorsan → Aşama 1'e geç</li>
+      <li>Çıktı: önceliklendirilmiş feature brief'ler listesi</li>
+    </ul>
+  </GridCard>
+  <GridCard icon={IconRefresh} iconColor="var(--accent-text)" title="Alt katman (her feature için)">
+    <ul>
+      <li>Her feature brief Aşama 1-6'dan geçer</li>
+      <li>Feature tamamlanınca sıradaki brief alınır</li>
+      <li>Döngü tekrar başlar</li>
+    </ul>
+  </GridCard>
+</TwoColGrid>
+
+</Section>
+
+<Phase id="p0" num={0} title="Fikri Feature'lara Ayrıştır" subtitle="product discovery" optionalLabel="Opsiyonel">
+
+**Ne zaman gerekir:** Elinizde net feature brief yoksa — yeni ürün fikri, büyük pivot, sıfırdan başlanan proje veya geniş vizyon.
+
+**Ne zaman atlanır:** Mevcut ürüne bilinen bir feature ekliyorsanız doğrudan Aşama 1'e geçin.
+
+Bu aşamada AI **product discovery partneri** olarak çalışır. Hedef: fikri kullanıcıya değer üreten, bağımsız ve önceliklendirilebilir feature'lara ayrıştırmak.
+
+### Decomposition Prompt'u
+
+<CodeBlock lang={<><IconPrompt size={12} /> prompt</>} kind="prompt" copyLabel="Kopyala" copiedLabel="Kopyalandı">
+{`Aşağıdaki fikri oku. Hemen feature listesi üretme.
+
+<idea>
+Online bir eğitim platformu kurmak istiyoruz. Öğrenciler ders
+izleyebilecek, quiz çözebilecek, sertifika alabilecek.
+Eğitmenler içerik yükleyebilecek. Gamification ile motivasyon
+artırılacak. Mobil ve web'den erişilebilecek.
+</idea>
+
+Önce beni sorgula. Şu başlıklarda netleşmemiş her şeyi sor:
+- Hedef kullanıcı kimdir?
+- Hangi problem çözülüyor?
+- Gelir modeli nedir?
+- Teknik kısıtlar nelerdir?
+- MVP'de olması şart olan vs sonraya bırakılabilecek nedir?
+- Platform kısıtları nelerdir?
+
+Her seferinde tek soru sor. Her soru için kendi önerini de ver.
+
+Tüm sorular bittiğinde şu formatta çıktı üret:
+<feature_list>
+## MVP Features
+1. Feature adı — 1-2 cümle açıklama
+
+## Phase 2 Features
+1. Feature adı — 1-2 cümle açıklama
+
+## Dependency Map
+- Feature X → Feature Y'den önce yapılmalı
+
+## Önerilen Sıralama
+1. İlk feature (neden: ...)
+</feature_list>`}
+</CodeBlock>
+
+<ExpandableExample label={<><IconEye size={16} /> Örnek çıktı</>}>
+
+<CodeBlock lang={<><IconEye size={12} /> örnek çıktı</>} kind="example" copyLabel="Kopyala" copiedLabel="Kopyalandı">
+{`<feature_list>
+## MVP Features
+1. Ders izleme — Öğrenci video dersleri izleyebilir, ilerleme kaydedilir.
+2. Eğitmen içerik yükleme — Video ve materyal yükleyebilir.
+3. Temel quiz — Ders sonunda çoktan seçmeli quiz çözülebilir.
+4. Kullanıcı kimlik doğrulama — Kayıt, giriş, profil yönetimi.
+
+## Phase 2 Features
+1. Gamification (puan, rozet, leaderboard)
+2. Sertifika üretimi ve doğrulama
+3. Mobil uygulama (native)
+4. Eğitmen analytics dashboard
+
+## Dependency Map
+- Ders izleme → Kullanıcı kimlik doğrulamadan sonra
+- Gamification → Ders izleme + quiz'den sonra
+
+## Önerilen Sıralama
+1. Kullanıcı kimlik doğrulama (neden: diğer her şeyin temeli)
+2. Eğitmen içerik yükleme (neden: içerik olmadan platform boş)
+3. Ders izleme (neden: öğrenci için temel değer)
+4. Temel quiz (neden: öğrenme doğrulaması)
+</feature_list>`}
+</CodeBlock>
+
+</ExpandableExample>
+
+<Callout icon={IconBulb} kind="tip">
+  Feature listesini <code>docs/feature-backlog.md</code> dosyasında sakla. Her feature implement edildikçe durumunu güncelle (backlog → in progress → done).
+</Callout>
+
+</Phase>
+
+<Phase id="p1" num={1} title="Feature Brief'i Netleştir" subtitle="analyst / product thinking partner">
+
+İlk adım "plan yap" değil, şunu yaptırmak olmalı: varsayımları, edge case'leri, veri modelini, test kararlarını ve kapsam dışı bırakılacak şeyleri tek tek netleştir. Bu aşamada AI **analyst** gibi çalışır. Çıktı: kod değil, **netleşmiş kararlar listesi**.
+
+### Sorgulama Prompt'u (Grill Me)
+
+<CodeBlock lang={<><IconPrompt size={12} /> prompt</>} kind="prompt" copyLabel="Kopyala" copiedLabel="Kopyalandı">
+{`Bu feature brief'ini oku. Hemen plan veya kod üretme.
+
+<feature_brief>
+Eğitim platformumuza gamification sistemi ekliyoruz. Öğrenciler ders
+tamamladığında puan kazanacak, toplam puanları dashboard'da görünecek.
+İleri aşamada rozet ve leaderboard da eklenecek ama ilk sürümde
+sadece puan sistemi olacak.
+</feature_brief>
+
+Önce beni relentlessly interview et. Şu başlıklarda sorgula:
+- Ürün hedefi ve başarı kriteri
+- Kullanıcı senaryoları ve edge case'ler
+- Veri modeli kararları
+- Geriye dönük veri migrasyonu
+- UI konumu ve davranışı
+- Kapsam dışı bırakılacak şeyler
+- Test kararları
+
+Kurallar:
+- Her seferinde tek soru sor.
+- Her soru için kendi önerini de ver.
+- Tüm sorular bittiğinde kararları özetle:
+
+  <decisions>
+  - Karar başlığı: Açıklama
+  </decisions>`}
+</CodeBlock>
+
+<ExpandableExample label={<><IconMessageDots size={16} /> Örnek sorgulama akışı ve kararlar</>}>
+
+<CodeBlock lang={<><IconEye size={12} /> örnek akış</>} kind="example" copyLabel="Kopyala" copiedLabel="Kopyalandı">
+{`AI: Puanlar sadece ders tamamlamadan mı, yoksa quiz, yorum yazma gibi
+aksiyonlar da puan verecek mi?
+Önerim: İlk sürümde sadece ders tamamlama.
+
+Developer: Evet, sadece ders tamamlama.
+
+AI: Sistemde halihazırda tamamlanmış dersler var. Bunlar geriye dönük
+puanlanacak mı? Önerim: Hayır, sadece yeni tamamlamalar.
+
+Developer: Katılıyorum, geriye dönük puanlama yok.
+
+(...diğer sorular...)
+
+AI: Tüm sorular tamamlandı. Netleşen kararlar:
+
+<decisions>
+- Puan kaynağı: Sadece ders tamamlama.
+- Puan miktarı: Her ders tamamlama 10 puan.
+- Geriye dönük puanlama: Hayır.
+- Aynı ders tekrarı: Puan verilmez.
+- UI: Dashboard'a "Toplam Puan" widget'ı.
+- Seviye sistemi: İlk sürümde yok.
+- Veri modeli: points tablosu (user_id, lesson_id, points, created_at).
+- Migration: Geriye dönük yok.
+</decisions>`}
+</CodeBlock>
+
+</ExpandableExample>
+
+</Phase>
+
+<Phase id="p2" num={2} title="PRD / Destination Document Üret" subtitle="hedef dokümanını oluştur">
+
+PRD burada "bürokratik doküman" değil, **hedef dokümanıdır** — ekipteki herkesin "ne yapıyoruz, neden, nerede duruyoruz" sorularını cevaplayabileceği tek referans noktası.
+
+### PRD Template — <code>docs/templates/prd-template.md</code>
+
+<CodeBlock lang={<><IconFileText size={12} /> prd-template.md</>} kind="file" copyLabel="Kopyala" copiedLabel="Kopyalandı">
+{`# Feature PRD: <Feature Name>
+
+## Problem
+Kullanıcının yaşadığı problem nedir?
+
+## Goal
+Bu feature hangi sonucu üretmeli?
+
+## Non-Goals
+Bu çalışma kapsamında olmayan şeyler.
+
+## User Stories
+- As a user, I want...
+
+## Acceptance Criteria
+- Her kriter test edilebilir olmalı. "İyi deneyim" gibi belirsiz ifade kullanma.
+
+## Implementation Decisions
+- Yalnızca <decisions> bölümündeki kararları yansıt, yeni karar ekleme.
+
+## Testing Decisions
+- Unit testler, Integration testler, E2E testler, Edge case testleri
+
+## Definition of Done
+- Testler geçiyor · Typecheck geçiyor · Build geçiyor · Review tamamlandı`}
+</CodeBlock>
+
+### PRD Üretme Prompt'u
+
+<CodeBlock lang={<><IconPrompt size={12} /> prompt</>} kind="prompt" copyLabel="Kopyala" copiedLabel="Kopyalandı">
+{`docs/templates/prd-template.md dosyasını oku.
+
+Aşağıdaki feature brief ve kararları kullanarak PRD oluştur.
+
+<feature_brief>
+Eğitim platformumuza gamification sistemi ekliyoruz. Öğrenciler ders
+tamamladığında puan kazanacak, toplam puanları dashboard'da görünecek.
+</feature_brief>
+
+<decisions>
+- Puan kaynağı: Sadece ders tamamlama.
+- Puan miktarı: Her ders tamamlama 10 puan.
+- Geriye dönük puanlama: Hayır.
+- Aynı ders tekrarı: Puan verilmez.
+- UI: Dashboard'a "Toplam Puan" widget'ı.
+- Veri modeli: points tablosu (user_id, lesson_id, points, created_at).
+</decisions>
+
+Kurallar:
+- Template'deki her bölümü doldur.
+- Implementation Decisions'da yalnızca <decisions> kararlarını yansıt.
+- Acceptance Criteria her madde doğrulanabilir olsun.
+- PRD'yi docs/prd/gamification-points.md olarak kaydet.`}
+</CodeBlock>
+
+<Callout icon={IconInfoCircle} kind="info">
+  <strong>Araç başına dosya referansı:</strong> Claude Code → <code>dosyasını oku</code> yeterlidir. Cursor → <code>@docs/templates/prd-template.md</code>. Önemli olan template'in her seferinde prompt'a kopyalanması yerine dosyadan okunmasıdır.
+</Callout>
+
+</Phase>
+
+<Phase id="p3" num={3} title="PRD'yi Kanban Issue'larına Böl" subtitle="vertical slice issue'ları oluştur">
+
+Klasik "Phase 1: DB, Phase 2: API, Phase 3: UI" yerine PRD'yi **vertical slice issue'larına** böl. Vertical slice, tüm teknik katmanları kapsayan ama kapsamı dar tutulan uçtan uca bir dilimdir.
+
+<TwoBoxGrid>
+  <Box tone="red" label={<><IconX size={12} /> Zayıf issue (horizontal)</>}>
+    <code>Create database schema for gamification</code><br /><br />Tek başına bağımsız test edilemez, kullanıcıya görünür sonuç üretmez.
+  </Box>
+  <Box tone="green" label={<><IconCheck size={12} /> Güçlü issue (vertical slice)</>}>
+    <code>Award points for lesson completion and show total on dashboard</code><br /><br />Uçtan uca değer üretir: veri + servis + API + UI + test birlikte çalışır.
+  </Box>
+</TwoBoxGrid>
+
+### Issue Template — <code>docs/templates/issue-template.md</code>
+
+<CodeBlock lang={<><IconFileText size={12} /> issue-template.md</>} kind="file" copyLabel="Kopyala" copiedLabel="Kopyalandı">
+{`# Issue <NUMARA> — <Kısa başlık>
+
+## Type
+feature | bug | refactor
+
+## Goal
+Bu issue tamamlandığında kullanıcı veya sistem ne yapabiliyor olacak?
+
+## Scope
+- Database / schema değişikliği
+- Backend servis / iş mantığı
+- API endpoint
+- UI bileşeni
+- Test (unit, integration, smoke)
+
+## Out of Scope
+Bu issue'da açıkça YAPILMAYACAK şeyler.
+
+## Dependencies
+Bağımlı issue'lar. Yoksa "None".
+
+## Acceptance Criteria
+- Kriter 1 (doğrulanabilir, "düzgün çalışmalı" gibi belirsiz ifade yok)
+- Kriter 2
+
+## Test Plan
+- Unit: Hangi modül test edilecek?
+- Integration: Hangi akış uçtan uca test edilecek?
+- UI smoke: Hangi ekran render doğrulaması yapılacak?`}
+</CodeBlock>
+
+### Issue Üretme Prompt'u
+
+<CodeBlock lang={<><IconPrompt size={12} /> prompt</>} kind="prompt" copyLabel="Kopyala" copiedLabel="Kopyalandı">
+{`Şu iki dosyayı oku:
+- docs/prd/gamification-points.md
+- docs/templates/issue-template.md
+
+PRD'deki scope'u vertical slice issue'larına böl.
+
+Kurallar:
+- Her issue uçtan uca değer üretmeli — tek katman issue'ları yapma.
+- Her issue bağımsız olarak test edilebilir ve demo gösterilebilir olmalı.
+- Issue'ları dependency sırasına göre numaralandır.
+- Out of Scope bölümünü açıkça doldur.
+- Issue'ları ayrı dosyalar olarak kaydet:
+  docs/issues/issue-01.md, docs/issues/issue-02.md, ...
+- Son olarak dependency graph'ı özetle.`}
+</CodeBlock>
+
+<ExpandableExample label={<><IconGitBranch size={16} /> Örnek dependency graph çıktısı</>}>
+
+<CodeBlock lang={<><IconEye size={12} /> örnek çıktı</>} kind="example" copyLabel="Kopyala" copiedLabel="Kopyalandı">
+{`docs/issues/issue-01.md → Award points for lesson completion
+                          and show total on dashboard
+docs/issues/issue-02.md → Prevent duplicate points for same lesson
+docs/issues/issue-03.md → Admin endpoint to view user points
+docs/issues/issue-04.md → Edge case handling (deleted lesson,
+                          deactivated user)
+
+Dependency graph:
+- Issue 01: Bağımsız (ilk yapılacak)
+- Issue 02: Issue 01'e bağımlı
+- Issue 03: Issue 01'e bağımlı
+- Issue 04: Issue 01 + 02'ye bağımlı`}
+</CodeBlock>
+
+</ExpandableExample>
+
+</Phase>
+
+<Phase id="p4" num={4} title="Agent'a TDD ile Kod Yazdır" subtitle="human-in-the-loop implementation">
+
+AI coding'de en güvenli implementation yöntemi TDD'dir. Agent testleri doğru konuma yazabilmek için projedeki test kurallarını bilmesi gerekir: <code>docs/test-conventions.md</code> dosyasında tanımlanır (dizin yapısı, dosya isimlendirme, test formatı, test komutları).
+
+### TDD Implementation Prompt'u
+
+Developer başında otururken (human-in-the-loop) her adımı gözlemleyerek kullanılır.
+
+<CodeBlock lang={<><IconPrompt size={12} /> prompt — human-in-the-loop</>} kind="prompt" copyLabel="Kopyala" copiedLabel="Kopyalandı">
+{`Şu dosyaları oku:
+- docs/issues/issue-01.md
+- docs/test-conventions.md
+
+TDD döngüsü ile implement et. Type alanını oku ve stratejini belirle:
+
+[Type = feature ise]
+  Adım 1 — Test yaz (Red):
+  - Her Acceptance Criteria için en az bir test yaz.
+  - Testleri çalıştır: npm test
+  - Tüm yeni testlerin FAIL ettiğini doğrula.
+    Eğer bir test implementation olmadan pass ediyorsa, yanlış yazılmış.
+
+  Adım 2 — Implement et (Green):
+  - Testleri geçirecek minimal kodu yaz. Gereksiz abstraction ekleme.
+  - Testleri tekrar çalıştır: npm test → tüm testler PASS etmeli.
+
+[Type = bug ise]
+  Adım 1 — Hatayı reproduce et: Önce failing test yaz. FAIL etmeli.
+  Adım 2 — Fix et: Minimal değişiklik. Test PASS etmeli.
+
+[Type = refactor ise]
+  Adım 1 — Tüm mevcut testlerin PASS ettiğini doğrula.
+  Adım 2 — Refactor yap, davranışı değiştirme.
+  Adım 3 — Testler hâlâ PASS etmeli.
+
+[Tüm type'lar için]
+  Adım 3 — Doğrula:
+  - npm run typecheck · npm run lint · npm run build
+  - Hata varsa düzelt ve tekrar çalıştır.
+
+  Adım 4 — Summary yaz:
+  ## Implementation Summary
+  - Eklenen test dosyaları: ...
+  - Eklenen/değiştirilen kaynak dosyalar: ...
+  - Test sonuçları: (çıktıyı yapıştır)
+  - Typecheck/lint/build: pass/fail
+  - Scope dışı notlar: ...`}
+</CodeBlock>
+
+### Agent Zorlanırsa Ne Yapılır
+
+2-3 denemede çözemediyse 4 seçenek:
+
+<TwoColGrid>
+  <GridCard icon={IconInfoCircle} iconColor="var(--blue-text)" title="Bağlam ver, devam ettir">
+    <p>Eksik env variable, yanlış dosya yolu gibi durumlarda bilgiyi ver ve devam ettir. Yeni issue gerekmez.</p>
+  </GridCard>
+  <GridCard icon={IconScissors} iconColor="var(--amber-text)" title="Issue'yu küçült">
+    <p>Scope fazla büyük olabilir. Kabul kriterini daralt, geri kalanı yeni issue yap.</p>
+  </GridCard>
+  <GridCard icon={IconUser} iconColor="var(--green-text)" title="Zor kısmı kendin yaz">
+    <p>Karmaşık kısmı (race condition, legacy side effect) kendin yaz. Agent geri kalanla devam etsin.</p>
+  </GridCard>
+  <GridCard icon={IconFileAlert} iconColor="var(--red-text)" title="Dur, analiz et, issue aç">
+    <p>Sistematik sorunsa belgele. Blocker Report formatıyla yeni issue oluştur.</p>
+  </GridCard>
+</TwoColGrid>
+
+</Phase>
+
+<Phase id="p5" num={5} title="Human-in-the-loop ve AFK Task Ayrımı" subtitle="görev dağılımı ve AFK çalıştırma">
+
+Her task AI'a bırakılmaz. Bazıları **human-in-the-loop**, bazıları **AFK** (developer müdahale etmeden) olabilir.
+
+<TwoBoxGrid>
+  <Box tone="green" label={<><IconUserCheck size={12} /> Human-in-the-loop işler</>}>
+    <ul>
+      <li>Gereksinim netleştirme</li>
+      <li>Ürün kararı</li>
+      <li>Mimari sınır belirleme</li>
+      <li>Veri modeli kararı</li>
+      <li>Riskli migration kararı</li>
+      <li>Code review · Final QA</li>
+    </ul>
+  </Box>
+  <Box tone="blue" label={<><IconRobot size={12} /> AFK'ya bırakılabilecek işler</>}>
+    <ul>
+      <li>Küçük issue implementation</li>
+      <li>Test yazma</li>
+      <li>Typecheck / lint / build düzeltme</li>
+      <li>Dokümantasyon güncelleme</li>
+      <li>Basit refactor</li>
+    </ul>
+  </Box>
+</TwoBoxGrid>
+
+### AFK Çalıştırmanın Koşulları ve Riskleri
+
+<TwoBoxGrid>
+  <Box tone="green" label={<><IconShieldCheck size={12} /> Güvenli AFK koşulları</>}>
+    <ul>
+      <li>Issue küçük ve scope net</li>
+      <li>Ayrı branch / worktree'de çalışıyor</li>
+      <li>Test, typecheck ve build komutları tanımlı</li>
+      <li>Max iteration limiti belirlenmiş</li>
+    </ul>
+  </Box>
+  <Box tone="red" label={<><IconAlertTriangle size={12} /> AFK riskleri ve önlemleri</>}>
+    <ul>
+      <li><strong>Loop riski</strong> — Max 10 deneme kuralı koy</li>
+      <li><strong>Scope kayması</strong> — Out of Scope bölümünü doldur</li>
+      <li><strong>Sessiz hata</strong> — Summary'e test çıktısını dahil ettir</li>
+      <li><strong>Yanlış dosya değişikliği</strong> — Merge öncesi diff review</li>
+    </ul>
+  </Box>
+</TwoBoxGrid>
+
+### AFK Çalıştırma — 3 Adım
+
+<FlowSteps>
+  <FlowStep num={1} title="Hazırlık (~2 dk)">
+    <p>Issue için ayrı branch oluştur. Issue ve test-conventions dosyalarının hazır olduğunu doğrula.</p>
+    <CodeBlock lang="bash" copyLabel="Kopyala" copiedLabel="Kopyalandı">
+{`git checkout -b feature/gamification-points
+# Opsiyonel: paralel worktree
+git worktree add ../project-issue-01 feature/gamification-points`}
+    </CodeBlock>
+  </FlowStep>
+  <FlowStep num={2} title="AFK Prompt ile Agent'ı Başlat">
+    <p>Bu prompt verildikten sonra developer bilgisayar başından ayrılabilir.</p>
+    <CodeBlock lang={<><IconPrompt size={12} /> prompt — AFK modu</>} kind="prompt" copyLabel="Kopyala" copiedLabel="Kopyalandı">
+{`Şu dosyaları oku:
+- docs/issues/issue-01.md
+- docs/test-conventions.md
+
+Bu issue'yu uygula.
+
+Çalışma kuralları:
+1. Type, Scope ve Out of Scope bölümlerini oku.
+   Yalnızca Scope'taki işleri yap.
+2. Type'a göre test stratejini belirle:
+   - feature → Önce testleri yaz (fail etmeli), sonra implement et.
+   - bug → Önce reproduce testi yaz (fail etmeli), sonra fix et.
+   - refactor → Mevcut testleri doğrula, refactor yap, tekrar doğrula.
+3. Minimal implementation yap.
+4. Komutları çalıştır ve hepsinin geçtiğini doğrula:
+   npm test · npm run typecheck · npm run lint · npm run build
+5. Hata varsa düzelt. Maksimum 10 deneme. 10'da çözemediysen dur.
+6. Scope dışına çıkma.
+7. Bitince Implementation Summary yaz.
+   Çözemediysen summary sonuna Blocker Report ekle.`}
+    </CodeBlock>
+  </FlowStep>
+  <FlowStep num={3} title="Döndüğünde Review">
+    <CodeBlock lang="bash" copyLabel="Kopyala" copiedLabel="Kopyalandı">
+{`# Gerçek diff'i incele
+git diff main...feature/gamification-points
+# Beklenmedik dosya değişikliği kontrolü
+git diff --name-only main...feature/gamification-points
+# Testleri kendin çalıştır
+npm test && npm run typecheck && npm run build`}
+    </CodeBlock>
+    <Callout icon={IconAlertCircle} kind="warning">
+      AFK coding sonrasında mutlaka <code>git diff</code> okuyarak değişiklikleri gözden geçir. Agent&apos;ın &quot;başarılı&quot; dediğine değil, gerçek diff&apos;e güven.
+    </Callout>
+  </FlowStep>
+</FlowSteps>
+
+### Blocker Report Formatı
+
+Agent çözemediğinde summary'nin sonuna bu formatı ekler:
+
+<CodeBlock lang={<><IconFileAlert size={12} /> Blocker Report</>} copyLabel="Kopyala" copiedLabel="Kopyalandı">
+{`## Blocker Report
+### Sorun
+Kısa tanım: ne oldu?
+### Hata çıktısı
+İlgili hata mesajı veya test çıktısı
+### Denenen çözümler
+1. Deneme: ... → Sonuç: ...
+2. Deneme: ... → Sonuç: ...
+### Olası kök neden
+Tahminin (developer doğrulamalı)
+### Etkilenen acceptance criteria
+Hangi kriter karşılanamadı?
+### Önerilen aksiyon
+- Mevcut issue'nun scope'u güncellensin
+- Yeni issue açılsın (önerilen başlık: ...)
+- Ortam/konfigürasyon sorunu — issue gerekmez`}
+</CodeBlock>
+
+### Blocker Report Sonrası 3 Seçenek
+
+<TwoColGrid>
+  <GridCard icon={IconCircleCheck} iconColor="var(--green-text)" title="A — Kendim düzelt, devam ettir">
+    <p>Basit konfigürasyon veya env sorunu ise developer düzeltir ve "devam et" der. Yeni issue gerekmez.</p>
+  </GridCard>
+  <GridCard icon={IconPlus} iconColor="var(--blue-text)" title="B — Yeni issue aç">
+    <p>Sorun mevcut issue scope'u dışındaysa yeni issue oluştur, pipeline'a sok.</p>
+  </GridCard>
+</TwoColGrid>
+<TwoColGrid>
+  <GridCard icon={IconEdit} iconColor="var(--amber-text)" title="C — Mevcut issue'yu güncelle">
+    <p>Sorun issue'nun eksik tanımlanmış scope'undan kaynaklanıyorsa, yeni issue açmak yerine mevcut issue'yu düzelt.</p>
+  </GridCard>
+</TwoColGrid>
+
+### Paralel AFK: Bağımsız Issue'ları Aynı Anda Çalıştır
+
+<CodeBlock lang="bash" copyLabel="Kopyala" copiedLabel="Kopyalandı">
+{`git worktree add ../project-issue-01 -b feature/issue-01
+git worktree add ../project-issue-02 -b feature/issue-02
+git worktree add ../project-issue-03 -b feature/issue-03
+# Her worktree'de ayrı bir agent session başlat`}
+</CodeBlock>
+
+<Callout icon={IconInfoCircle} kind="info">
+  Merge conflict riski varsa (aynı dosyaları değiştiren issue'lar) sıralı çalıştırın. Merge sırası her zaman dependency graph'a uymalıdır.
+</Callout>
+
+</Phase>
+
+<Phase id="p6" num={6} title="Kod Tabanını İyileştir" subtitle="shallow module anti-pattern'den kaçın">
+
+Feature tamamlandıktan sonra iş bitmez. AI coding'in hızı, kontrol edilmezse **shallow module birikimi** yaratır: çok sayıda küçük dosya, her biri birbirine bağımlı, hiçbiri tek başına anlamlı iş yapmayan modüller. Bu, her yeni feature'da agent'ın context'ine daha fazla dosya yüklenmesini ve bakım maliyetinin artmasını getirir.
+
+### Shallow Module Belirtileri
+
+- Bir iş mantığını anlamak için 5'ten fazla dosya açmak gerekiyor.
+- Modüllerin çoğu 10-30 satır ve neredeyse hepsi başka modülü import ediyor.
+- Çok şey export ediliyor ama her biri çok az iş yapıyor.
+- Bir modülü test etmek için 3-4 bağımlılığı mock'lamak gerekiyor.
+- "Pass-through" katmanlar var: veriyi alıp hiçbir şey eklemeden bir sonraki katmana verme.
+
+### Deep Module Refactoring Stratejisi
+
+1. **İlgili küçük modülleri birleştir** — Aynı domain kavramıyla ilgili dosyaları tek modüle topla.
+2. **Pass-through katmanları kaldır** — Gerçek soyutlama sağlamıyorsa kaldır.
+3. **Public interface'i küçült** — Sadece dışarıdan çağrılması gerekenler export edilmeli.
+4. **Test sınırını modül sınırıyla hizala** — Testler public interface üzerinden yazılmalı.
+
+### AI ile Refactoring — 2 Adım
+
+<CodeBlock lang={<><IconPrompt size={12} /> Adım 1 — Analiz (kod değiştirme)</>} kind="prompt" copyLabel="Kopyala" copiedLabel="Kopyalandı">
+{`Bu modül grubunu analiz et: [dosya listesi]
+
+Şu soruları cevapla:
+- Hangi dosyalar aynı domain kavramına ait?
+- Pass-through katmanlar var mı?
+- Public interface ne kadar geniş?
+- Bu modülleri birleştirerek deep module yapabilir miyiz?
+
+Kod değiştirme. Önce analiz ve öneri sun.`}
+</CodeBlock>
+
+<CodeBlock lang={<><IconPrompt size={12} /> Adım 2 — Uygulama</>} kind="prompt" copyLabel="Kopyala" copiedLabel="Kopyalandı">
+{`Önerdiğin refactoring planını uygula.
+Mevcut testlerin hâlâ geçtiğinden emin ol.
+Yeni modül yapısı için eksik testleri ekle.
+Refactoring sonrası test/typecheck/build çalıştır.
+Public interface değişikliğini summary'de belirt.`}
+</CodeBlock>
+
+### Ne Zaman Refactoring Yapılmalı
+
+- **Her feature tamamlandıktan sonra:** Agent'ın eklediği yeni dosyaları gözden geçir.
+- **Sprint sonunda:** Shallow module birikimi artmışsa refactoring issue'ları oluştur.
+- **Agent performansı düştüğünde:** Aynı tip görevlerde daha fazla hata yapıyorsa modül yapısını sadeleştir.
+
+<Callout icon={IconBulb} kind="tip">
+  Refactoring issue'larını da vertical slice gibi küçük ve bağımsız tut. Issue template'indeki Type'ı <strong>refactor</strong> yap — agent bunu görünce yeni test yazmak yerine mevcut testleri koruma stratejisiyle çalışır.
+</Callout>
+
+</Phase>
+
+<Section id="resources" title="Kaynaklar">
+
+Bu dokümanın çerçevesi ve örnekleri aşağıdaki video sunumundan derlenmiş, bağımsız bir tutorial olarak yeniden yapılandırılmıştır.
+
+<Callout icon={IconVideo} kind="info">
+  <strong>Video:</strong> <em>AI Coding Agent'larla Disiplinli Yazılım Geliştirme</em> — Smart Zone / Dumb Zone, Grill Me tekniği, vertical slice / tracer bullet, deep vs shallow module, TDD ile agentic coding ve AFK task yönetimi konularını kapsar.
+</Callout>
+
+Devamı için **Bölüm 2**'ye bakın: best practice'ler, beceri haritası, takım modeli ve playbook'lar.
+
+</Section>

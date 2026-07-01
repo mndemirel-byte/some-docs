@@ -1,0 +1,48 @@
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  gap: 12px;
+  margin: 12px 0;
+}
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 16px;
+}
+
+.icon {
+  font-size: 20px;
+  color: var(--accent-text);
+  margin-bottom: 8px;
+}
+
+.name {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--blue-text);
+  font-weight: 500;
+  margin-bottom: 5px;
+}
+
+.desc {
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.desc code {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  padding: 1px 5px;
+  border-radius: 4px;
+  color: var(--blue-text);
+}
+
+.desc strong {
+  color: var(--text);
+  font-weight: 600;
+}

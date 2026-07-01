@@ -1,0 +1,744 @@
+import {
+  IconUserCircle,
+  IconTool,
+  IconTerminal,
+  IconTerminal2,
+  IconLink,
+  IconRoute,
+  IconTools,
+  IconRepeatOnce,
+  IconRefresh,
+  IconBug,
+  IconZoomOut,
+  IconFlask,
+  IconBrandGithub,
+  IconBook,
+  IconHeartHandshake,
+  IconGitBranch,
+  IconInfoCircle,
+  IconBulb,
+  IconBrandUbuntu,
+  IconBrandWindows,
+} from "@tabler/icons-react";
+import { Hero, Accent } from "@/components/doc/hero";
+import { HeroAuthor } from "@/components/doc/hero-author";
+import { Toc } from "@/components/doc/toc";
+import { Section } from "@/components/doc/section";
+import { Callout } from "@/components/doc/callout";
+import { TwoColGrid, GridCard } from "@/components/doc/two-col-grid";
+import { OsTabs } from "@/components/doc/os-tabs";
+import { CodeBlock } from "@/components/doc/code-block";
+import { TableBox } from "@/components/doc/table-box";
+import { DataTable } from "@/components/doc/data-table";
+import { Cmd } from "@/components/doc/cmd";
+import { Phase } from "@/components/doc/phase-header";
+import { ExpandableExample } from "@/components/doc/expandable-example";
+import { Terminal } from "@/components/doc/terminal";
+import { ValueRow, ValueCard } from "@/components/doc/value-row";
+import { SimplePrincipleGrid, SimplePrincipleCard } from "@/components/doc/simple-principle-grid";
+import { StateFlow, State, StateArrow } from "@/components/doc/state-flow";
+import { SectionSkillGrid, SectionSkillCard } from "@/components/doc/section-skill-card";
+import { GroupedFlowPhase, GroupedFlowStep, FlowConnector } from "@/components/doc/grouped-flow";
+import { ResourceList, ResourceItem } from "@/components/doc/resource-list";
+
+<Hero
+  badge="Claude Code · Skill Series"
+  variant="eyebrow"
+  title={<>Building a Project from <Accent>Scratch</Accent> with Matt Pocock Skills</>}
+  description={<>Pocock&apos;s open-source skill set is a collection of structured prompt templates added to Claude Code as slash commands. Their purpose isn&apos;t to speed up the agent — it&apos;s to <strong>impose discipline</strong>: forcing thought before code, building a test feedback loop, protecting architecture, and documenting decisions. In this piece, we walk through the complete flow step by step using a URL Shortener example.</>}
+  tags={["claude-code", "slash-commands", "TDD", "ADR", "vertical-slice", "url-shortener", "TypeScript"]}
+/>
+
+<HeroAuthor icon={IconUserCircle}>
+  <strong>Matt Pocock</strong> — TypeScript instructor, creator of Total TypeScript, former Vercel &amp; Stately engineer
+</HeroAuthor>
+
+<Toc
+  title="Table of Contents"
+  layout="list"
+  entries={[
+    { id: "s1", num: "1", label: "Prerequisites and Setup" },
+    { id: "s2", num: "2", label: "Project Definition: URL Shortener" },
+    { id: "s3", num: "3", label: "Skill Map" },
+    { id: "a0", num: "4", label: "Step 0 — /setup-matt-pocock-skills" },
+    { id: "a1", num: "5", label: "Step 1 — /grill-with-docs" },
+    { id: "a2", num: "6", label: "Step 2 — /to-prd" },
+    { id: "a3", num: "7", label: "Step 3 — /to-issues" },
+    { id: "a4", num: "8", label: "Step 4 — /tdd" },
+    { id: "a5", num: "9", label: "Step 5 — /triage" },
+    { id: "a6", num: "10", label: "Step 6 — /improve-codebase-architecture" },
+    { id: "s11", num: "11", label: "As Needed: /diagnose, /zoom-out, /prototype" },
+    { id: "s12", num: "12", label: "Summary: The Complete Flow" },
+  ]}
+/>
+
+<Section id="s1" num="01" title="Prerequisites and Setup">
+
+<TwoColGrid>
+  <GridCard icon={IconTool} iconColor="var(--accent-text)" title="Required tools">
+    <ul>
+      <li><strong>Claude Code</strong> — <code>npm install -g @anthropic-ai/claude-code</code></li>
+      <li><strong>Node.js</strong> v18+ — for the skill installer and the example project</li>
+      <li><strong>Git + GitHub</strong> — skills integrate with GitHub Issues</li>
+      <li><strong>GitHub CLI (<code>gh</code>)</strong> — needed for writing to the issue tracker</li>
+    </ul>
+  </GridCard>
+  <GridCard icon={IconTerminal} iconColor="var(--blue-text)" title="Installing the gh CLI">
+    <OsTabs
+      tabs={[
+        { id: "linux", label: <><IconBrandUbuntu size={16} /> Linux / macOS</> },
+        { id: "windows", label: <><IconBrandWindows size={16} /> Windows</> },
+      ]}
+    >
+      <CodeBlock lang="bash">
+{`# macOS
+brew install gh
+
+# Linux
+sudo apt install gh
+
+# Authenticate
+gh auth login`}
+      </CodeBlock>
+      <CodeBlock lang="powershell">
+{`# with winget
+winget install --id GitHub.cli
+
+# or with Scoop
+scoop install gh
+
+# Authenticate
+gh auth login`}
+      </CodeBlock>
+    </OsTabs>
+  </GridCard>
+</TwoColGrid>
+
+### Installing the Skills
+
+Pocock's skills install with a single command. It asks which skills you want and which agent (Claude Code, Cursor, etc.) to install them for:
+
+<CodeBlock lang="bash">
+{`npx skills@latest add mattpocock/skills`}
+</CodeBlock>
+
+<Callout icon={IconInfoCircle} kind="info">
+  During installation, choose which skills to install. <strong>Be sure to select /setup-matt-pocock-skills</strong> — the other skills depend on its output. Choose Claude Code as the target agent. The skills are installed into your project's <code>.claude/</code> directory.
+</Callout>
+
+<CodeBlock lang="bash — start the project">
+{`cd your-project
+claude
+# Commands like /grill-with-docs, /tdd, /to-prd are now active`}
+</CodeBlock>
+
+</Section>
+
+<Section id="s2" num="02" title="Project Definition: URL Shortener">
+
+Our example project is a simple URL shortening service. Small enough to finish in one piece, but deep enough (database, API, redirect logic, analytics) to be an ideal scenario for showcasing each skill.
+
+<TwoColGrid>
+  <GridCard icon={IconLink} iconColor="var(--accent-text)" title="Features">
+    <ul>
+      <li>The user provides a long URL; the system returns a short link</li>
+      <li>Visiting the short link redirects to the original URL</li>
+      <li>Every redirect is recorded (click, date)</li>
+      <li>A simple dashboard shows click statistics</li>
+    </ul>
+  </GridCard>
+  <GridCard icon={IconTerminal2} iconColor="var(--green-text)" title="Creating the repo">
+    <OsTabs
+      tabs={[
+        { id: "linux", label: <><IconBrandUbuntu size={16} /> Linux / macOS</> },
+        { id: "windows", label: <><IconBrandWindows size={16} /> Windows</> },
+      ]}
+    >
+      <CodeBlock lang="bash">
+{`mkdir url-shortener && cd url-shortener
+git init
+gh repo create url-shortener \\
+  --public --source=. --push`}
+      </CodeBlock>
+      <CodeBlock lang="powershell">
+{`mkdir url-shortener; cd url-shortener
+git init
+gh repo create url-shortener \`
+  --public --source=. --push`}
+      </CodeBlock>
+    </OsTabs>
+  </GridCard>
+</TwoColGrid>
+
+</Section>
+
+<Section id="s3" num="03" title="Skill Map: Which One, When?">
+
+<TableBox icon={IconRoute} tone="green" title="Mandatory flow — for every feature">
+  <DataTable
+    headers={["#", "Skill", "What it does", "When"]}
+    rows={[
+      ["0", <Cmd key="c0">/setup-matt-pocock-skills</Cmd>, "Configures the repo", "Once, at project start"],
+      ["1", <Cmd key="c1">/grill-with-docs</Cmd>, "Interrogates the idea, creates CONTEXT.md and ADRs", "Before every new feature"],
+      ["2", <Cmd key="c2">/to-prd</Cmd>, "Produces a PRD from the conversation context", "Once grilling is done"],
+      ["3", <Cmd key="c3">/to-issues</Cmd>, "Splits the PRD into vertical slice issues", "Once the PRD is approved"],
+      ["4", <Cmd key="c4">/tdd</Cmd>, "Implements with Red-Green-Refactor", "For every issue"],
+    ]}
+  />
+</TableBox>
+
+<TableBox icon={IconTools} tone="amber" title="Skills used as needed">
+  <DataTable
+    headers={["Skill", "What it does", "When"]}
+    rows={[
+      [<Cmd key="c5">/triage</Cmd>, "Manages issues via a state machine", "When issues pile up"],
+      [<Cmd key="c6">/improve-codebase-architecture</Cmd>, "Detects shallow modules, suggests deepening", "After a feature, or when architecture degrades"],
+      [<Cmd key="c7">/diagnose</Cmd>, "Runs a structured debugging loop", "For hard bugs"],
+      [<Cmd key="c8">/zoom-out</Cmd>, "Gives the agent a high-level overview", "When working in unfamiliar code"],
+      [<Cmd key="c9">/prototype</Cmd>, "Validates a design decision with a throwaway prototype", "When architecture is uncertain"],
+    ]}
+  />
+</TableBox>
+
+</Section>
+
+<Phase id="a0" num={0} title="Prepare the Repo for the Skills" subtitle={<><Cmd><IconTerminal2 size={12} /> /setup-matt-pocock-skills</Cmd> · Once, at project start</>}>
+
+This skill configures the repo so the other skills can run. **All other engineering skills depend on this step's output.** Three decisions are made: where the issue tracker lives, the triage labels, and where the domain docs live.
+
+<ExpandableExample label={<><IconTerminal size={16} /> Terminal output — /setup-matt-pocock-skills</>}>
+<Terminal label="claude — url-shortener">
+{`> /setup-matt-pocock-skills
+
+Claude: Inspecting the repo...
+- git remote: github.com/username/url-shortener ✓
+- CLAUDE.md: not present
+- CONTEXT.md: not present
+- docs/adr/: not present
+
+─── Section A: Issue Tracker ───
+
+Since this repo is on GitHub, I recommend GitHub Issues.
+Options: 1) GitHub Issues  2) Local markdown  3) Other
+
+You: 1
+
+─── Section B: Triage Labels ───
+
+Default labels:
+- needs-triage → awaiting assessment
+- needs-info → waiting on info from reporter
+- ready-for-agent → can be picked up by an AFK agent
+- ready-for-human → needs human implementation
+- wontfix → won't be done
+
+Should I use these labels?
+You: Defaults are fine.
+
+─── Section C: Domain Docs ───
+
+Recommended: CONTEXT.md → repo root, ADRs → docs/adr/
+You: OK.
+
+Claude: Files created:
+✓ CLAUDE.md (agent skills configuration added)
+✓ docs/agents/issue-tracker.md
+✓ docs/agents/triage-labels.md
+✓ docs/agents/domain-docs.md`}
+</Terminal>
+</ExpandableExample>
+
+<Callout icon={IconBulb} kind="tip">
+  After this step, the other skills know how to write to the issue tracker, which labels to use, and where to find the domain docs. Without setup, the other skills don't work.
+</Callout>
+
+</Phase>
+
+<Phase id="a1" num={1} title="Interrogate the Idea and Establish Domain Language" subtitle={<><Cmd><IconTerminal2 size={12} /> /grill-with-docs</Cmd> · Before every new feature</>}>
+
+<Cmd>/grill-with-docs</Cmd> relentlessly interviews you — but while doing so it does two extra things: **(1)** it builds/updates the project's domain language (<code>CONTEXT.md</code>), and **(2)** it documents architectural decisions as ADRs under <code>docs/adr/</code>.
+
+<ExpandableExample label={<><IconTerminal size={16} /> Terminal output — /grill-with-docs</>}>
+<Terminal label="claude — url-shortener">
+{`> /grill-with-docs We're going to build a simple URL shortener.
+  User gives a URL, gets back a short link. Clicks are
+  counted and shown on a dashboard.
+
+Claude: I won't produce a plan right away — there are things I need
+to clarify first.
+
+Question 1/N: What format will the short URLs use?
+A random string (abc123), or a sequential number?
+My suggestion: 6-character random alphanumeric — low
+collision risk and readable URLs.
+
+You: Random 6 characters, alphanumeric.
+
+Claude: [Adding to CONTEXT.md]
+  slug — The 6-character random alphanumeric identifier
+  in the short URL. E.g.: abc123 → example.com/abc123
+
+Question 2/N: If the same URL is shortened a second time, what happens?
+Should a new slug be generated, or should the existing slug be returned?
+My suggestion: Generate a new slug every time — from an
+analytics standpoint, each campaign/share may want its own link.
+
+You: A new slug every time.
+
+Claude: [Creating docs/adr/0001-unique-slug-per-submission.md]
+  # New Slug for Every Submission of the Same URL
+  Decision: Every URL submission generates a new slug.
+  Why: To track clicks from different sources separately.
+  Alternative: Idempotent — rejected because it loses
+  analytics granularity.
+
+Question 3/N: What information will be stored per click?
+My suggestion: Each click as a separate record
+(timestamp, referrer, user-agent).
+
+You: Each click as a separate record.
+
+Claude: [Adding to CONTEXT.md]
+  click — A single HTTP request to a slug.
+  Timestamp, referrer, and user-agent are recorded.
+
+(... 8-10 more questions: auth, rate limiting, can a slug be
+deleted, dashboard content, API-only or not, tech stack ...)
+
+Claude: Files created/updated:
+
+CONTEXT.md:
+  slug, click, link, click count, dashboard terms
+  Relationships between terms (link has many clicks)
+
+docs/adr/:
+  0001-unique-slug-per-submission.md
+  0002-individual-click-records.md
+  0003-no-auth-for-v1.md
+  0004-api-first-no-ui-for-v1.md`}
+</Terminal>
+</ExpandableExample>
+
+### The Value of This Step
+
+<ValueRow>
+  <ValueCard icon={IconHeartHandshake} iconColor="var(--accent-text)" title="Shared Understanding">
+    You and the agent understand the same thing using the same words
+  </ValueCard>
+  <ValueCard icon={IconBook} iconColor="var(--green-text)" title="CONTEXT.md">
+    Variable and function names will follow the domain language
+  </ValueCard>
+  <ValueCard icon={IconGitBranch} iconColor="var(--blue-text)" title="ADRs">
+    Decisions are documented; the same questions won't be asked in a new session
+  </ValueCard>
+</ValueRow>
+
+</Phase>
+
+<Phase id="a2" num={2} title="Produce a PRD" subtitle={<><Cmd><IconTerminal2 size={12} /> /to-prd</Cmd> · Once grilling is done</>}>
+
+<Cmd>/to-prd</Cmd> doesn't interview you again. It synthesizes everything in the conversation context (grilling decisions, CONTEXT.md, ADRs) into a PRD and **publishes it directly to GitHub Issues**.
+
+<ExpandableExample label={<><IconTerminal size={16} /> Terminal output — /to-prd</>}>
+<Terminal label="claude — url-shortener">
+{`> /to-prd
+
+Claude: Synthesizing the conversation context and domain docs...
+
+Inspecting the repo — current seams:
+  - No code yet, starting from scratch.
+  - Suggested test seams:
+    1. LinkService (slug generation + persistence)
+    2. RedirectHandler (slug → URL resolution + click recording)
+    3. AnalyticsService (click count calculation)
+
+Are these seams correct?
+You: Correct, go ahead.
+
+Claude: Publishing the PRD to GitHub Issues...
+
+✓ Issue #1 created: "PRD: URL Shortener v1"
+  Label: ready-for-agent
+
+PRD content:
+  ## Problem Statement
+  Users need to be able to turn long URLs into shareable
+  short links and see click statistics.
+
+  ## User Stories
+  1. I want to give a long URL and get a short link.
+  2. As a short-link visitor, I want to be redirected.
+  3. I want to see the total click count.
+  4. I want to see click history (date, referrer).
+
+  ## Implementation Decisions
+  - Slug: 6-character random alphanumeric (ADR-0001)
+  - Every submission generates a new slug (ADR-0001)
+  - Click records are individual (ADR-0002)
+  - No auth in v1 (ADR-0003)
+  - API-only, no UI (ADR-0004)
+  - Stack: Node.js + TypeScript + SQLite
+
+  ## Testing Decisions
+  - Seam 1: LinkService — unit test
+  - Seam 2: RedirectHandler — integration test
+  - Seam 3: AnalyticsService — unit test
+  - E2E: create link → visit → check analytics
+
+  ## Definition of Done
+  Tests ✓ | Typecheck ✓ | Build ✓`}
+</Terminal>
+</ExpandableExample>
+
+<Callout icon={IconInfoCircle} kind="info">
+  <strong>What&apos;s distinctive about /to-prd:</strong> the "Testing Decisions" section doesn&apos;t just say "unit tests will be written" — it explicitly defines test boundaries (<strong>seams</strong>). This is what lets the agent know where to put tests and what to test during the /tdd step.
+</Callout>
+
+</Phase>
+
+<Phase id="a3" num={3} title="Split the PRD into Issues" subtitle={<><Cmd><IconTerminal2 size={12} /> /to-issues</Cmd> · Once the PRD is approved</>}>
+
+<Cmd>/to-issues</Cmd> splits the PRD into **vertical slice** (tracer bullet) issues. Every issue cuts through all layers vertically. It doesn't do horizontal splitting (all the database first, then all the API).
+
+<ExpandableExample label={<><IconTerminal size={16} /> Terminal output — /to-issues</>}>
+<Terminal label="claude — url-shortener">
+{`> /to-issues #1
+
+Claude: Reading PRD #1... Loading domain language from CONTEXT.md...
+
+Suggested vertical slice breakdown:
+
+1. "Create short link and return slug"
+   Type: AFK | Blocked by: none | User stories: #1
+
+2. "Redirect slug to original URL and record click"
+   Type: AFK | Blocked by: #1 | User stories: #2
+
+3. "Get click count for a link"
+   Type: AFK | Blocked by: #2 | User stories: #3
+
+4. "Get click history with timestamps and referrers"
+   Type: AFK | Blocked by: #2 | User stories: #4
+
+5. "Handle edge cases: expired slug, invalid slug, collision"
+   Type: AFK | Blocked by: #1, #2
+
+Is the granularity appropriate? Are the dependencies correct?
+You: Looks good, create them.
+
+Claude: Publishing the issues to GitHub...
+✓ Issue #2: Create short link and return slug
+  Label: ready-for-agent
+✓ Issue #3: Redirect slug to original URL and record click
+  Label: ready-for-agent | Blocked by: #2
+✓ Issue #4: Get click count for a link
+  Label: ready-for-agent | Blocked by: #3
+✓ Issue #5: Get click history with timestamps and referrers
+  Label: ready-for-agent | Blocked by: #3
+✓ Issue #6: Handle edge cases
+  Label: ready-for-agent | Blocked by: #2, #3`}
+</Terminal>
+</ExpandableExample>
+
+<Callout icon={IconInfoCircle} kind="info">
+  <strong>HITL vs. AFK split:</strong> every issue is labeled "HITL" (Human-in-the-Loop) or "AFK." AFK issues are well-defined work the agent can complete on its own. HITL issues require an architectural decision or human intervention. In this project all issues are AFK — because the decisions were made during grilling and documented in the PRD.
+</Callout>
+
+</Phase>
+
+<Phase id="a4" num={4} title="Implementation with TDD" subtitle={<><Cmd><IconTerminal2 size={12} /> /tdd</Cmd> · For every issue</>}>
+
+<Cmd>/tdd</Cmd> works through the Red-Green-Refactor loop. **It doesn't do horizontal slicing** — it never says "write all the tests first, then all the code." Instead it's vertical slice: write one test → make it pass → next test. The agent learns from the previous loop in each cycle.
+
+<ExpandableExample label={<><IconTerminal size={16} /> Terminal output — /tdd #2</>}>
+<Terminal label="claude — url-shortener">
+{`> /tdd #2
+
+Claude: Issue #2: "Create short link and return slug"
+
+Acceptance criteria:
+  POST /links body: { url } → response: { slug, url, createdAt }
+  Slug must be 6 alphanumeric characters
+  Link must be saved to the database
+
+Domain language from CONTEXT.md:
+  slug: a 6-character random alphanumeric identifier
+  link: a URL + slug pair
+
+─── RED: First test ───
+
+Creating tests/link-service.test.ts:
+
+  describe("LinkService", () => {
+    it("should create a link with a 6-char alphanumeric slug", () => {
+      const link = createLink("https://example.com");
+      expect(link.slug).toMatch(/^[a-z0-9]{6}$/);
+      expect(link.url).toBe("https://example.com");
+    });
+  });
+
+npm test → FAIL ✗ (createLink doesn't exist yet)
+
+─── GREEN: Minimal implementation ───
+
+Creating src/link-service.ts:
+
+  export function createLink(url: string) {
+    const slug = generateSlug();
+    // ... persist + return
+  }
+
+npm test → PASS ✓
+
+─── RED: Next test ───
+
+  it("should create unique slugs for the same URL", () => {
+    const link1 = createLink("https://example.com");
+    const link2 = createLink("https://example.com");
+    expect(link1.slug).not.toBe(link2.slug);
+  });
+
+npm test → PASS ✓
+
+(... the RED-GREEN loop continues: API endpoint test,
+validation test, one test → one implementation each time)
+
+─── REFACTOR ───
+
+generateSlug() and persistence logic live in the same function.
+Per the deep module principle, I'm restructuring LinkService.
+npm test → PASS ✓ (all tests still pass)
+npm run typecheck → PASS ✓
+npm run build → PASS ✓
+
+Implementation Summary:
+- src/link-service.ts (new)
+- src/routes/links.ts (new)
+- tests/link-service.test.ts (3 tests)
+- tests/links-api.test.ts (2 tests)`}
+</Terminal>
+</ExpandableExample>
+
+### The Core Principles of /tdd
+
+<SimplePrincipleGrid>
+  <SimplePrincipleCard title="1 · No horizontal slicing">
+    It never does "write 5 tests first, then 5 implementations." Every test-implementation pair is a vertical slice.
+  </SimplePrincipleCard>
+  <SimplePrincipleCard title="2 · Integration-style tests">
+    Tests are written against the public interface rather than internal mocks. Not "checkout calls paymentService," but "user can checkout."
+  </SimplePrincipleCard>
+  <SimplePrincipleCard title="3 · Targets deep modules">
+    Small interface, rich implementation. Test boundary = module boundary. This is checked during the refactor stage.
+  </SimplePrincipleCard>
+  <SimplePrincipleCard title="4 · Mocking only at system boundaries">
+    Don't mock your own modules. Only mock external dependencies (database, API, filesystem).
+  </SimplePrincipleCard>
+</SimplePrincipleGrid>
+
+</Phase>
+
+<Phase id="a5" num={5} title="Issue Management" subtitle={<><Cmd><IconTerminal2 size={12} /> /triage</Cmd> · When issues pile up</>}>
+
+<Cmd>/triage</Cmd> manages issues with a state machine. You can skip it on small projects or solo work. Every issue is in one of these states:
+
+<StateFlow>
+  <State tone="start">unlabeled</State>
+  <StateArrow>→</StateArrow>
+  <State tone="mid">needs-triage</State>
+  <StateArrow>→</StateArrow>
+  <State tone="ok">ready-for-agent</State>
+  <StateArrow>/</StateArrow>
+  <State tone="ok">ready-for-human</State>
+  <StateArrow>/</StateArrow>
+  <State tone="hold">needs-info</State>
+  <StateArrow>→</StateArrow>
+  <State tone="mid">needs-triage</State>
+  <StateArrow>/</StateArrow>
+  <State tone="end">wontfix</State>
+</StateFlow>
+
+<ExpandableExample label={<><IconTerminal size={16} /> Terminal output — /triage</>}>
+<Terminal label="claude — url-shortener">
+{`> /triage Show me the issues that need attention
+
+Claude: Scanning the issue tracker...
+
+ready-for-agent (can be picked up):
+  #3 Redirect slug to original URL — blocked by #2
+  #4 Get click count — blocked by #3
+  #5 Get click history — blocked by #3
+  #6 Handle edge cases — blocked by #2, #3
+
+needs-triage: (none)
+
+Suggested action: Since issue #2 is done, #3 is no
+longer blocked. You can proceed with #3.
+
+You: Pick up #3 and implement it with /tdd.`}
+</Terminal>
+</ExpandableExample>
+
+</Phase>
+
+<Phase id="a6" num={6} title="Improve the Architecture" subtitle={<><Cmd><IconTerminal2 size={12} /> /improve-codebase-architecture</Cmd> · Every 3-5 issues</>}>
+
+This skill analyzes the codebase using the domain language in CONTEXT.md and the ADRs. It detects shallow modules and offers **deepening suggestions**. What sets it apart is that it analyzes the code not just structurally, but **in the context of the domain language**.
+
+<ExpandableExample label={<><IconTerminal size={16} /> Terminal output — /improve-codebase-architecture</>}>
+<Terminal label="claude — url-shortener">
+{`> /improve-codebase-architecture
+
+Claude: From CONTEXT.md: slug, link, click, click count
+From ADRs: unique slug per submission, individual click records
+
+Detected deepening opportunities:
+
+1. [Strong] ClickRecorder + ClickCounter could be merged
+   → into a single deep module, AnalyticsService
+
+   Problem: Two separate modules access the same click table.
+   Their interfaces together cover nearly all click logic.
+
+   Deletion test: if ClickCounter were deleted, the same
+   logic would spread across AnalyticsService's callers.
+
+   Before: ClickRecorder + ClickCounter (2 modules, 2 interfaces)
+   After:  AnalyticsService (1 module, 2 public methods)
+
+2. [Worth exploring] Should SlugGenerator be its own module?
+   Problem: Currently inside LinkService, but it's just one function.
+   Deletion test: if removed, complexity disappears, doesn't spread.
+   Recommendation: Leave it inside LinkService for now.
+
+Select which suggestions you'd like to apply.`}
+</Terminal>
+</ExpandableExample>
+
+</Phase>
+
+<Section id="s11" num="11" title="As Needed: Helper Skills">
+
+<SectionSkillGrid>
+  <SectionSkillCard icon={IconBug} name={<><Cmd>/diagnose</Cmd> — Structured Debugging</>} when="For hard bugs — when neither the agent nor you can solve it">
+    <p><strong>Loop order:</strong> build a feedback loop → reproduce → minimize → form a hypothesis → instrument → fix → write a regression test. The most critical step is the first one: the agent doesn't proceed until it has a deterministic, fast, automatically runnable feedback loop.</p>
+    <ExpandableExample label={<><IconTerminal size={16} /> Example output</>}>
+      <Terminal label="claude — /diagnose">
+{`> /diagnose The redirect endpoint sometimes returns 404
+  even though the slug exists in the database.
+
+Claude: Phase 1 — Building a feedback loop...
+Writing a test that reliably reproduces the bug...
+
+[failing test → bug reproduced → minimized → hypothesis
+→ fixed → regression test added]`}
+      </Terminal>
+    </ExpandableExample>
+  </SectionSkillCard>
+
+  <SectionSkillCard icon={IconZoomOut} name={<><Cmd>/zoom-out</Cmd> — High-Level Overview</>} when="When you step into a part of the codebase you don't know">
+    <p>Gives the agent a high-level overview of a specific directory or module, using the <strong>domain language in CONTEXT.md</strong>: which modules are dependent, who calls what, what seams exist.</p>
+    <Terminal label="claude — /zoom-out">
+{`> /zoom-out src/analytics/
+
+Claude: The Analytics module is the service layer that
+queries click records.
+
+  LinkService → (creates a link)
+  RedirectHandler → (records a click) → ClickRepository
+  AnalyticsService → (reads clicks) ← ClickRepository
+                   → (reads link metadata) ← LinkRepository
+
+Callers: the GET /links/:slug/stats endpoint`}
+    </Terminal>
+  </SectionSkillCard>
+
+  <SectionSkillCard icon={IconFlask} name={<><Cmd>/prototype</Cmd> — Design Decision Validation</>} when="When you're unsure about an architecture choice — to make questions like &quot;is this strategy correct?&quot; concrete">
+    <p>Validates a design decision with data using a throwaway prototype (a terminal script, minimal UI, or log analysis). It can document the result as an ADR.</p>
+    <Terminal label="claude — /prototype">
+{`> /prototype I want to test our slug collision handling
+  strategy — retry, or sequential fallback?
+
+Claude: This is a logic question — I'm building a terminal script.
+
+[generates 10,000 slugs, measures the collision rate,
+compares retry vs. sequential strategies]
+
+Result: with 6-character alphanumeric slugs, the collision
+rate at 1M slugs is 0.001%. The retry strategy is enough;
+a sequential fallback is unnecessary complexity.
+
+Should we document this result as an ADR?`}
+    </Terminal>
+  </SectionSkillCard>
+</SectionSkillGrid>
+
+</Section>
+
+<Section id="s12" num="12" title="Summary: The Complete Flow">
+
+The power of these skills isn't in any one of them — it's in **how they work together.** <Cmd>/grill-with-docs</Cmd> builds CONTEXT.md → <Cmd>/to-prd</Cmd> uses that language in the PRD → <Cmd>/to-issues</Cmd> writes issues in the same language → <Cmd>/tdd</Cmd> follows that language in tests → <Cmd>/improve-codebase-architecture</Cmd> does architectural analysis using the domain language. Result: every artifact speaks the same language and rests on the same decisions.
+
+<GroupedFlowPhase icon={IconRepeatOnce} tone="once" title="Once — at project start">
+  <GroupedFlowStep marker="▸" title={<Cmd>/setup-matt-pocock-skills</Cmd>}>
+    Issue tracker, triage labels, domain docs structure
+  </GroupedFlowStep>
+</GroupedFlowPhase>
+
+<FlowConnector />
+
+<GroupedFlowPhase icon={IconRefresh} tone="each" title="For every feature — the recurring loop">
+  <GroupedFlowStep marker="1" title={<Cmd>/grill-with-docs</Cmd>}>
+    CONTEXT.md is updated, ADRs are written
+  </GroupedFlowStep>
+  <GroupedFlowStep marker="2" title={<Cmd>/to-prd</Cmd>}>
+    The PRD is published to the issue tracker
+  </GroupedFlowStep>
+  <GroupedFlowStep marker="3" title={<Cmd>/to-issues</Cmd>}>
+    Vertical slice issues are created
+  </GroupedFlowStep>
+  <GroupedFlowStep marker="4" title={<><Cmd>/tdd</Cmd> (for every issue)</>}>
+    Red-Green-Refactor, deep module, vertical slice
+  </GroupedFlowStep>
+</GroupedFlowPhase>
+
+<FlowConnector />
+
+<GroupedFlowPhase icon={IconTools} tone="when" title="As needed">
+  <GroupedFlowStep marker="▸" title={<Cmd>/triage</Cmd>}>
+    Issue state management
+  </GroupedFlowStep>
+  <GroupedFlowStep marker="▸" title={<Cmd>/improve-codebase-architecture</Cmd>}>
+    Architecture analysis + deepening suggestions
+  </GroupedFlowStep>
+  <GroupedFlowStep marker="▸" title={<Cmd>/diagnose</Cmd>}>
+    Structured debugging
+  </GroupedFlowStep>
+  <GroupedFlowStep marker="▸" title={<Cmd>/zoom-out</Cmd>}>
+    High-level overview
+  </GroupedFlowStep>
+  <GroupedFlowStep marker="▸" title={<Cmd>/prototype</Cmd>}>
+    Design decision validation
+  </GroupedFlowStep>
+</GroupedFlowPhase>
+
+</Section>
+
+<Section id="resources" title="Resources">
+
+<ResourceList>
+  <ResourceItem icon={IconBrandGithub} title={<a href="https://github.com/mattpocock/skills" target="_blank" rel="noreferrer">github.com/mattpocock/skills</a>}>
+    Source code and documentation for the skills
+  </ResourceItem>
+  <ResourceItem icon={IconBook} title="A Philosophy of Software Design — John Ousterhout">
+    Deep modules, interface design
+  </ResourceItem>
+  <ResourceItem icon={IconBook} title="Domain-Driven Design — Eric Evans">
+    Ubiquitous language, the theoretical basis for CONTEXT.md
+  </ResourceItem>
+  <ResourceItem icon={IconBook} title="The Pragmatic Programmer — David Thomas & Andrew Hunt">
+    Tracer bullets, small steps
+  </ResourceItem>
+</ResourceList>
+
+</Section>

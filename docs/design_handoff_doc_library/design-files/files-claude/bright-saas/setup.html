@@ -1,0 +1,1229 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code Agentic Project Setup</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
+<style>
+:root {
+  --bg: #120D24;
+  --surface: #1C1633;
+  --surface2: #261E45;
+  --border: #372C5C;
+  --border-strong: #4D3F80;
+  --accent: #A78BFA;
+  --accent-bg: rgba(167,139,250,0.14);
+  --accent-border: rgba(167,139,250,0.38);
+  --accent-text: #A78BFA;
+  --cyan: #22D3EE;
+  --cyan-bg: rgba(34,211,238,0.14);
+  --cyan-border: rgba(34,211,238,0.38);
+  --cyan-text: #22D3EE;
+  --green: #A3E635;
+  --green-bg: rgba(163,230,53,0.14);
+  --green-border: rgba(163,230,53,0.38);
+  --green-text: #A3E635;
+  --red: #FB7185;
+  --red-bg: rgba(251,113,133,0.14);
+  --red-border: rgba(251,113,133,0.38);
+  --red-text: #FB7185;
+  --text: #F7F4FF;
+  --muted: #948CB8;
+  --subtle: #CBC4ED;
+  --mono: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);line-height:1.65;font-size:15px}
+a{color:var(--accent-text);text-decoration:none}
+a:hover{text-decoration:underline}
+
+/* Layout */
+.wrap{max-width:860px;margin:0 auto;padding:0 24px 80px}
+
+/* Hero */
+.hero{padding:48px 0 36px;border-bottom:1px solid var(--border);margin-bottom:40px}
+.hero-badge{display:inline-flex;align-items:center;gap:6px;background:var(--accent-bg);border:1px solid var(--accent-border);color:var(--accent-text);font-size:11px;font-family:var(--mono);padding:4px 12px;border-radius:20px;margin-bottom:16px}
+.hero h1{font-size:32px;font-weight:700;line-height:1.2;color:var(--text);margin-bottom:12px}
+.hero h1 span{color:var(--accent-text)}
+.hero-desc{font-size:15px;color:var(--subtle);max-width:620px;line-height:1.6}
+.tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:20px}
+.tag{font-family:var(--mono);font-size:11px;padding:3px 9px;border-radius:4px;background:var(--surface2);border:1px solid var(--border);color:var(--muted)}
+
+/* TOC */
+.toc{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px 24px;margin-bottom:48px}
+.toc-title{font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:14px;display:flex;align-items:center;gap:6px}
+.toc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:2px 12px}
+.toc-link{display:flex;align-items:center;gap:8px;padding:5px 0;font-size:13px;color:var(--subtle);border-bottom:none;transition:color .15s}
+.toc-link:hover{color:var(--accent-text);text-decoration:none}
+.toc-num{font-family:var(--mono);font-size:10px;color:var(--accent-text);opacity:.7;min-width:20px}
+
+/* Section */
+.section{margin-bottom:56px;scroll-margin-top:20px}
+.sec-head{display:flex;align-items:center;gap:10px;margin-bottom:20px;padding-bottom:14px;border-bottom:1px solid var(--border)}
+.sec-num{font-family:var(--mono);font-size:10px;background:var(--accent-bg);color:var(--accent-text);border:1px solid var(--accent-border);padding:2px 8px;border-radius:4px;letter-spacing:.04em}
+.sec-head h2{font-size:22px;font-weight:600;color:var(--text)}
+h3{font-size:16px;font-weight:600;color:var(--text);margin:24px 0 10px}
+p{color:var(--subtle);font-size:14px;margin-bottom:12px;line-height:1.65}
+ul,ol{padding-left:20px;margin-bottom:12px}
+li{font-size:14px;color:var(--subtle);margin-bottom:4px;line-height:1.55}
+strong{color:var(--text);font-weight:600}
+
+/* Inline code */
+code{font-family:var(--mono);font-size:12px;background:var(--surface2);border:1px solid var(--border);padding:1px 5px;border-radius:4px;color:var(--cyan-text)}
+
+/* File tree bullet list */
+.ftree-ul,.ftree-ul ul{list-style:none;padding:0;margin:0}
+.ftree-ul{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px 24px}
+.ftree-ul ul{padding-left:20px;border-left:2px solid var(--border);margin:3px 0 3px 10px}
+.ftree-ul li{padding:3px 0}
+.ftree-ul .ft-row{display:inline-flex;align-items:center;gap:6px;font-family:var(--mono);font-size:13px;cursor:default}
+.ft-dir-name{color:#22D3EE;font-weight:500}
+.ft-file-name{color:var(--subtle)}
+.ft-special-name{color:#A78BFA;font-weight:600}
+.ftree-ul i{font-size:15px}
+.ti-folder-open{color:#FDE047}
+.ft-dir-name i.ti-folder{color:#FDE047}
+.ft-icon-folder{color:#FDE047}
+.ft-icon-file{color:var(--muted)}
+.ft-icon-special{color:#A78BFA}
+
+/* Code blocks */
+.cb{background:var(--surface);border:1px solid var(--border);border-radius:12px;margin:12px 0;overflow:hidden}
+.cb-head{display:flex;align-items:center;justify-content:space-between;padding:9px 16px;border-bottom:1px solid var(--border);background:var(--surface2)}
+.cb-lang{font-family:var(--mono);font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.cb-copy{background:none;border:1px solid var(--border);color:var(--muted);font-size:11px;font-family:var(--mono);padding:3px 10px;border-radius:4px;cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:4px}
+.cb-copy:hover{background:var(--surface);color:var(--text);border-color:var(--border-strong)}
+.cb pre{padding:16px 20px;overflow-x:auto;font-family:var(--mono);font-size:13px;line-height:1.75;color:var(--subtle)}
+
+/* Skill table */
+.stbl{width:100%;border-collapse:collapse;margin:12px 0}
+.stbl th{text-align:left;padding:8px 12px;font-size:11px;color:var(--muted);font-family:var(--mono);border-bottom:1px solid var(--border-strong);font-weight:500;text-transform:uppercase;letter-spacing:.05em}
+.stbl td{padding:11px 12px;border-bottom:1px solid var(--border);font-size:14px;color:var(--subtle);vertical-align:top}
+.stbl tr:last-child td{border-bottom:none}
+.stbl tr:hover td{background:var(--surface2)}
+.stbl .sc{font-family:var(--mono);font-size:12px;color:var(--cyan-text);white-space:nowrap}
+
+/* Resp grid */
+.rgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px;margin:12px 0}
+.rcard{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px;transition:border-color .2s}
+.rcard:hover{border-color:var(--border-strong)}
+.rcard-icon{font-size:20px;color:var(--accent-text);margin-bottom:8px}
+.rcard-name{font-family:var(--mono);font-size:13px;color:var(--cyan-text);font-weight:500;margin-bottom:5px}
+.rcard-desc{font-size:13px;color:var(--muted);line-height:1.5}
+
+/* Cards (collapsible) */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:10px;margin-bottom:10px;overflow:hidden;transition:border-color .2s}
+.card:hover{border-color:var(--border-strong)}
+.ch{display:flex;align-items:center;justify-content:space-between;padding:15px 18px;cursor:pointer;user-select:none;transition:background .15s}
+.ch:hover{background:var(--surface2)}
+.cl{display:flex;align-items:center;gap:10px}
+.cbadge{font-family:var(--mono);font-size:10px;padding:2px 8px;border-radius:4px;font-weight:500}
+.bskill{background:var(--cyan-bg);color:var(--cyan-text);border:1px solid var(--cyan-border)}
+.bagent{background:var(--accent-bg);color:var(--accent-text);border:1px solid var(--accent-border)}
+.bdocs{background:var(--green-bg);color:var(--green-text);border:1px solid var(--green-border)}
+.cname{font-family:var(--mono);font-size:13px;color:var(--text);font-weight:500}
+.cdesc{font-size:12px;color:var(--muted);margin-top:2px}
+.ctog{color:var(--muted);font-size:16px;transition:transform .2s;flex-shrink:0}
+.card.open .ctog{transform:rotate(180deg)}
+.cbody{display:none;padding:16px 18px;border-top:1px solid var(--border)}
+.card.open .cbody{display:block}
+.cbody p{font-size:13px}
+.cbody li{font-size:13px}
+.cbody ol{padding-left:20px;counter-reset:none}
+
+/* Workflow steps */
+.wstep{display:flex;align-items:flex-start;gap:14px;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:15px;margin-bottom:10px}
+.wnum{width:30px;height:30px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:12px;font-weight:600;background:var(--accent-bg);color:var(--accent-text);border:1px solid var(--accent-border);flex-shrink:0}
+.wbody h4{font-family:var(--mono);font-size:13px;color:var(--text);font-weight:500;margin-bottom:3px}
+.wbody p{font-size:13px;color:var(--muted);margin:0}
+
+/* Anti-patterns */
+.ap{margin-bottom:16px}
+.aprow{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.avoid{background:var(--red-bg);border:1px solid var(--red-border);border-radius:10px;padding:14px}
+.prefer{background:var(--green-bg);border:1px solid var(--green-border);border-radius:10px;padding:14px}
+.aplabel{font-size:10px;font-family:var(--mono);text-transform:uppercase;letter-spacing:.08em;font-weight:600;margin-bottom:8px;display:flex;align-items:center;gap:5px}
+.avoid .aplabel{color:var(--red-text)}
+.prefer .aplabel{color:var(--green-text)}
+.apcode{font-family:var(--mono);font-size:12px;color:var(--subtle);line-height:1.85}
+
+/* Pipeline */
+.pipeline{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:2px;margin:32px 0}
+.pnode{display:flex;flex-direction:column;align-items:center;gap:6px}
+.pdot{width:46px;height:46px;border-radius:50%;background:var(--accent-bg);border:1.5px solid var(--accent-border);display:flex;align-items:center;justify-content:center;font-size:18px;color:var(--accent-text)}
+.plabel{font-size:10px;color:var(--muted);text-align:center;max-width:52px;line-height:1.35;font-family:var(--mono)}
+.parr{color:var(--muted);font-size:16px;margin:0 4px;margin-bottom:22px}
+
+/* Principles grid */
+.pgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}
+.pcard{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:15px}
+.pcard h4{font-size:14px;font-weight:500;color:var(--text);margin-bottom:6px;display:flex;align-items:center;gap:7px}
+.pcard p{font-size:13px;color:var(--muted);margin:0}
+.pcard i{color:var(--accent-text)}
+
+/* Callout */
+.callout{background:var(--accent-bg);border:1px solid var(--accent-border);border-radius:10px;padding:13px 16px;margin:14px 0;font-size:13px;color:var(--subtle);display:flex;gap:10px;align-items:flex-start;line-height:1.5}
+.callout i{color:var(--accent-text);font-size:16px;flex-shrink:0;margin-top:1px}
+
+hr{border:none;border-top:1px solid var(--border);margin:32px 0}
+
+/* OS Tabs */
+.os-tabs{border:1px solid var(--border);border-radius:12px;overflow:hidden}
+.os-tab-bar{display:flex;background:var(--surface2);border-bottom:1px solid var(--border)}
+.os-tab{background:none;border:none;padding:10px 18px;font-size:13px;color:var(--muted);cursor:pointer;display:flex;align-items:center;gap:6px;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .15s;font-family:inherit}
+.os-tab:hover{color:var(--text)}
+.os-tab.active{color:var(--accent-text);border-bottom-color:var(--accent);font-weight:500}
+.os-tab-panel{display:none}
+.os-tab-panel.active{display:block}
+.os-tab-panel .cb{border:none;border-radius:0;margin:0}
+.os-tab-panel .cb-head{border-radius:0}
+
+@media(max-width:600px){
+  .aprow,.pgrid,.rgrid{grid-template-columns:1fr}
+  .hero h1{font-size:24px}
+  .wrap{padding:0 16px 60px}
+  .pipeline{gap:0}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<!-- Hero -->
+<div class="hero">
+  <div class="hero-badge"><i class="ti ti-terminal-2"></i> agentic-ai-dev &nbsp;·&nbsp; orta seviye</div>
+  <h1>Claude Code <span>Agentic</span> Project Setup</h1>
+  <p class="hero-desc">Herhangi bir yazılım projesine kopyalanabilecek Claude Code uyumlu agentic development setup şablonu — skill'ler, sub-agent'lar, CLAUDE.md ve standart klasör yapısı tek dokümanda.</p>
+  <div class="tags">
+    <span class="tag">claude-code</span>
+    <span class="tag">skills</span>
+    <span class="tag">sub-agents</span>
+    <span class="tag">CLAUDE.md</span>
+    <span class="tag">ADR</span>
+    <span class="tag">agentic workflow</span>
+    <span class="tag">mattpocock/skills</span>
+  </div>
+</div>
+
+<!-- TOC -->
+<div class="toc">
+  <div class="toc-title"><i class="ti ti-list"></i> İçindekiler</div>
+  <div class="toc-grid">
+    <a class="toc-link" href="#s1"><span class="toc-num">01</span>Hedef Klasör Yapısı</a>
+    <a class="toc-link" href="#s2"><span class="toc-num">02</span>Klasör Sorumlulukları</a>
+    <a class="toc-link" href="#s3"><span class="toc-num">03</span>Setup Komutları</a>
+    <a class="toc-link" href="#s4"><span class="toc-num">04</span>CLAUDE.md Şablonu</a>
+    <a class="toc-link" href="#s5"><span class="toc-num">05</span>Skill Set</a>
+    <a class="toc-link" href="#s6"><span class="toc-num">06</span>Skill Dosyaları</a>
+    <a class="toc-link" href="#s7"><span class="toc-num">07</span>Agent Tanımları</a>
+    <a class="toc-link" href="#s8"><span class="toc-num">08</span>Docs README Şablonları</a>
+    <a class="toc-link" href="#s9"><span class="toc-num">09</span>Çalışma Akışı</a>
+    <a class="toc-link" href="#s10"><span class="toc-num">10</span>Kullanım Prensipleri</a>
+    <a class="toc-link" href="#s11"><span class="toc-num">11</span>Anti-pattern'ler</a>
+    <a class="toc-link" href="#s12"><span class="toc-num">12</span>Özet</a>
+  </div>
+</div>
+
+<!-- S1 Klasör Yapısı -->
+<div class="section" id="s1">
+  <div class="sec-head">
+    <span class="sec-num">01</span>
+    <h2>Hedef Klasör Yapısı</h2>
+  </div>
+  <p>Her yeni projede aşağıdaki yapı oluşturulur:</p>
+  <ul class="ftree-ul">
+    <li>
+      <span class="ft-row"><i class="ti ti-folder-open ft-icon-folder"></i><span class="ft-dir-name">your-project/</span></span>
+      <ul>
+        <li><span class="ft-row"><i class="ti ti-file-description ft-icon-special"></i><span class="ft-special-name">CLAUDE.md</span></span></li>
+        <li>
+          <span class="ft-row"><i class="ti ti-folder ft-icon-folder"></i><span class="ft-dir-name">.claude/</span></span>
+          <ul>
+            <li>
+              <span class="ft-row"><i class="ti ti-folder ft-icon-folder"></i><span class="ft-dir-name">skills/</span></span>
+              <ul>
+                <li><span class="ft-row"><i class="ti ti-file-code ft-icon-file"></i><span class="ft-file-name">grill-with-docs/<strong>SKILL.md</strong></span></span></li>
+                <li><span class="ft-row"><i class="ti ti-file-code ft-icon-file"></i><span class="ft-file-name">to-prd/<strong>SKILL.md</strong></span></span></li>
+                <li><span class="ft-row"><i class="ti ti-file-code ft-icon-file"></i><span class="ft-file-name">to-issues/<strong>SKILL.md</strong></span></span></li>
+                <li><span class="ft-row"><i class="ti ti-file-code ft-icon-file"></i><span class="ft-file-name">tdd/<strong>SKILL.md</strong></span></span></li>
+                <li><span class="ft-row"><i class="ti ti-file-code ft-icon-file"></i><span class="ft-file-name">codebase-design/<strong>SKILL.md</strong></span></span></li>
+                <li><span class="ft-row"><i class="ti ti-file-code ft-icon-file"></i><span class="ft-file-name">diagnosing-bugs/<strong>SKILL.md</strong></span></span></li>
+                <li><span class="ft-row"><i class="ti ti-file-code ft-icon-file"></i><span class="ft-file-name">improve-codebase-architecture/<strong>SKILL.md</strong></span></span></li>
+              </ul>
+            </li>
+            <li>
+              <span class="ft-row"><i class="ti ti-folder ft-icon-folder"></i><span class="ft-dir-name">agents/</span></span>
+              <ul>
+                <li><span class="ft-row"><i class="ti ti-file-text ft-icon-file"></i><span class="ft-file-name">planner-agent.md</span></span></li>
+                <li><span class="ft-row"><i class="ti ti-file-text ft-icon-file"></i><span class="ft-file-name">implementation-agent.md</span></span></li>
+                <li><span class="ft-row"><i class="ti ti-file-text ft-icon-file"></i><span class="ft-file-name">debugging-agent.md</span></span></li>
+                <li><span class="ft-row"><i class="ti ti-file-text ft-icon-file"></i><span class="ft-file-name">architecture-review-agent.md</span></span></li>
+                <li><span class="ft-row"><i class="ti ti-file-text ft-icon-file"></i><span class="ft-file-name">documentation-agent.md</span></span></li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+        <li>
+          <span class="ft-row"><i class="ti ti-folder ft-icon-folder"></i><span class="ft-dir-name">docs/</span></span>
+          <ul>
+            <li><span class="ft-row"><i class="ti ti-file-description ft-icon-special"></i><span class="ft-special-name">CONTEXT.md</span></span></li>
+            <li><span class="ft-row"><i class="ti ti-folder ft-icon-folder"></i><span class="ft-dir-name">prd/</span></span></li>
+            <li><span class="ft-row"><i class="ti ti-folder ft-icon-folder"></i><span class="ft-dir-name">issues/</span></span></li>
+            <li><span class="ft-row"><i class="ti ti-folder ft-icon-folder"></i><span class="ft-dir-name">adr/</span></span></li>
+            <li><span class="ft-row"><i class="ti ti-folder ft-icon-folder"></i><span class="ft-dir-name">architecture/</span></span></li>
+            <li><span class="ft-row"><i class="ti ti-folder ft-icon-folder"></i><span class="ft-dir-name">decisions/</span></span></li>
+          </ul>
+        </li>
+        <li><span class="ft-row"><i class="ti ti-folder ft-icon-folder"></i><span class="ft-dir-name">src/</span></span></li>
+        <li><span class="ft-row"><i class="ti ti-folder ft-icon-folder"></i><span class="ft-dir-name">tests/</span></span></li>
+        <li><span class="ft-row"><i class="ti ti-file-text ft-icon-file"></i><span class="ft-file-name">README.md</span></span></li>
+      </ul>
+    </li>
+  </ul>
+</div>
+
+<!-- S2 Klasör Sorumlulukları -->
+<div class="section" id="s2">
+  <div class="sec-head">
+    <span class="sec-num">02</span>
+    <h2>Klasörlerin Sorumlulukları</h2>
+  </div>
+  <div class="rgrid">
+    <div class="rcard">
+      <div class="rcard-icon"><i class="ti ti-file-description"></i></div>
+      <div class="rcard-name">CLAUDE.md</div>
+      <div class="rcard-desc">Ana agent manifest. Proje amacı, mimari kurallar, test komutları, skill ve agent workflow'u, agent sınırları. Uzun prosedürler <code>skills/*/SKILL.md</code>'ye gider.</div>
+    </div>
+    <div class="rcard">
+      <div class="rcard-icon"><i class="ti ti-tools"></i></div>
+      <div class="rcard-name">.claude/skills/</div>
+      <div class="rcard-desc">Tekrar kullanılabilir çalışma disiplinleri. Skill bir "rol" değil, agent'ın uygulayacağı <strong>prosedür</strong>dür.</div>
+    </div>
+    <div class="rcard">
+      <div class="rcard-icon"><i class="ti ti-robot"></i></div>
+      <div class="rcard-name">.claude/agents/</div>
+      <div class="rcard-desc">Uzman agent rolleri. Her agent belirli bir işi üstlenir ve birden fazla skill kullanabilir.</div>
+    </div>
+    <div class="rcard">
+      <div class="rcard-icon"><i class="ti ti-notebook"></i></div>
+      <div class="rcard-name">docs/CONTEXT.md</div>
+      <div class="rcard-desc">Yaşayan bağlam dosyası. Domain dili, önemli kavramlar, sistem sınırları, modül sorumlulukları ve mimari kabuller.</div>
+    </div>
+    <div class="rcard">
+      <div class="rcard-icon"><i class="ti ti-layout-list"></i></div>
+      <div class="rcard-name">docs/prd/</div>
+      <div class="rcard-desc">Ürün gereksinim dokümanları. Ör: <code>001-initial-product-requirements.md</code></div>
+    </div>
+    <div class="rcard">
+      <div class="rcard-icon"><i class="ti ti-checklist"></i></div>
+      <div class="rcard-name">docs/issues/</div>
+      <div class="rcard-desc">Agent'lara verilecek iş parçaları. Her issue <strong>vertical slice</strong> olmalı — yatay katman görevi olmamalı.</div>
+    </div>
+    <div class="rcard">
+      <div class="rcard-icon"><i class="ti ti-git-branch"></i></div>
+      <div class="rcard-name">docs/adr/</div>
+      <div class="rcard-desc">Architecture Decision Records. Ör: <code>0001-use-config-file-for-pricing.md</code></div>
+    </div>
+    <div class="rcard">
+      <div class="rcard-icon"><i class="ti ti-sitemap"></i></div>
+      <div class="rcard-name">docs/architecture/</div>
+      <div class="rcard-desc">Sistem mimarisi, modül haritası, veri akışı, sequence diagram ve high-level design dokümanları.</div>
+    </div>
+    <div class="rcard">
+      <div class="rcard-icon"><i class="ti ti-notes"></i></div>
+      <div class="rcard-name">docs/decisions/</div>
+      <div class="rcard-desc">ADR seviyesinde olmayan ama takip edilmesi gereken küçük ürün, teknik veya süreç kararları.</div>
+    </div>
+  </div>
+</div>
+
+<!-- S3 Setup Komutları -->
+<div class="section" id="s3">
+  <div class="sec-head">
+    <span class="sec-num">03</span>
+    <h2>Setup Komutları</h2>
+  </div>
+  <p>Yeni bir projede aşağıdaki komutlar çalıştırılabilir:</p>
+
+  <div class="os-tabs">
+    <div class="os-tab-bar">
+      <button class="os-tab active" onclick="switchTab('linux')"><i class="ti ti-brand-ubuntu"></i> Linux / macOS</button>
+      <button class="os-tab" onclick="switchTab('windows')"><i class="ti ti-brand-windows"></i> Windows (PowerShell)</button>
+    </div>
+
+    <div id="tab-linux" class="os-tab-panel active">
+      <div class="cb">
+        <div class="cb-head">
+          <span class="cb-lang">bash</span>
+          <button class="cb-copy" onclick="cp(this)"><i class="ti ti-copy"></i> Kopyala</button>
+        </div>
+        <pre>mkdir -p .claude/skills/{grill-with-docs,to-prd,to-issues,tdd,codebase-design,diagnosing-bugs,improve-codebase-architecture}
+mkdir -p .claude/agents
+mkdir -p docs/{prd,issues,adr,architecture,decisions}
+mkdir -p src tests
+
+touch CLAUDE.md
+touch docs/CONTEXT.md
+touch docs/prd/README.md
+touch docs/issues/README.md
+touch docs/adr/README.md
+touch docs/architecture/README.md
+touch docs/decisions/README.md
+
+touch .claude/skills/grill-with-docs/SKILL.md
+touch .claude/skills/to-prd/SKILL.md
+touch .claude/skills/to-issues/SKILL.md
+touch .claude/skills/tdd/SKILL.md
+touch .claude/skills/codebase-design/SKILL.md
+touch .claude/skills/diagnosing-bugs/SKILL.md
+touch .claude/skills/improve-codebase-architecture/SKILL.md
+
+touch .claude/agents/planner-agent.md
+touch .claude/agents/implementation-agent.md
+touch .claude/agents/debugging-agent.md
+touch .claude/agents/architecture-review-agent.md
+touch .claude/agents/documentation-agent.md</pre>
+      </div>
+    </div>
+
+    <div id="tab-windows" class="os-tab-panel">
+      <div class="cb">
+        <div class="cb-head">
+          <span class="cb-lang">powershell</span>
+          <button class="cb-copy" onclick="cp(this)"><i class="ti ti-copy"></i> Kopyala</button>
+        </div>
+        <pre># Klasörleri oluştur
+@(
+  ".claude\skills\grill-with-docs",
+  ".claude\skills\to-prd",
+  ".claude\skills\to-issues",
+  ".claude\skills\tdd",
+  ".claude\skills\codebase-design",
+  ".claude\skills\diagnosing-bugs",
+  ".claude\skills\improve-codebase-architecture",
+  ".claude\agents",
+  "docs\prd",
+  "docs\issues",
+  "docs\adr",
+  "docs\architecture",
+  "docs\decisions",
+  "src",
+  "tests"
+) | ForEach-Object { New-Item -ItemType Directory -Force $_ | Out-Null }
+
+# Dosyaları oluştur
+@(
+  "CLAUDE.md",
+  "docs\CONTEXT.md",
+  "docs\prd\README.md",
+  "docs\issues\README.md",
+  "docs\adr\README.md",
+  "docs\architecture\README.md",
+  "docs\decisions\README.md",
+  ".claude\skills\grill-with-docs\SKILL.md",
+  ".claude\skills\to-prd\SKILL.md",
+  ".claude\skills\to-issues\SKILL.md",
+  ".claude\skills\tdd\SKILL.md",
+  ".claude\skills\codebase-design\SKILL.md",
+  ".claude\skills\diagnosing-bugs\SKILL.md",
+  ".claude\skills\improve-codebase-architecture\SKILL.md",
+  ".claude\agents\planner-agent.md",
+  ".claude\agents\implementation-agent.md",
+  ".claude\agents\debugging-agent.md",
+  ".claude\agents\architecture-review-agent.md",
+  ".claude\agents\documentation-agent.md"
+) | ForEach-Object { New-Item -ItemType File -Force $_ | Out-Null }</pre>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- S4 CLAUDE.md Şablonu -->
+<div class="section" id="s4">
+  <div class="sec-head">
+    <span class="sec-num">04</span>
+    <h2>CLAUDE.md Şablonu</h2>
+  </div>
+  <p>Aşağıdaki içeriği proje kökündeki <code>CLAUDE.md</code> dosyasına koy.</p>
+  <div class="card" id="c-claudemd">
+    <div class="ch" onclick="tog('c-claudemd')">
+      <div class="cl">
+        <span class="cbadge bdocs"><i class="ti ti-file-description"></i> CLAUDE.md</span>
+        <div>
+          <div class="cname">Project Instructions for Claude Code</div>
+          <div class="cdesc">Tam şablonu görmek için genişlet</div>
+        </div>
+      </div>
+      <i class="ti ti-chevron-down ctog"></i>
+    </div>
+    <div class="cbody">
+      <div class="cb">
+        <div class="cb-head">
+          <span class="cb-lang">markdown</span>
+          <button class="cb-copy" onclick="cp(this)"><i class="ti ti-copy"></i> Kopyala</button>
+        </div>
+        <pre># Project Instructions for Claude Code
+
+## Project Goal
+This repository uses an agentic development workflow.
+Claude should not work as a single monolithic coding assistant. Instead, Claude should:
+1. Understand the project context.
+2. Clarify requirements.
+3. Produce PRDs when needed.
+4. Break work into vertical slice issues.
+5. Implement one issue at a time.
+6. Use TDD for deterministic behavior.
+7. Keep architecture decisions documented.
+8. Review architecture before finalizing milestones.
+
+## Repository Structure
+Important folders:
+- `docs/CONTEXT.md`: living project context and domain language
+- `docs/prd/`: product requirements documents
+- `docs/issues/`: agent-ready vertical slice implementation issues
+- `docs/adr/`: architecture decision records
+- `docs/architecture/`: high-level design and architecture notes
+- `docs/decisions/`: smaller non-ADR decisions
+- `.claude/skills/`: reusable workflows and engineering disciplines
+- `.claude/agents/`: specialized project agents
+
+## Default Workflow
+For new features:
+1. Use `/grill-with-docs` if the requirement is unclear.
+2. Use `/to-prd` for medium or large features.
+3. Use `/to-issues` to split PRD into vertical slice issues.
+4. Use `implementation-agent` for implementation.
+5. Implementation must follow `/tdd`.
+6. Use `/codebase-design` when changing module boundaries.
+7. Use `debugging-agent` with `/diagnosing-bugs` when tests fail unexpectedly.
+8. Use `/improve-codebase-architecture` before milestone completion.
+
+## Architecture Rules
+- Prefer vertical slices over horizontal layer work.
+- Keep business logic separate from presentation layers.
+- Keep public interfaces small.
+- Prefer deep modules over shallow modules.
+- Avoid unnecessary abstraction.
+- Avoid large rewrites unless explicitly requested.
+- Do not duplicate business logic across UI, API, CLI, or worker layers.
+- Document meaningful architecture decisions in `docs/adr/`.
+
+## Testing Rules
+- Use TDD for deterministic business logic.
+- Write one failing test before implementation.
+- Prefer behavior-focused tests.
+- Do not couple tests to private implementation details unless necessary.
+- Run relevant tests after each change.
+- Run the full test suite before marking an issue complete.
+
+## Documentation Rules
+- Keep `docs/CONTEXT.md` updated when domain language or module boundaries change.
+- Write PRDs under `docs/prd/`.
+- Write implementation issues under `docs/issues/`.
+- Write ADRs under `docs/adr/`.
+- Keep README accurate for setup and usage.
+
+## Issue Rules
+Issues under `docs/issues/` must include:
+- Title, User story, Acceptance criteria, Test expectations,
+  Dependencies, Suggested agent, Required skills, Out of scope
+
+Issues should be vertical slices. Avoid: "Create database layer", "Write pricing.py".
+Prefer: "User can run the first CLI tracer bullet and see a cost estimate".
+
+## Commands
+```bash
+# Run tests
+pytest
+
+# Run app
+# TODO: add project-specific run command
+```
+
+## Safety and Scope
+- Do not delete files without explicit instruction.
+- Do not introduce new dependencies without explaining why.
+- Do not change public behavior outside the active issue.
+- Do not perform unrelated refactors.
+- If a task is too broad, create or update an issue instead of coding immediately.</pre>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- S5 Skill Set -->
+<div class="section" id="s5">
+  <div class="sec-head">
+    <span class="sec-num">05</span>
+    <h2>Skill Set</h2>
+  </div>
+  <p>Bu setup içinde seçilen temel skill set. Skill = çalışma disiplini / prosedür.</p>
+  <table class="stbl">
+    <thead>
+      <tr>
+        <th>Skill</th>
+        <th>Amaç</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td class="sc">grill-with-docs</td><td>Belirsiz gereksinimi netleştirmek, domain dili ve bağlam oluşturmak</td></tr>
+      <tr><td class="sc">to-prd</td><td>Konuşmayı veya feature fikrini PRD'ye çevirmek</td></tr>
+      <tr><td class="sc">to-issues</td><td>PRD'yi vertical slice issue'lara bölmek</td></tr>
+      <tr><td class="sc">tdd</td><td>Test-first implementation disiplini</td></tr>
+      <tr><td class="sc">codebase-design</td><td>Modül sınırlarını, deep module prensibini ve temiz tasarımı korumak</td></tr>
+      <tr><td class="sc">diagnosing-bugs</td><td>Test veya runtime hatalarını sistematik teşhis etmek</td></tr>
+      <tr><td class="sc">improve-codebase-architecture</td><td>Kod tabanını milestone sonunda mimari olarak gözden geçirmek</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- S6 Skill Dosyaları -->
+<div class="section" id="s6">
+  <div class="sec-head">
+    <span class="sec-num">06</span>
+    <h2>Skill Dosyaları</h2>
+  </div>
+  <p>Aşağıdaki dosyalar <code>.claude/skills/&lt;skill-name&gt;/SKILL.md</code> altında tutulur. Detaylar için genişlet.</p>
+
+  <div class="card" id="sk1">
+    <div class="ch" onclick="tog('sk1')">
+      <div class="cl">
+        <span class="cbadge bskill">skill</span>
+        <div>
+          <div class="cname">grill-with-docs</div>
+          <div class="cdesc">Belirsiz gereksinimi netleştir, domain dili oluştur</div>
+        </div>
+      </div>
+      <i class="ti ti-chevron-down ctog"></i>
+    </div>
+    <div class="cbody">
+      <p><strong>Amaç:</strong> PRD oluşturmadan önce proje niyetini netleştirmek.</p>
+      <p><strong>Ne zaman kullanılır:</strong></p>
+      <ul>
+        <li>Gereksinim geniş veya belirsizse</li>
+        <li>Proje sınırları net değilse</li>
+        <li>Agent varsayım yapmak üzereyse</li>
+        <li>Paylaşılan domain dili eksikse</li>
+        <li>Kullanıcı plan istedi ama önemli detaylar eksik</li>
+      </ul>
+      <p><strong>Çıktılar:</strong> <code>docs/CONTEXT.md</code>, <code>docs/decisions/</code>, opsiyonel <code>docs/adr/</code> taslakları</p>
+      <p><strong>Talimatlar:</strong></p>
+      <ol>
+        <li>Varsa mevcut dokümanları oku: <code>docs/CONTEXT.md</code>, <code>docs/prd/</code>, <code>docs/adr/</code>, <code>README.md</code></li>
+        <li>Belirle: proje hedefi, hedef kullanıcılar, core workflow'lar, domain vocabulary, kısıtlamalar, varsayımlar, açık sorular</li>
+        <li>Yalnızca en önemli netleştirici soruları sor</li>
+        <li>Yeterli bağlam varsa <code>docs/CONTEXT.md</code>'yi güncelle</li>
+      </ol>
+      <p><strong>Kurallar:</strong> Kod implemente etme. Issue oluşturma (talep edilmediğinde). Uzun yazılar yerine özlü bağlam tercih et. Gerçekleri, varsayımları ve açık soruları birbirinden ayır.</p>
+    </div>
+  </div>
+
+  <div class="card" id="sk2">
+    <div class="ch" onclick="tog('sk2')">
+      <div class="cl">
+        <span class="cbadge bskill">skill</span>
+        <div>
+          <div class="cname">to-prd</div>
+          <div class="cdesc">Feature fikrini PRD'ye çevir</div>
+        </div>
+      </div>
+      <i class="ti ti-chevron-down ctog"></i>
+    </div>
+    <div class="cbody">
+      <p><strong>Amaç:</strong> Mevcut proje bağlamından PRD oluşturmak.</p>
+      <p><strong>Girdiler:</strong> <code>docs/CONTEXT.md</code>, <code>docs/decisions/</code>, <code>docs/adr/</code>, <code>README.md</code>, mevcut konuşmadaki kullanıcı isteği</p>
+      <p><strong>Output konum:</strong> <code>docs/prd/NNN-feature-name.md</code></p>
+      <p><strong>PRD yapısı (zorunlu alanlar):</strong></p>
+      <ul>
+        <li>Title, Problem statement, Goals, Non-goals</li>
+        <li>Target users, User stories</li>
+        <li>Functional requirements, Non-functional requirements</li>
+        <li>UX/interface expectations, Data/config requirements</li>
+        <li>Acceptance criteria, Out of scope, Open questions</li>
+      </ul>
+      <p><strong>Kurallar:</strong> Kod implemente etme. Dosya bazlı implementation planı yapma. Teknik detayı modül sınırı seviyesinde tut. Bağlam yetersizse <code>grill-with-docs</code> çalıştır.</p>
+    </div>
+  </div>
+
+  <div class="card" id="sk3">
+    <div class="ch" onclick="tog('sk3')">
+      <div class="cl">
+        <span class="cbadge bskill">skill</span>
+        <div>
+          <div class="cname">to-issues</div>
+          <div class="cdesc">PRD'yi vertical slice issue'lara böl</div>
+        </div>
+      </div>
+      <i class="ti ti-chevron-down ctog"></i>
+    </div>
+    <div class="cbody">
+      <p><strong>Girdiler:</strong> <code>docs/prd/</code>, <code>docs/CONTEXT.md</code>, ilgili ADR'lar</p>
+      <p><strong>Output:</strong> <code>docs/issues/NNN-short-title.md</code></p>
+      <p><strong>Issue yapısı:</strong> Title, User story, Background, Acceptance criteria, Test expectations, Dependencies, Suggested agent, Required skills, Out of scope, Done checklist</p>
+      <div class="callout"><i class="ti ti-alert-circle"></i> Issue'lar vertical slice olmalıdır. "Create database layer" veya "Write pricing.py" DEĞIL; "User can load model pricing from config and get a cost estimate" gibi davranış odaklı issue'lar tercih edilir.</div>
+    </div>
+  </div>
+
+  <div class="card" id="sk4">
+    <div class="ch" onclick="tog('sk4')">
+      <div class="cl">
+        <span class="cbadge bskill">skill</span>
+        <div>
+          <div class="cname">tdd</div>
+          <div class="cdesc">Red-green-refactor döngüsü ile implementation</div>
+        </div>
+      </div>
+      <i class="ti ti-chevron-down ctog"></i>
+    </div>
+    <div class="cbody">
+      <p><strong>Amaç:</strong> Implementation'ı red-green-refactor döngüsü ile yönlendirmek.</p>
+      <p><strong>Adımlar:</strong></p>
+      <ol>
+        <li>Issue acceptance criteria'yı oku</li>
+        <li>Bir davranış seç</li>
+        <li>Bir failing test yaz</li>
+        <li>İlgili test komutunu çalıştır</li>
+        <li>Testin beklenen nedenle başarısız olduğunu doğrula</li>
+        <li>Testi geçirmek için en küçük değişikliği implement et</li>
+        <li>Testi tekrar çalıştır</li>
+        <li>Test geçtikten sonra refactor yap</li>
+        <li>Acceptance criteria tümüyle kapsanana kadar tekrarla</li>
+        <li>Bitirmeden önce tam test suite'ini çalıştır</li>
+      </ol>
+      <p><strong>Test kuralları:</strong> Davranış testleri tercih et. Private implementation detaylarını test etme. Brittle test yazma. Değişken değerlere assert etme. Fixture kullan. Testleri okunabilir tut.</p>
+      <p><strong>Implementation kuralları:</strong> Testlerden önce büyük üretim kodu yazma. İlgisiz feature ekleme. İlgisiz refactor yapma. Aktif issue'ya odaklı kal.</p>
+    </div>
+  </div>
+
+  <div class="card" id="sk5">
+    <div class="ch" onclick="tog('sk5')">
+      <div class="cl">
+        <span class="cbadge bskill">skill</span>
+        <div>
+          <div class="cname">codebase-design</div>
+          <div class="cdesc">Modül sınırlarını ve temiz tasarımı koru</div>
+        </div>
+      </div>
+      <i class="ti ti-chevron-down ctog"></i>
+    </div>
+    <div class="cbody">
+      <p><strong>Tasarım prensipleri:</strong></p>
+      <ul>
+        <li>Küçük public interface'li derin modülleri tercih et</li>
+        <li>Business logic'i delivery mechanism'lardan (UI, CLI, API, DB) ayır</li>
+        <li>Adapter'ları ince tut</li>
+        <li>Business logic'i tekrar etme</li>
+        <li>Gereksiz soyutlamadan kaçın</li>
+        <li>Domain dilinden açık isimler kullan</li>
+        <li>Hem insanların hem agent'ların kolayca navigate edebildiği kod yaz</li>
+      </ul>
+      <p><strong>ADR tetikleyicileri:</strong> Framework seçimi, persistence stratejisi, modül sınırı tanımı/değişimi, public interface stabilizasyonu, gelecek agent'ların anlaması gereken tradeoff.</p>
+    </div>
+  </div>
+
+  <div class="card" id="sk6">
+    <div class="ch" onclick="tog('sk6')">
+      <div class="cl">
+        <span class="cbadge bskill">skill</span>
+        <div>
+          <div class="cname">diagnosing-bugs</div>
+          <div class="cdesc">Hataları sistematik olarak teşhis et</div>
+        </div>
+      </div>
+      <i class="ti ti-chevron-down ctog"></i>
+    </div>
+    <div class="cbody">
+      <p><strong>Bug teşhis adımları:</strong></p>
+      <ol>
+        <li>Hatayı yeniden oluştur</li>
+        <li>Tam hata mesajını yakala</li>
+        <li>En küçük başarısız komut veya testi belirle</li>
+        <li>Son değişiklikleri incele</li>
+        <li>Hipotez oluştur</li>
+        <li>Hipotezi doğrulayan / çürüten en küçük değişikliği yap</li>
+        <li>Başarısız testi tekrar çalıştır</li>
+        <li>Ancak sonra fix uygula</li>
+        <li>Yakın testleri çalıştır, tam suite ile bitir</li>
+      </ol>
+      <p><strong>Kurallar:</strong> Büyük bölümleri tahmin edip yeniden yazma. Birden fazla ilgisiz bug'ı aynı anda düzeltme. Hatayı anlamadan bastırma. Fix'ten önce regression test eklemeyi tercih et. Şaşırtıcı root cause'ları <code>docs/decisions/</code>'a kaydet.</p>
+    </div>
+  </div>
+
+  <div class="card" id="sk7">
+    <div class="ch" onclick="tog('sk7')">
+      <div class="cl">
+        <span class="cbadge bskill">skill</span>
+        <div>
+          <div class="cname">improve-codebase-architecture</div>
+          <div class="cdesc">Milestone öncesi mimari gözden geçirme</div>
+        </div>
+      </div>
+      <i class="ti ti-chevron-down ctog"></i>
+    </div>
+    <div class="cbody">
+      <p><strong>Review alanları:</strong> Modül sınırları, duplicate business logic, shallow modules, framework leakage into core logic, missing tests, confusing names, missing ADRs, inaccurate README, overengineering, under-documented decisions.</p>
+      <p><strong>Çıktı formatı:</strong></p>
+      <ol>
+        <li>Bulgular — severity bazlı: <strong>critical</strong> / <strong>important</strong> / <strong>minor</strong></li>
+        <li>Önerilen düzeltmeler</li>
+        <li>Kullanıcı onaylamadan yalnızca low-risk fix'leri uygula</li>
+        <li>Mimari değiştiyse doc'ları güncelle</li>
+        <li>Değişiklikler sonrası testleri çalıştır</li>
+      </ol>
+      <p><strong>Kurallar:</strong> Açık onay olmadan büyük yeniden yazma yapma. Bug düzeltmesi dışında public davranışı değiştirme. Küçük, geri alınabilir refactor'ları tercih et. Mevcut testleri koru.</p>
+    </div>
+  </div>
+</div>
+
+<!-- S7 Agent Tanımları -->
+<div class="section" id="s7">
+  <div class="sec-head">
+    <span class="sec-num">07</span>
+    <h2>Agent Tanımları</h2>
+  </div>
+  <p>Aşağıdaki dosyalar <code>.claude/agents/*.md</code> altında tutulur. Agent = rol / uzman worker.</p>
+
+  <div class="card" id="ag1">
+    <div class="ch" onclick="tog('ag1')">
+      <div class="cl">
+        <span class="cbadge bagent">agent</span>
+        <div>
+          <div class="cname">planner-agent</div>
+          <div class="cdesc">Gereksinim netleştirme, PRD ve issue — kod yazmaz</div>
+        </div>
+      </div>
+      <i class="ti ti-chevron-down ctog"></i>
+    </div>
+    <div class="cbody">
+      <p><strong>Model:</strong> sonnet &nbsp;·&nbsp; <strong>Effort:</strong> high &nbsp;·&nbsp; <strong>Tools:</strong> Read, Write, Edit, Glob, Grep</p>
+      <p><strong>Skills:</strong> grill-with-docs, to-prd, to-issues, codebase-design</p>
+      <p><strong>Sorumluluklar:</strong></p>
+      <ul>
+        <li>Belirsiz gereksinimleri netleştir</li>
+        <li><code>docs/CONTEXT.md</code>'yi güncelle</li>
+        <li><code>docs/prd/</code> altına PRD yaz</li>
+        <li>PRD'yi vertical slice issue'lara böl → <code>docs/issues/</code></li>
+        <li>Mimari kararlar için <code>docs/adr/</code> altında ADR taslağı oluştur</li>
+      </ul>
+      <p><strong>Kurallar:</strong> Talep edilmediğinde production kodu yazma. Yatay katman issue'ları oluşturma. Tracer bullet issue'ları tercih et. Her issue acceptance criteria ve test expectations içermeli.</p>
+    </div>
+  </div>
+
+  <div class="card" id="ag2">
+    <div class="ch" onclick="tog('ag2')">
+      <div class="cl">
+        <span class="cbadge bagent">agent</span>
+        <div>
+          <div class="cname">implementation-agent</div>
+          <div class="cdesc">TDD ile tek scoped issue implement eder</div>
+        </div>
+      </div>
+      <i class="ti ti-chevron-down ctog"></i>
+    </div>
+    <div class="cbody">
+      <p><strong>Model:</strong> sonnet &nbsp;·&nbsp; <strong>Effort:</strong> high &nbsp;·&nbsp; <strong>Tools:</strong> Read, Write, Edit, Bash, Glob, Grep</p>
+      <p><strong>Skills:</strong> tdd, codebase-design</p>
+      <p><strong>Sorumluluklar:</strong></p>
+      <ul>
+        <li>Bir seferde tek issue implement et</li>
+        <li>Kodlamadan önce issue dosyasını oku</li>
+        <li>Acceptance criteria'yı tam olarak uygula</li>
+        <li>TDD kullan, her değişiklik sonrası ilgili testleri çalıştır</li>
+        <li>Davranış, komutlar veya mimari değiştiğinde doc'ları güncelle</li>
+      </ul>
+      <p><strong>Kurallar:</strong> İlgisiz refactor başlatma. Business logic'i tekrar etme. İlgisiz issue'ları karıştırma. Neden açıklamadan dependency ekleme. Bitirmeden önce tam test suite'ini çalıştır.</p>
+    </div>
+  </div>
+
+  <div class="card" id="ag3">
+    <div class="ch" onclick="tog('ag3')">
+      <div class="cl">
+        <span class="cbadge bagent">agent</span>
+        <div>
+          <div class="cname">debugging-agent</div>
+          <div class="cdesc">Test hataları ve beklenmedik davranışları teşhis eder</div>
+        </div>
+      </div>
+      <i class="ti ti-chevron-down ctog"></i>
+    </div>
+    <div class="cbody">
+      <p><strong>Model:</strong> sonnet &nbsp;·&nbsp; <strong>Effort:</strong> high &nbsp;·&nbsp; <strong>Tools:</strong> Read, Write, Edit, Bash, Glob, Grep</p>
+      <p><strong>Skills:</strong> diagnosing-bugs, tdd, codebase-design</p>
+      <p><strong>Sorumluluklar:</strong> Bug'ı yeniden oluştur → En küçük failing test'i bul → Kod değiştirmeden önce teşhis et → Uygunsa regression test ekle → En küçük güvenli fix'i uygula → Yakın + tam testleri çalıştır</p>
+      <p><strong>Kurallar:</strong> Büyük bölümleri yeniden yazma. Kodu anlamadan hataları bastırma. İlgisiz sorunları düzeltme. Şaşırtıcı bulguları issue notlarına veya <code>docs/decisions/</code>'a kaydet.</p>
+    </div>
+  </div>
+
+  <div class="card" id="ag4">
+    <div class="ch" onclick="tog('ag4')">
+      <div class="cl">
+        <span class="cbadge bagent">agent</span>
+        <div>
+          <div class="cname">architecture-review-agent</div>
+          <div class="cdesc">Milestone öncesi final mimari gözden geçirme</div>
+        </div>
+      </div>
+      <i class="ti ti-chevron-down ctog"></i>
+    </div>
+    <div class="cbody">
+      <p><strong>Model:</strong> sonnet &nbsp;·&nbsp; <strong>Effort:</strong> high &nbsp;·&nbsp; <strong>Tools:</strong> Read, Write, Edit, Bash, Glob, Grep</p>
+      <p><strong>Skills:</strong> improve-codebase-architecture, codebase-design</p>
+      <p><strong>Sorumluluklar:</strong></p>
+      <ul>
+        <li>Mimariyi, modül sınırlarını, testleri, doc'ları ve ADR'ları gözden geçir</li>
+        <li>Duplication, coupling ve overengineering'i tespit et</li>
+        <li>Sadece low-risk fix'leri uygula</li>
+      </ul>
+      <p><strong>Kurallar:</strong> Onaysız büyük yeniden yazma yapma. Bug düzeltmesi dışında public davranışı değiştirme. Bulguları severity bazlı grupla. Değişikliklerden sonra testleri çalıştır.</p>
+    </div>
+  </div>
+
+  <div class="card" id="ag5">
+    <div class="ch" onclick="tog('ag5')">
+      <div class="cl">
+        <span class="cbadge bagent">agent</span>
+        <div>
+          <div class="cname">documentation-agent</div>
+          <div class="cdesc">README, ADR ve proje dokümantasyonunu günceller</div>
+        </div>
+      </div>
+      <i class="ti ti-chevron-down ctog"></i>
+    </div>
+    <div class="cbody">
+      <p><strong>Model:</strong> sonnet &nbsp;·&nbsp; <strong>Effort:</strong> medium &nbsp;·&nbsp; <strong>Tools:</strong> Read, Write, Edit, Glob, Grep</p>
+      <p><strong>Skills:</strong> codebase-design</p>
+      <p><strong>Sorumluluklar:</strong></p>
+      <ul>
+        <li>README'yi güncel tut, kullanım komutlarını güncelle</li>
+        <li><code>docs/CONTEXT.md</code>'yi güncelle</li>
+        <li>ADR'ları oluştur veya cilala</li>
+        <li>Doc'ları gelecek agent'lar için özlü ve yararlı tut</li>
+        <li>İlgili PRD, ADR ve issue'ları birbirine bağla</li>
+      </ul>
+      <p><strong>Kurallar:</strong> Var olmayan davranışı icat etme. Mümkünse komutları codebase'e karşı doğrula. Özlü dokümantasyonu tercih et. İlgili PRD, ADR ve issue'ları linkle.</p>
+    </div>
+  </div>
+</div>
+
+<!-- S8 Docs README Şablonları -->
+<div class="section" id="s8">
+  <div class="sec-head">
+    <span class="sec-num">08</span>
+    <h2>Docs README Şablonları</h2>
+  </div>
+
+  <div class="card" id="rd1">
+    <div class="ch" onclick="tog('rd1')">
+      <div class="cl">
+        <span class="cbadge bdocs">docs</span>
+        <div><div class="cname">docs/prd/README.md</div><div class="cdesc">PRD klasörü rehberi</div></div>
+      </div>
+      <i class="ti ti-chevron-down ctog"></i>
+    </div>
+    <div class="cbody">
+      <p>Naming: <code>NNN-short-feature-name.md</code> — ör. <code>001-token-cost-calculator.md</code></p>
+      <p>Her PRD: goals, non-goals, user stories, requirements, acceptance criteria ve open questions içermeli.</p>
+    </div>
+  </div>
+
+  <div class="card" id="rd2">
+    <div class="ch" onclick="tog('rd2')">
+      <div class="cl">
+        <span class="cbadge bdocs">docs</span>
+        <div><div class="cname">docs/issues/README.md</div><div class="cdesc">Issue klasörü rehberi</div></div>
+      </div>
+      <i class="ti ti-chevron-down ctog"></i>
+    </div>
+    <div class="cbody">
+      <p>Her issue vertical slice olmalı. Davranış odaklı örnekler:</p>
+      <ul>
+        <li>"User can submit a form and see a result"</li>
+        <li>"User can run a CLI command and get JSON output"</li>
+        <li>"System rejects invalid config with a useful error"</li>
+      </ul>
+      <p>Her issue: Title, User story, Acceptance criteria, Test expectations, Dependencies, Suggested agent, Required skills, Done checklist içermeli.</p>
+    </div>
+  </div>
+
+  <div class="card" id="rd3">
+    <div class="ch" onclick="tog('rd3')">
+      <div class="cl">
+        <span class="cbadge bdocs">docs</span>
+        <div><div class="cname">docs/adr/README.md</div><div class="cdesc">Architecture Decision Records rehberi</div></div>
+      </div>
+      <i class="ti ti-chevron-down ctog"></i>
+    </div>
+    <div class="cbody">
+      <p><strong>ADR oluşturma zamanı:</strong> Framework seçimi, persistence stratejisi seçimi, modül sınırı tanımı, public interface stabilizasyonu, gelecek agent'ların anlaması gereken tradeoff.</p>
+      <p>Naming: <code>NNNN-short-title.md</code> — ör. <code>0001-use-fastapi-for-api-layer.md</code></p>
+    </div>
+  </div>
+
+  <div class="card" id="rd4">
+    <div class="ch" onclick="tog('rd4')">
+      <div class="cl">
+        <span class="cbadge bdocs">docs</span>
+        <div><div class="cname">docs/architecture/README.md</div><div class="cdesc">High-level architecture notları</div></div>
+      </div>
+      <i class="ti ti-chevron-down ctog"></i>
+    </div>
+    <div class="cbody">
+      <p>Bu klasör şunları içerir: module map, data flow, sequence diagrams, integration boundaries, deployment notes.</p>
+    </div>
+  </div>
+
+  <div class="card" id="rd5">
+    <div class="ch" onclick="tog('rd5')">
+      <div class="cl">
+        <span class="cbadge bdocs">docs</span>
+        <div><div class="cname">docs/decisions/README.md</div><div class="cdesc">Lightweight karar notları</div></div>
+      </div>
+      <i class="ti ti-chevron-down ctog"></i>
+    </div>
+    <div class="cbody">
+      <p>Tam ADR gerektirmeyen kararlar için. Kullanım alanları:</p>
+      <ul>
+        <li>Küçük ürün kararları</li>
+        <li>Naming kararları</li>
+        <li>Geçici kısıtlamalar</li>
+        <li>Bilinen tradeoff'lar</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- S9 Çalışma Akışı -->
+<div class="section" id="s9">
+  <div class="sec-head">
+    <span class="sec-num">09</span>
+    <h2>Önerilen Çalışma Akışı</h2>
+  </div>
+
+  <h3>Yeni proje başlatırken</h3>
+  <div class="wstep">
+    <div class="wnum">1</div>
+    <div class="wbody">
+      <h4>/grill-with-docs</h4>
+      <p>Projeyi netleştir, domain dilini çıkar, <code>docs/CONTEXT.md</code> oluştur, açık soruları listele</p>
+    </div>
+  </div>
+  <div class="wstep">
+    <div class="wnum">2</div>
+    <div class="wbody">
+      <h4>/to-prd</h4>
+      <p>İlk PRD'yi <code>docs/prd/</code> altına yaz</p>
+    </div>
+  </div>
+  <div class="wstep">
+    <div class="wnum">3</div>
+    <div class="wbody">
+      <h4>/to-issues</h4>
+      <p>PRD'yi agent-ready vertical slice issue'lara böl → <code>docs/issues/</code></p>
+    </div>
+  </div>
+
+  <h3 style="margin-top:28px">Bir issue implement ederken</h3>
+  <div class="cb">
+    <div class="cb-head">
+      <span class="cb-lang">text — Claude Code</span>
+      <button class="cb-copy" onclick="cp(this)"><i class="ti ti-copy"></i> Kopyala</button>
+    </div>
+    <pre>Use implementation-agent.
+
+Implement docs/issues/001-example-feature.md.
+
+Follow the tdd and codebase-design skills.
+Keep changes scoped to this issue.
+Run tests before finishing.</pre>
+  </div>
+
+  <h3>Test kırıldığında</h3>
+  <div class="cb">
+    <div class="cb-head">
+      <span class="cb-lang">text — Claude Code</span>
+      <button class="cb-copy" onclick="cp(this)"><i class="ti ti-copy"></i> Kopyala</button>
+    </div>
+    <pre>Use debugging-agent.
+
+Diagnose the failing test using the diagnosing-bugs skill.
+Do not rewrite large sections.
+Add a regression test if appropriate.</pre>
+  </div>
+
+  <h3>Milestone sonunda</h3>
+  <div class="cb">
+    <div class="cb-head">
+      <span class="cb-lang">text — Claude Code</span>
+      <button class="cb-copy" onclick="cp(this)"><i class="ti ti-copy"></i> Kopyala</button>
+    </div>
+    <pre>Use architecture-review-agent.
+
+Run improve-codebase-architecture.
+Review module boundaries, tests, docs and ADRs.
+Apply only low-risk fixes.</pre>
+  </div>
+</div>
+
+<!-- S10 Kullanım Prensipleri -->
+<div class="section" id="s10">
+  <div class="sec-head">
+    <span class="sec-num">10</span>
+    <h2>Kullanım Prensipleri</h2>
+  </div>
+  <div class="pgrid">
+    <div class="pcard">
+      <h4><i class="ti ti-tools"></i> Skill nedir?</h4>
+      <p>Çalışma disiplini veya prosedürdür. <code>tdd</code> bir skill'dir. <code>codebase-design</code> bir skill'dir.</p>
+    </div>
+    <div class="pcard">
+      <h4><i class="ti ti-robot"></i> Agent nedir?</h4>
+      <p>Rol veya uzman worker'dır. <code>implementation-agent</code> bir agent'tır. <code>tdd</code> ve <code>codebase-design</code> skill'lerini kullanır.</p>
+    </div>
+    <div class="pcard">
+      <h4><i class="ti ti-folder-cog"></i> Project-level setup</h4>
+      <p>Her repo içinde <code>.claude/skills/</code>, <code>.claude/agents/</code>, <code>CLAUDE.md</code> ve <code>docs/</code> tutulur. Proje kendi agentic workflow'unu taşır.</p>
+    </div>
+    <div class="pcard">
+      <h4><i class="ti ti-home"></i> Personal-level setup</h4>
+      <p>Aynı tanımları tüm projelerde global kullanmak için <code>~/.claude/skills/</code> ve <code>~/.claude/agents/</code>. Ancak ekip projelerinde project-level daha güvenlidir.</p>
+    </div>
+  </div>
+</div>
+
+<!-- S11 Anti-pattern'ler -->
+<div class="section" id="s11">
+  <div class="sec-head">
+    <span class="sec-num">11</span>
+    <h2>Anti-pattern'ler</h2>
+  </div>
+
+  <div class="ap">
+    <div class="aprow">
+      <div class="avoid">
+        <div class="aplabel"><i class="ti ti-x"></i> Kaçın</div>
+        <div class="apcode">Bana tüm uygulamayı yap.</div>
+      </div>
+      <div class="prefer">
+        <div class="aplabel"><i class="ti ti-check"></i> Tercih et</div>
+        <div class="apcode">Use planner-agent to create vertical slice issues from the PRD.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="ap">
+    <div class="aprow">
+      <div class="avoid">
+        <div class="aplabel"><i class="ti ti-x"></i> Kaçın</div>
+        <div class="apcode">pricing.py yaz.</div>
+      </div>
+      <div class="prefer">
+        <div class="aplabel"><i class="ti ti-check"></i> Tercih et</div>
+        <div class="apcode">Implement the issue: user can load model pricing from config and get a cost estimate.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="ap">
+    <div class="aprow">
+      <div class="avoid">
+        <div class="aplabel"><i class="ti ti-x"></i> Kaçın</div>
+        <div class="apcode">Testler kırıldı, düzelt.</div>
+      </div>
+      <div class="prefer">
+        <div class="aplabel"><i class="ti ti-check"></i> Tercih et</div>
+        <div class="apcode">Use debugging-agent and diagnosing-bugs. Reproduce the failure, identify the root cause, add a regression test if needed, then fix.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- S12 Özet -->
+<div class="section" id="s12">
+  <div class="sec-head">
+    <span class="sec-num">12</span>
+    <h2>Özet</h2>
+  </div>
+  <p>Bu setup'ın hedefi — her adım bir sonrakini besleyen bir agentic delivery pipeline:</p>
+
+  <div class="pipeline">
+    <div class="pnode">
+      <div class="pdot"><i class="ti ti-bulb"></i></div>
+      <div class="plabel">Intent</div>
+    </div>
+    <span class="parr">→</span>
+    <div class="pnode">
+      <div class="pdot"><i class="ti ti-notebook"></i></div>
+      <div class="plabel">Context</div>
+    </div>
+    <span class="parr">→</span>
+    <div class="pnode">
+      <div class="pdot"><i class="ti ti-file-text"></i></div>
+      <div class="plabel">PRD</div>
+    </div>
+    <span class="parr">→</span>
+    <div class="pnode">
+      <div class="pdot"><i class="ti ti-checklist"></i></div>
+      <div class="plabel">Issues</div>
+    </div>
+    <span class="parr">→</span>
+    <div class="pnode">
+      <div class="pdot"><i class="ti ti-robot"></i></div>
+      <div class="plabel">Agents</div>
+    </div>
+    <span class="parr">→</span>
+    <div class="pnode">
+      <div class="pdot"><i class="ti ti-test-pipe"></i></div>
+      <div class="plabel">TDD</div>
+    </div>
+    <span class="parr">→</span>
+    <div class="pnode">
+      <div class="pdot"><i class="ti ti-eye"></i></div>
+      <div class="plabel">Review</div>
+    </div>
+    <span class="parr">→</span>
+    <div class="pnode">
+      <div class="pdot"><i class="ti ti-books"></i></div>
+      <div class="plabel">Docs</div>
+    </div>
+  </div>
+
+  <p>Bu yapı sayesinde Claude Code:</p>
+  <ul>
+    <li>Neyi nereye yazacağını bilir</li>
+    <li>PRD ve issue üretirken standart klasörleri kullanır</li>
+    <li>ADR kararlarını doğru yerde tutar</li>
+    <li>Implementation sırasında TDD uygular</li>
+    <li>Modül sınırlarını korur</li>
+    <li>Milestone sonunda mimari review yapar</li>
+  </ul>
+  <div class="callout" style="margin-top:20px">
+    <i class="ti ti-sparkles"></i>
+    Bu, "tek agent'a büyük prompt verme" yaklaşımından çıkıp gerçek bir <strong>agentic software delivery workflow</strong> kurmanın temelidir.
+  </div>
+</div>
+
+</div>
+
+<script>
+function tog(id){
+  const c=document.getElementById(id);
+  c.classList.toggle('open');
+}
+function cp(btn){
+  const pre=btn.closest('.cb').querySelector('pre');
+  navigator.clipboard.writeText(pre.textContent.trim()).then(()=>{
+    const o=btn.innerHTML;
+    btn.innerHTML='<i class="ti ti-check"></i> Kopyalandı';
+    setTimeout(()=>{btn.innerHTML=o},2000);
+  });
+}
+function switchTab(os){
+  document.querySelectorAll('.os-tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.os-tab-panel').forEach(p=>p.classList.remove('active'));
+  document.getElementById('tab-'+os).classList.add('active');
+  event.currentTarget.classList.add('active');
+}
+</script>
+</body>
+</html>

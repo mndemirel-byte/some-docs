@@ -1,0 +1,53 @@
+.session {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.turn {
+  padding: 14px 20px;
+  border-bottom: 1px solid var(--border);
+}
+
+.turn:last-child {
+  border-bottom: none;
+}
+
+.label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.dev {
+  color: var(--blue-text);
+}
+
+.ai {
+  color: var(--accent-text);
+}
+
+.turn p {
+  font-size: 13px;
+  color: var(--subtle);
+  margin: 0;
+  line-height: 1.6;
+}
+
+.turn ul {
+  padding-left: 16px;
+  margin: 4px 0 0;
+}
+
+.turn ul li {
+  font-size: 13px;
+  color: var(--subtle);
+  margin-bottom: 2px;
+}

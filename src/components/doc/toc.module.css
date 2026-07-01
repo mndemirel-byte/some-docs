@@ -1,0 +1,71 @@
+.toc {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 20px 24px;
+  margin-bottom: 48px;
+}
+
+.title {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 2px 12px;
+}
+
+.list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.list li {
+  margin-bottom: 2px;
+}
+
+.sub {
+  list-style: none;
+  padding: 2px 0 2px 30px;
+  margin: 0;
+}
+
+.sub .link {
+  font-size: 12px;
+  padding: 3px 8px;
+  color: var(--muted);
+}
+
+.link {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 8px;
+  font-size: 13px;
+  color: var(--subtle);
+  text-decoration: none;
+  border-radius: 6px;
+}
+
+.link:hover {
+  color: var(--accent-text);
+  background: var(--accent-bg);
+}
+
+.num {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--accent-text);
+  opacity: 0.7;
+  min-width: 20px;
+}

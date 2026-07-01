@@ -1,0 +1,707 @@
+import {
+  IconUserCircle,
+  IconTool,
+  IconTerminal,
+  IconTerminal2,
+  IconLink,
+  IconRoute,
+  IconTools,
+  IconRepeatOnce,
+  IconRefresh,
+  IconBug,
+  IconZoomOut,
+  IconFlask,
+  IconBrandGithub,
+  IconBook,
+  IconHeartHandshake,
+  IconGitBranch,
+  IconInfoCircle,
+  IconBulb,
+} from "@tabler/icons-react";
+import { Hero, Accent } from "@/components/doc/hero";
+import { HeroAuthor } from "@/components/doc/hero-author";
+import { Toc } from "@/components/doc/toc";
+import { Section } from "@/components/doc/section";
+import { Callout } from "@/components/doc/callout";
+import { TwoColGrid, GridCard } from "@/components/doc/two-col-grid";
+import { CodeBlock } from "@/components/doc/code-block";
+import { TableBox } from "@/components/doc/table-box";
+import { DataTable } from "@/components/doc/data-table";
+import { Cmd } from "@/components/doc/cmd";
+import { Phase } from "@/components/doc/phase-header";
+import { ExpandableExample } from "@/components/doc/expandable-example";
+import { Terminal } from "@/components/doc/terminal";
+import { ValueRow, ValueCard } from "@/components/doc/value-row";
+import { SimplePrincipleGrid, SimplePrincipleCard } from "@/components/doc/simple-principle-grid";
+import { StateFlow, State, StateArrow } from "@/components/doc/state-flow";
+import { SectionSkillGrid, SectionSkillCard } from "@/components/doc/section-skill-card";
+import { GroupedFlowPhase, GroupedFlowStep, FlowConnector } from "@/components/doc/grouped-flow";
+import { ResourceList, ResourceItem } from "@/components/doc/resource-list";
+
+<Hero
+  badge="Claude Code · Skill Serisi"
+  variant="eyebrow"
+  title={<>Matt Pocock Skills ile <Accent>Sıfırdan</Accent> Proje Geliştirme</>}
+  description="Pocock'un açık kaynak skill seti, Claude Code'a slash command olarak eklenen yapılandırılmış prompt şablonlarıdır. Amaçları agent'ı hızlandırmak değil, disipline sokmaktır: koddan önce düşünmeye zorlamak, test feedback loop'u kurmak, mimariyi korumak ve kararları belgelemek. Bu yazıda URL Shortener örneği üzerinden komple akışı adım adım gösteriyoruz."
+  tags={["claude-code", "slash-commands", "TDD", "ADR", "vertical-slice", "url-shortener", "TypeScript"]}
+/>
+
+<HeroAuthor icon={IconUserCircle}>
+  <strong>Matt Pocock</strong> — TypeScript eğitmeni, Total TypeScript yaratıcısı, eski Vercel &amp; Stately mühendisi
+</HeroAuthor>
+
+<Toc
+  title="İçindekiler"
+  layout="list"
+  entries={[
+    { id: "s1", num: "1", label: "Ön Koşullar ve Kurulum" },
+    { id: "s2", num: "2", label: "Proje Tanımı: URL Shortener" },
+    { id: "s3", num: "3", label: "Skill Haritası" },
+    { id: "a0", num: "4", label: "Adım 0 — /setup-matt-pocock-skills" },
+    { id: "a1", num: "5", label: "Adım 1 — /grill-with-docs" },
+    { id: "a2", num: "6", label: "Adım 2 — /to-prd" },
+    { id: "a3", num: "7", label: "Adım 3 — /to-issues" },
+    { id: "a4", num: "8", label: "Adım 4 — /tdd" },
+    { id: "a5", num: "9", label: "Adım 5 — /triage" },
+    { id: "a6", num: "10", label: "Adım 6 — /improve-codebase-architecture" },
+    { id: "s11", num: "11", label: "İhtiyaç Halinde: /diagnose, /zoom-out, /prototype" },
+    { id: "s12", num: "12", label: "Özet: Komple Akış" },
+  ]}
+/>
+
+<Section id="s1" num="01" title="Ön Koşullar ve Kurulum">
+
+<TwoColGrid>
+  <GridCard icon={IconTool} iconColor="var(--accent-text)" title="Gerekli araçlar">
+    <ul>
+      <li><strong>Claude Code</strong> — <code>npm install -g @anthropic-ai/claude-code</code></li>
+      <li><strong>Node.js</strong> v18+ — skill installer ve örnek proje için</li>
+      <li><strong>Git + GitHub</strong> — skill'ler GitHub Issues ile entegre çalışır</li>
+      <li><strong>GitHub CLI (<code>gh</code>)</strong> — issue tracker'a yazması için gerekli</li>
+    </ul>
+  </GridCard>
+  <GridCard icon={IconTerminal} iconColor="var(--blue-text)" title="gh CLI kurulum">
+    <CodeBlock lang="bash" copyLabel="Kopyala" copiedLabel="Kopyalandı">
+{`# macOS
+brew install gh
+
+# Linux
+sudo apt install gh
+
+# Authenticate
+gh auth login`}
+    </CodeBlock>
+  </GridCard>
+</TwoColGrid>
+
+### Skill'leri Yükleme
+
+Pocock'un skill'leri tek komutla yüklenir. Hangi skill'leri istediğinizi ve hangi agent'a yükleyeceğinizi sorar:
+
+<CodeBlock lang="bash" copyLabel="Kopyala" copiedLabel="Kopyalandı">
+{`npx skills@latest add mattpocock/skills`}
+</CodeBlock>
+
+<Callout icon={IconInfoCircle} kind="info">
+  Kurulum sırasında yüklemek istediğiniz skill'leri seçin. <strong>/setup-matt-pocock-skills&apos;i mutlaka seçin</strong> — diğer skill'ler bunun çıktısına bağımlıdır. Hedef agent olarak Claude Code'u seçin. Skill'ler projenizin <code>.claude/</code> dizinine yüklenir.
+</Callout>
+
+<CodeBlock lang="bash — projeyi başlat" copyLabel="Kopyala" copiedLabel="Kopyalandı">
+{`cd your-project
+claude
+# Artık /grill-with-docs, /tdd, /to-prd gibi komutlar aktif`}
+</CodeBlock>
+
+</Section>
+
+<Section id="s2" num="02" title="Proje Tanımı: URL Shortener">
+
+Örnek projemiz basit bir URL kısaltma servisi. Yeterince küçük (bir yazıda tamamlanabilir) ama yeterince derin (database, API, redirect mantığı, analytics) — skill'lerin her birini göstermek için ideal senaryo.
+
+<TwoColGrid>
+  <GridCard icon={IconLink} iconColor="var(--accent-text)" title="Özellikler">
+    <ul>
+      <li>Kullanıcı uzun URL verir, sistem kısa link döndürür</li>
+      <li>Kısa link ziyaretinde orijinal URL'ye yönlendirme</li>
+      <li>Her yönlendirme kayıt altına alınır (tıklama, tarih)</li>
+      <li>Basit dashboard tıklama istatistiklerini gösterir</li>
+    </ul>
+  </GridCard>
+  <GridCard icon={IconTerminal2} iconColor="var(--green-text)" title="Repo oluşturma">
+    <CodeBlock lang="bash" copyLabel="Kopyala" copiedLabel="Kopyalandı">
+{`mkdir url-shortener && cd url-shortener
+git init
+gh repo create url-shortener \\
+  --public --source=. --push`}
+    </CodeBlock>
+  </GridCard>
+</TwoColGrid>
+
+</Section>
+
+<Section id="s3" num="03" title="Skill Haritası: Hangisi Ne Zaman Kullanılır?">
+
+<TableBox icon={IconRoute} tone="green" title="Zorunlu akış — her feature için">
+  <DataTable
+    headers={["#", "Skill", "Ne yapar", "Ne zaman"]}
+    rows={[
+      ["0", <Cmd key="c0">/setup-matt-pocock-skills</Cmd>, "Repo'yu konfigüre eder", "Proje başında bir kez"],
+      ["1", <Cmd key="c1">/grill-with-docs</Cmd>, "Fikri sorgular, CONTEXT.md ve ADR oluşturur", "Her yeni feature'dan önce"],
+      ["2", <Cmd key="c2">/to-prd</Cmd>, "Konuşma bağlamından PRD üretir", "Grilling tamamlanınca"],
+      ["3", <Cmd key="c3">/to-issues</Cmd>, "PRD'yi vertical slice issue'lara böler", "PRD onaylanınca"],
+      ["4", <Cmd key="c4">/tdd</Cmd>, "Red-Green-Refactor ile implement eder", "Her issue için"],
+    ]}
+  />
+</TableBox>
+
+<TableBox icon={IconTools} tone="amber" title="İhtiyaç halinde kullanılan skill'ler">
+  <DataTable
+    headers={["Skill", "Ne yapar", "Ne zaman"]}
+    rows={[
+      [<Cmd key="c5">/triage</Cmd>, "Issue'ları state machine ile yönetir", "Biriken issue'lar varsa"],
+      [<Cmd key="c6">/improve-codebase-architecture</Cmd>, "Shallow module'ları tespit eder, deepening önerir", "Feature sonrası veya mimari bozulduğunda"],
+      [<Cmd key="c7">/diagnose</Cmd>, "Yapılandırılmış debugging loop çalıştırır", "Zor bug'larda"],
+      [<Cmd key="c8">/zoom-out</Cmd>, "Agent'a üst düzey bakış açısı kazandırır", "Tanımadığın kod alanında çalışırken"],
+      [<Cmd key="c9">/prototype</Cmd>, "Throwaway prototype ile tasarım kararı doğrular", "Mimari kararsızlıkta"],
+    ]}
+  />
+</TableBox>
+
+</Section>
+
+<Phase id="a0" num={0} title="Repo'yu Skill'ler İçin Hazırla" subtitle={<><Cmd><IconTerminal2 size={12} /> /setup-matt-pocock-skills</Cmd> · Proje başında bir kez</>}>
+
+Bu skill, repo'yu diğer skill'lerin çalışması için yapılandırır. **Diğer tüm engineering skill'leri bu adımın çıktısına bağımlıdır.** Üç karar alınır: issue tracker konumu, triage label'ları ve domain doc konumu.
+
+<ExpandableExample label={<><IconTerminal size={16} /> Terminal çıktısı — /setup-matt-pocock-skills</>}>
+<Terminal label="claude — url-shortener">
+{`> /setup-matt-pocock-skills
+
+Claude: Repo'yu inceliyorum...
+- git remote: github.com/username/url-shortener ✓
+- CLAUDE.md: mevcut değil
+- CONTEXT.md: mevcut değil
+- docs/adr/: mevcut değil
+
+─── Section A: Issue Tracker ───
+
+GitHub'da olduğu için GitHub Issues öneriyorum.
+Seçenekler: 1) GitHub Issues  2) Local markdown  3) Diğer
+
+Siz: 1
+
+─── Section B: Triage Label'ları ───
+
+Varsayılan label'lar:
+- needs-triage → değerlendirme bekliyor
+- needs-info → reporter'dan bilgi bekleniyor
+- ready-for-agent → AFK agent alabilir
+- ready-for-human → insan implementasyonu gerekli
+- wontfix → yapılmayacak
+
+Bu label'ları kullanayım mı?
+Siz: Varsayılanlar iyi.
+
+─── Section C: Domain Docs ───
+
+Önerilen: CONTEXT.md → repo kökünde, ADR'lar → docs/adr/
+Siz: Tamam.
+
+Claude: Oluşturulan dosyalar:
+✓ CLAUDE.md (agent skills konfigürasyonu eklendi)
+✓ docs/agents/issue-tracker.md
+✓ docs/agents/triage-labels.md
+✓ docs/agents/domain-docs.md`}
+</Terminal>
+</ExpandableExample>
+
+<Callout icon={IconBulb} kind="tip">
+  Bu adımdan sonra diğer skill'ler issue tracker'a nasıl yazacaklarını, hangi label'ları kullanacaklarını ve domain doc'ları nerede bulacaklarını bilir. Setup olmadan diğer skill'ler çalışmaz.
+</Callout>
+
+</Phase>
+
+<Phase id="a1" num={1} title="Fikri Sorgula ve Domain Dilini Kur" subtitle={<><Cmd><IconTerminal2 size={12} /> /grill-with-docs</Cmd> · Her yeni feature'dan önce</>}>
+
+<Cmd>/grill-with-docs</Cmd> sizi relentlessly interview eder — ama bunu yaparken iki ek şey yapar: **(1)** projenin domain dilini oluşturur/günceller (<code>CONTEXT.md</code>) ve **(2)** mimari kararları <code>docs/adr/</code> altında ADR olarak belgeler.
+
+<ExpandableExample label={<><IconTerminal size={16} /> Terminal çıktısı — /grill-with-docs</>}>
+<Terminal label="claude — url-shortener">
+{`> /grill-with-docs Basit bir URL shortener yapacağız.
+  Kullanıcı URL verir, kısa link döner. Tıklamalar
+  sayılır ve dashboard'da gösterilir.
+
+Claude: Hemen plan üretmeyeceğim, önce netleştirmem gereken şeyler var.
+
+Soru 1/N: Kısa URL'lerin formatı nasıl olacak?
+Rastgele string mi (abc123), yoksa sequential sayı mı?
+Önerim: 6 karakterli rastgele alfanumerik — çakışma riski düşük.
+
+Siz: Rastgele 6 karakter, alfanumerik.
+
+Claude: [CONTEXT.md'ye ekleniyor]
+  slug — Kısa URL'deki 6 karakterlik rastgele alfanumerik
+  tanımlayıcı. Ör: abc123 → example.com/abc123
+
+Soru 2/N: Aynı URL ikinci kez kısaltılırsa ne olacak?
+Yeni slug mı üretilsin, yoksa mevcut slug mu dönsün?
+Önerim: Her seferinde yeni slug — analytics açısından her
+kampanya için ayrı link istenebilir.
+
+Siz: Her seferinde yeni slug.
+
+Claude: [docs/adr/0001-unique-slug-per-submission.md oluşturuluyor]
+  # Aynı URL İçin Her Seferde Yeni Slug
+  Karar: Her URL submission'ı yeni bir slug üretir.
+  Neden: Farklı kaynaklardan tıklamaları ayrı takip etmek için.
+  Alternatif: Idempotent — reddedildi çünkü analytics kaybolur.
+
+Soru 3/N: Tıklama kaydında hangi bilgiler tutulacak?
+Önerim: Her tıklama ayrı kayıt (timestamp, referrer, user-agent).
+
+Siz: Her tıklama ayrı kayıt olsun.
+
+Claude: [CONTEXT.md'ye ekleniyor]
+  click — Bir slug'a gelen tek HTTP isteği.
+  Timestamp, referrer ve user-agent kaydedilir.
+
+(... 8-10 soru daha: auth, rate limit, slug silinebilir mi,
+dashboard içeriği, API-only mı, tech stack ...)
+
+Claude: Oluşturulan/güncellenen dosyalar:
+
+CONTEXT.md:
+  slug, click, link, click count, dashboard terimleri
+  Terimler arası ilişkiler (link has many clicks)
+
+docs/adr/:
+  0001-unique-slug-per-submission.md
+  0002-individual-click-records.md
+  0003-no-auth-for-v1.md
+  0004-api-first-no-ui-for-v1.md`}
+</Terminal>
+</ExpandableExample>
+
+### Bu Adımın Değeri
+
+<ValueRow>
+  <ValueCard icon={IconHeartHandshake} iconColor="var(--accent-text)" title="Shared Understanding">
+    Siz ve agent aynı şeyi aynı kelimelerle anlıyorsunuz
+  </ValueCard>
+  <ValueCard icon={IconBook} iconColor="var(--green-text)" title="CONTEXT.md">
+    Değişken ve fonksiyon adları domain dilini izleyecek
+  </ValueCard>
+  <ValueCard icon={IconGitBranch} iconColor="var(--blue-text)" title="ADR'lar">
+    Kararlar belgelenmiş; yeni session'da aynı sorular sorulmaz
+  </ValueCard>
+</ValueRow>
+
+</Phase>
+
+<Phase id="a2" num={2} title="PRD Oluştur" subtitle={<><Cmd><IconTerminal2 size={12} /> /to-prd</Cmd> · Grilling tamamlanınca</>}>
+
+<Cmd>/to-prd</Cmd> sizi tekrar interview etmez. Konuşma bağlamındaki her şeyi (grilling kararları, CONTEXT.md, ADR'lar) sentezleyerek bir PRD üretir ve doğrudan **GitHub Issues'a publish eder**.
+
+<ExpandableExample label={<><IconTerminal size={16} /> Terminal çıktısı — /to-prd</>}>
+<Terminal label="claude — url-shortener">
+{`> /to-prd
+
+Claude: Konuşma bağlamını ve domain doc'ları sentezliyorum...
+
+Repo'yu inceliyorum — mevcut seam'ler:
+  - Henüz kod yok, sıfırdan başlıyoruz.
+  - Önerilen test seam'leri:
+    1. LinkService (slug üretimi + persistence)
+    2. RedirectHandler (slug → URL çözümleme + click kaydı)
+    3. AnalyticsService (click count hesaplama)
+
+Bu seam'ler doğru mu?
+Siz: Doğru, devam et.
+
+Claude: PRD'yi GitHub Issues'a publish ediyorum...
+
+✓ Issue #1 oluşturuldu: "PRD: URL Shortener v1"
+  Label: ready-for-agent
+
+PRD içeriği:
+  ## Problem Statement
+  Kullanıcıların uzun URL'leri kısa linklere dönüştürmesi
+  ve tıklama istatistiklerini görmesi gerekiyor.
+
+  ## User Stories
+  1. Uzun URL verip kısa link almak istiyorum.
+  2. Kısa link ziyaretçisi olarak yönlendirilmek istiyorum.
+  3. Toplam tıklama sayısını görmek istiyorum.
+  4. Tıklama geçmişini (tarih, referrer) görmek istiyorum.
+
+  ## Implementation Decisions
+  - Slug: 6 karakter rastgele alfanumerik (ADR-0001)
+  - Her submission yeni slug üretir (ADR-0001)
+  - Click kayıtları individual (ADR-0002)
+  - Auth yok v1'de (ADR-0003)
+  - API-only, UI yok (ADR-0004)
+  - Stack: Node.js + TypeScript + SQLite
+
+  ## Testing Decisions
+  - Seam 1: LinkService — unit test
+  - Seam 2: RedirectHandler — integration test
+  - Seam 3: AnalyticsService — unit test
+  - E2E: create link → visit → check analytics
+
+  ## Definition of Done
+  Testler ✓ | Typecheck ✓ | Build ✓`}
+</Terminal>
+</ExpandableExample>
+
+<Callout icon={IconInfoCircle} kind="info">
+  <strong>/to-prd&apos;nin önemli farkı:</strong> "Testing Decisions" bölümü sadece "unit test yazılacak" demez — test sınırlarını (<strong>seam</strong>) açıkça tanımlar. Bu, /tdd adımında agent&apos;ın testleri nereye koyacağını ve neyi test edeceğini bilmesini sağlar.
+</Callout>
+
+</Phase>
+
+<Phase id="a3" num={3} title="PRD'yi Issue'lara Böl" subtitle={<><Cmd><IconTerminal2 size={12} /> /to-issues</Cmd> · PRD onaylanınca</>}>
+
+<Cmd>/to-issues</Cmd>, PRD'yi **vertical slice** (tracer bullet) issue'lara böler. Her issue tüm katmanları dikey olarak keser. Yatay bölme (önce tüm database, sonra tüm API) yapmaz.
+
+<ExpandableExample label={<><IconTerminal size={16} /> Terminal çıktısı — /to-issues</>}>
+<Terminal label="claude — url-shortener">
+{`> /to-issues #1
+
+Claude: PRD #1'i okuyorum... Domain dilini CONTEXT.md'den yüklüyorum...
+
+Önerilen vertical slice breakdown:
+
+1. "Create short link and return slug"
+   Type: AFK | Blocked by: none | User stories: #1
+
+2. "Redirect slug to original URL and record click"
+   Type: AFK | Blocked by: #1 | User stories: #2
+
+3. "Get click count for a link"
+   Type: AFK | Blocked by: #2 | User stories: #3
+
+4. "Get click history with timestamps and referrers"
+   Type: AFK | Blocked by: #2 | User stories: #4
+
+5. "Handle edge cases: expired slug, invalid slug, collision"
+   Type: AFK | Blocked by: #1, #2
+
+Granülarite uygun mu? Dependency'ler doğru mu?
+Siz: Uygun, oluştur.
+
+Claude: Issue'ları GitHub'a publish ediyorum...
+✓ Issue #2: Create short link and return slug
+  Label: ready-for-agent
+✓ Issue #3: Redirect slug to original URL and record click
+  Label: ready-for-agent | Blocked by: #2
+✓ Issue #4: Get click count for a link
+  Label: ready-for-agent | Blocked by: #3
+✓ Issue #5: Get click history with timestamps and referrers
+  Label: ready-for-agent | Blocked by: #3
+✓ Issue #6: Handle edge cases
+  Label: ready-for-agent | Blocked by: #2, #3`}
+</Terminal>
+</ExpandableExample>
+
+<Callout icon={IconInfoCircle} kind="info">
+  <strong>HITL vs AFK ayrımı:</strong> Her issue "HITL" (Human-in-the-Loop) veya "AFK" olarak etiketlenir. AFK issue'lar agent'ın tek başına tamamlayabileceği, iyi tanımlı işlerdir. HITL issue'lar mimari karar veya insan müdahalesi gerektirir. Bu projede tüm issue'lar AFK — çünkü kararlar grilling sırasında alındı ve PRD'de belgelendi.
+</Callout>
+
+</Phase>
+
+<Phase id="a4" num={4} title="TDD ile İmplementasyon" subtitle={<><Cmd><IconTerminal2 size={12} /> /tdd</Cmd> · Her issue için</>}>
+
+<Cmd>/tdd</Cmd>, Red-Green-Refactor döngüsüyle çalışır. **Horizontal slicing yapmaz** — "önce tüm testleri yaz, sonra tüm kodu yaz" demez. Bunun yerine vertical slice: bir test yaz → o testi geçir → sonraki test. Her döngüde agent önceki döngüden öğrenir.
+
+<ExpandableExample label={<><IconTerminal size={16} /> Terminal çıktısı — /tdd #2</>}>
+<Terminal label="claude — url-shortener">
+{`> /tdd #2
+
+Claude: Issue #2: "Create short link and return slug"
+
+Acceptance criteria:
+  POST /links body: { url } → response: { slug, url, createdAt }
+  Slug 6 karakter alfanumerik olmalı
+  Link veritabanına kaydedilmeli
+
+CONTEXT.md'den domain dili:
+  slug: 6 karakterlik rastgele alfanumerik tanımlayıcı
+  link: bir URL + slug çifti
+
+─── RED: İlk test ───
+
+tests/link-service.test.ts oluşturuyorum:
+
+  describe("LinkService", () => {
+    it("should create a link with a 6-char alphanumeric slug", () => {
+      const link = createLink("https://example.com");
+      expect(link.slug).toMatch(/^[a-z0-9]{6}$/);
+      expect(link.url).toBe("https://example.com");
+    });
+  });
+
+npm test → FAIL ✗ (createLink doesn't exist yet)
+
+─── GREEN: Minimal implementation ───
+
+src/link-service.ts oluşturuyorum:
+
+  export function createLink(url: string) {
+    const slug = generateSlug();
+    // ... persist + return
+  }
+
+npm test → PASS ✓
+
+─── RED: Sonraki test ───
+
+  it("should create unique slugs for the same URL", () => {
+    const link1 = createLink("https://example.com");
+    const link2 = createLink("https://example.com");
+    expect(link1.slug).not.toBe(link2.slug);
+  });
+
+npm test → PASS ✓
+
+(... RED-GREEN döngüsü devam eder: API endpoint testi,
+validation testi, her seferinde bir test → bir implementation)
+
+─── REFACTOR ───
+
+generateSlug() ve persistence mantığı aynı fonksiyonda.
+Deep module prensibi gereği LinkService'i ayrıştırıyorum.
+npm test → PASS ✓ (tüm testler hâlâ geçiyor)
+npm run typecheck → PASS ✓
+npm run build → PASS ✓
+
+Implementation Summary:
+- src/link-service.ts (yeni)
+- src/routes/links.ts (yeni)
+- tests/link-service.test.ts (3 test)
+- tests/links-api.test.ts (2 test)`}
+</Terminal>
+</ExpandableExample>
+
+### /tdd'nin Temel Prensipleri
+
+<SimplePrincipleGrid>
+  <SimplePrincipleCard title="1 · Horizontal slicing yasak">
+    "Önce 5 test yaz, sonra 5 implementation" yapmaz. Her test-implementation çifti bir vertical slice'tır.
+  </SimplePrincipleCard>
+  <SimplePrincipleCard title="2 · Integration-style testler">
+    Internal mock'lar yerine public interface üzerinden test yazılır. "checkout calls paymentService" değil, "user can checkout" test edilir.
+  </SimplePrincipleCard>
+  <SimplePrincipleCard title="3 · Deep module hedeflenilir">
+    Küçük interface, zengin implementation. Test sınırı = modül sınırı. Refactor aşamasında bu kontrol edilir.
+  </SimplePrincipleCard>
+  <SimplePrincipleCard title="4 · Mocking sadece system boundary">
+    Kendi modüllerini mock'lama. Sadece harici bağımlılıkları (database, API, filesystem) mock'la.
+  </SimplePrincipleCard>
+</SimplePrincipleGrid>
+
+</Phase>
+
+<Phase id="a5" num={5} title="Issue Yönetimi" subtitle={<><Cmd><IconTerminal2 size={12} /> /triage</Cmd> · Issue'lar biriktiğinde</>}>
+
+<Cmd>/triage</Cmd>, issue'ları bir state machine ile yönetir. Küçük projelerde veya solo çalışmada atlayabilirsiniz. Her issue şu durumlardan birindedir:
+
+<StateFlow>
+  <State tone="start">unlabeled</State>
+  <StateArrow>→</StateArrow>
+  <State tone="mid">needs-triage</State>
+  <StateArrow>→</StateArrow>
+  <State tone="ok">ready-for-agent</State>
+  <StateArrow>/</StateArrow>
+  <State tone="ok">ready-for-human</State>
+  <StateArrow>/</StateArrow>
+  <State tone="hold">needs-info</State>
+  <StateArrow>→</StateArrow>
+  <State tone="mid">needs-triage</State>
+  <StateArrow>/</StateArrow>
+  <State tone="end">wontfix</State>
+</StateFlow>
+
+<ExpandableExample label={<><IconTerminal size={16} /> Terminal çıktısı — /triage</>}>
+<Terminal label="claude — url-shortener">
+{`> /triage Dikkat gerektiren issue'ları göster
+
+Claude: Issue tracker'ı tarıyorum...
+
+ready-for-agent (agent alabilir):
+  #3 Redirect slug to original URL — blocked by #2
+  #4 Get click count — blocked by #3
+  #5 Get click history — blocked by #3
+  #6 Handle edge cases — blocked by #2, #3
+
+needs-triage: (yok)
+
+Önerilen aksiyon: Issue #2 tamamlandığı için
+#3 artık blocker'sız. #3 ile devam edebilirsiniz.
+
+Siz: #3'ü al ve /tdd ile implement et.`}
+</Terminal>
+</ExpandableExample>
+
+</Phase>
+
+<Phase id="a6" num={6} title="Mimariyi İyileştir" subtitle={<><Cmd><IconTerminal2 size={12} /> /improve-codebase-architecture</Cmd> · Her 3-5 issue'da bir</>}>
+
+Bu skill, CONTEXT.md'deki domain dilini ve ADR'ları kullanarak kod tabanını analiz eder. Shallow module'ları tespit eder ve **deepening önerileri** sunar. Farkı kodu sadece yapısal olarak değil, **domain dili bağlamında** analiz etmesidir.
+
+<ExpandableExample label={<><IconTerminal size={16} /> Terminal çıktısı — /improve-codebase-architecture</>}>
+<Terminal label="claude — url-shortener">
+{`> /improve-codebase-architecture
+
+Claude: CONTEXT.md'den: slug, link, click, click count
+ADR'lardan: unique slug per submission, individual click records
+
+Tespit edilen deepening fırsatları:
+
+1. [Strong] ClickRecorder + ClickCounter birleştirilebilir
+   → AnalyticsService olarak tek deep module
+
+   Problem: İki ayrı modül aynı click tablosuna erişiyor.
+   Interface'leri birlikte neredeyse tüm click mantığını kapsıyor.
+
+   Deletion test: ClickCounter silinsek, aynı mantık
+   AnalyticsService caller'larına dağılır.
+
+   Before: ClickRecorder + ClickCounter (2 modül, 2 interface)
+   After:  AnalyticsService (1 modül, 2 public method)
+
+2. [Worth exploring] SlugGenerator ayrı modül mü olmalı?
+   Problem: Şu an LinkService içinde ama sadece bir fonksiyon.
+   Deletion test: Silinse complexity kaybolur, yayılmaz.
+   Öneri: Şimdilik LinkService içinde kalsın.
+
+Uygulamak istediğiniz önerileri seçin.`}
+</Terminal>
+</ExpandableExample>
+
+</Phase>
+
+<Section id="s11" num="11" title="İhtiyaç Halinde: Yardımcı Skill'ler">
+
+<SectionSkillGrid>
+  <SectionSkillCard icon={IconBug} name={<><Cmd>/diagnose</Cmd> — Yapılandırılmış Debugging</>} when="Zor bug'larda — agent'ın veya sizin çözemediğiniz durumlarda">
+    <p><strong>Loop sırası:</strong> feedback loop kur → reproduce et → minimize et → hipotez kur → instrument et → fix et → regression test yaz. En kritik adım ilkidir: agent deterministic, hızlı ve otomatik çalıştırılabilir bir feedback loop kurmadan ilerlemez.</p>
+    <ExpandableExample label={<><IconTerminal size={16} /> Örnek çıktı</>}>
+      <Terminal label="claude — /diagnose">
+{`> /diagnose Redirect endpoint bazen 404 dönüyor
+  ama slug database'de var.
+
+Claude: Phase 1 — Feedback loop kuruyorum...
+Bug'ı güvenilir şekilde reproduce edecek bir test yazıyorum...
+
+[failing test → bug reproduce → minimize → hipotez
+→ fix → regression test eklendi]`}
+      </Terminal>
+    </ExpandableExample>
+  </SectionSkillCard>
+
+  <SectionSkillCard icon={IconZoomOut} name={<><Cmd>/zoom-out</Cmd> — Üst Düzey Bakış</>} when="Tanımadığınız bir kod alanına girdiğinizde">
+    <p>Agent'a belirli bir dizin veya modül hakkında <strong>CONTEXT.md'deki domain diliyle</strong> üst düzey bakış kazandırır: hangi modüller bağımlı, kim çağırıyor, hangi seam'ler var.</p>
+    <Terminal label="claude — /zoom-out">
+{`> /zoom-out src/analytics/
+
+Claude: Analytics modülü, click kayıtlarını sorgulayan
+servis katmanıdır.
+
+  LinkService → (link oluşturur)
+  RedirectHandler → (click kaydeder) → ClickRepository
+  AnalyticsService → (click'leri okur) ← ClickRepository
+                   → (link meta verisini okur) ← LinkRepository
+
+Caller'lar: GET /links/:slug/stats endpoint'i`}
+    </Terminal>
+  </SectionSkillCard>
+
+  <SectionSkillCard icon={IconFlask} name={<><Cmd>/prototype</Cmd> — Tasarım Kararı Doğrulama</>} when={<>Mimari konusunda kararsızlık varsa — &quot;bu strateji doğru mu?&quot; gibi soruları somutlaştırmak için</>}>
+    <p>Throwaway prototype (terminal script, minimal UI veya log analizi) ile tasarım kararını veri ile doğrular. Sonucu ADR olarak belgeleyebilir.</p>
+    <Terminal label="claude — /prototype">
+{`> /prototype Slug collision handling stratejisini test
+  etmek istiyorum — retry mi, sequential fallback mı?
+
+Claude: Bu bir logic sorusu — terminal script oluşturuyorum.
+
+[10,000 slug üretir, collision oranını ölçer,
+retry vs sequential stratejilerini karşılaştırır]
+
+Sonuç: 6 karakter alfanumerik ile 1M slug'da collision
+oranı %0.001. Retry stratejisi yeterli, sequential
+fallback gereksiz karmaşıklık.
+
+Bu sonucu ADR olarak belgeleyelim mi?`}
+    </Terminal>
+  </SectionSkillCard>
+</SectionSkillGrid>
+
+</Section>
+
+<Section id="s12" num="12" title="Özet: Komple Akış">
+
+Skill'lerin gücü tek tek değil, **birlikte çalışmalarındadır.** <Cmd>/grill-with-docs</Cmd> CONTEXT.md oluşturur → <Cmd>/to-prd</Cmd> bu dili PRD'de kullanır → <Cmd>/to-issues</Cmd> aynı dilde issue yazar → <Cmd>/tdd</Cmd> testlerde bu dili izler → <Cmd>/improve-codebase-architecture</Cmd> domain diliyle mimari analiz yapar. Sonuç: her artefact aynı dili konuşur, aynı kararlara dayanır.
+
+<GroupedFlowPhase icon={IconRepeatOnce} tone="once" title="Bir kez — proje başında">
+  <GroupedFlowStep marker="▸" title={<Cmd>/setup-matt-pocock-skills</Cmd>}>
+    Issue tracker, triage labels, domain docs yapısı
+  </GroupedFlowStep>
+</GroupedFlowPhase>
+
+<FlowConnector />
+
+<GroupedFlowPhase icon={IconRefresh} tone="each" title="Her feature için — tekrarlı döngü">
+  <GroupedFlowStep marker="1" title={<Cmd>/grill-with-docs</Cmd>}>
+    CONTEXT.md güncellenir, ADR'lar yazılır
+  </GroupedFlowStep>
+  <GroupedFlowStep marker="2" title={<Cmd>/to-prd</Cmd>}>
+    PRD issue tracker'a publish edilir
+  </GroupedFlowStep>
+  <GroupedFlowStep marker="3" title={<Cmd>/to-issues</Cmd>}>
+    Vertical slice issue'lar oluşturulur
+  </GroupedFlowStep>
+  <GroupedFlowStep marker="4" title={<><Cmd>/tdd</Cmd> (her issue için)</>}>
+    Red-Green-Refactor, deep module, vertical slice
+  </GroupedFlowStep>
+</GroupedFlowPhase>
+
+<FlowConnector />
+
+<GroupedFlowPhase icon={IconTools} tone="when" title="Gerektiğinde">
+  <GroupedFlowStep marker="▸" title={<Cmd>/triage</Cmd>}>
+    Issue state yönetimi
+  </GroupedFlowStep>
+  <GroupedFlowStep marker="▸" title={<Cmd>/improve-codebase-architecture</Cmd>}>
+    Mimari analiz + deepening önerileri
+  </GroupedFlowStep>
+  <GroupedFlowStep marker="▸" title={<Cmd>/diagnose</Cmd>}>
+    Yapılandırılmış debugging
+  </GroupedFlowStep>
+  <GroupedFlowStep marker="▸" title={<Cmd>/zoom-out</Cmd>}>
+    Üst düzey bakış
+  </GroupedFlowStep>
+  <GroupedFlowStep marker="▸" title={<Cmd>/prototype</Cmd>}>
+    Tasarım kararı doğrulama
+  </GroupedFlowStep>
+</GroupedFlowPhase>
+
+</Section>
+
+<Section id="resources" title="Kaynaklar">
+
+<ResourceList>
+  <ResourceItem icon={IconBrandGithub} title={<a href="https://github.com/mattpocock/skills" target="_blank" rel="noreferrer">github.com/mattpocock/skills</a>}>
+    Skill'lerin kaynak kodu ve dokümantasyonu
+  </ResourceItem>
+  <ResourceItem icon={IconBook} title="A Philosophy of Software Design — John Ousterhout">
+    Deep modules, interface tasarımı
+  </ResourceItem>
+  <ResourceItem icon={IconBook} title="Domain-Driven Design — Eric Evans">
+    Ubiquitous language, CONTEXT.md'nin teorik temeli
+  </ResourceItem>
+  <ResourceItem icon={IconBook} title="The Pragmatic Programmer — David Thomas & Andrew Hunt">
+    Tracer bullets, small steps
+  </ResourceItem>
+</ResourceList>
+
+</Section>

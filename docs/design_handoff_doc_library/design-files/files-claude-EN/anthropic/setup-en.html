@@ -1,0 +1,1229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code Agentic Project Setup</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
+<style>
+:root {
+  --bg: #F7F4EC;
+  --surface: #FFFFFF;
+  --surface2: #F0EBDF;
+  --border: #E4DECF;
+  --border-strong: #D2C9B4;
+  --accent: #C2613F;
+  --accent-bg: rgba(194,97,63,0.07);
+  --accent-border: rgba(194,97,63,0.22);
+  --accent-text: #A8502F;
+  --cyan: #3D5A73;
+  --cyan-bg: rgba(61,90,115,0.07);
+  --cyan-border: rgba(61,90,115,0.22);
+  --cyan-text: #2F4759;
+  --green: #5F7A41;
+  --green-bg: rgba(95,122,65,0.07);
+  --green-border: rgba(95,122,65,0.22);
+  --green-text: #4C6234;
+  --red: #A8412F;
+  --red-bg: rgba(168,65,47,0.07);
+  --red-border: rgba(168,65,47,0.22);
+  --red-text: #8E3526;
+  --text: #211D17;
+  --muted: #8A8270;
+  --subtle: #5C5648;
+  --mono: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);line-height:1.65;font-size:15px}
+a{color:var(--accent-text);text-decoration:none}
+a:hover{text-decoration:underline}
+
+/* Layout */
+.wrap{max-width:860px;margin:0 auto;padding:0 24px 80px}
+
+/* Hero */
+.hero{padding:48px 0 36px;border-bottom:1px solid var(--border);margin-bottom:40px}
+.hero-badge{display:inline-flex;align-items:center;gap:6px;background:var(--accent-bg);border:1px solid var(--accent-border);color:var(--accent-text);font-size:11px;font-family:var(--mono);padding:4px 12px;border-radius:20px;margin-bottom:16px}
+.hero h1{font-size:32px;font-weight:700;line-height:1.2;color:var(--text);margin-bottom:12px}
+.hero h1 span{color:var(--accent-text)}
+.hero-desc{font-size:15px;color:var(--subtle);max-width:620px;line-height:1.6}
+.tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:20px}
+.tag{font-family:var(--mono);font-size:11px;padding:3px 9px;border-radius:4px;background:var(--surface2);border:1px solid var(--border);color:var(--muted)}
+
+/* TOC */
+.toc{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px 24px;margin-bottom:48px}
+.toc-title{font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:14px;display:flex;align-items:center;gap:6px}
+.toc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:2px 12px}
+.toc-link{display:flex;align-items:center;gap:8px;padding:5px 0;font-size:13px;color:var(--subtle);border-bottom:none;transition:color .15s}
+.toc-link:hover{color:var(--accent-text);text-decoration:none}
+.toc-num{font-family:var(--mono);font-size:10px;color:var(--accent-text);opacity:.7;min-width:20px}
+
+/* Section */
+.section{margin-bottom:56px;scroll-margin-top:20px}
+.sec-head{display:flex;align-items:center;gap:10px;margin-bottom:20px;padding-bottom:14px;border-bottom:1px solid var(--border)}
+.sec-num{font-family:var(--mono);font-size:10px;background:var(--accent-bg);color:var(--accent-text);border:1px solid var(--accent-border);padding:2px 8px;border-radius:4px;letter-spacing:.04em}
+.sec-head h2{font-size:22px;font-weight:600;color:var(--text)}
+h3{font-size:16px;font-weight:600;color:var(--text);margin:24px 0 10px}
+p{color:var(--subtle);font-size:14px;margin-bottom:12px;line-height:1.65}
+ul,ol{padding-left:20px;margin-bottom:12px}
+li{font-size:14px;color:var(--subtle);margin-bottom:4px;line-height:1.55}
+strong{color:var(--text);font-weight:600}
+
+/* Inline code */
+code{font-family:var(--mono);font-size:12px;background:var(--surface2);border:1px solid var(--border);padding:1px 5px;border-radius:4px;color:var(--cyan-text)}
+
+/* File tree bullet list */
+.ftree-ul,.ftree-ul ul{list-style:none;padding:0;margin:0}
+.ftree-ul{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px 24px}
+.ftree-ul ul{padding-left:20px;border-left:2px solid var(--border);margin:3px 0 3px 10px}
+.ftree-ul li{padding:3px 0}
+.ftree-ul .ft-row{display:inline-flex;align-items:center;gap:6px;font-family:var(--mono);font-size:13px;cursor:default}
+.ft-dir-name{color:#2F4759;font-weight:500}
+.ft-file-name{color:var(--subtle)}
+.ft-special-name{color:#A8502F;font-weight:600}
+.ftree-ul i{font-size:15px}
+.ti-folder-open{color:#C9971F}
+.ft-dir-name i.ti-folder{color:#C9971F}
+.ft-icon-folder{color:#C9971F}
+.ft-icon-file{color:var(--muted)}
+.ft-icon-special{color:#A8502F}
+
+/* Code blocks */
+.cb{background:var(--surface);border:1px solid var(--border);border-radius:12px;margin:12px 0;overflow:hidden}
+.cb-head{display:flex;align-items:center;justify-content:space-between;padding:9px 16px;border-bottom:1px solid var(--border);background:var(--surface2)}
+.cb-lang{font-family:var(--mono);font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.cb-copy{background:none;border:1px solid var(--border);color:var(--muted);font-size:11px;font-family:var(--mono);padding:3px 10px;border-radius:4px;cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:4px}
+.cb-copy:hover{background:var(--surface);color:var(--text);border-color:var(--border-strong)}
+.cb pre{padding:16px 20px;overflow-x:auto;font-family:var(--mono);font-size:13px;line-height:1.75;color:var(--subtle)}
+
+/* Skill table */
+.stbl{width:100%;border-collapse:collapse;margin:12px 0}
+.stbl th{text-align:left;padding:8px 12px;font-size:11px;color:var(--muted);font-family:var(--mono);border-bottom:1px solid var(--border-strong);font-weight:500;text-transform:uppercase;letter-spacing:.05em}
+.stbl td{padding:11px 12px;border-bottom:1px solid var(--border);font-size:14px;color:var(--subtle);vertical-align:top}
+.stbl tr:last-child td{border-bottom:none}
+.stbl tr:hover td{background:var(--surface2)}
+.stbl .sc{font-family:var(--mono);font-size:12px;color:var(--cyan-text);white-space:nowrap}
+
+/* Resp grid */
+.rgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px;margin:12px 0}
+.rcard{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px;transition:border-color .2s}
+.rcard:hover{border-color:var(--border-strong)}
+.rcard-icon{font-size:20px;color:var(--accent-text);margin-bottom:8px}
+.rcard-name{font-family:var(--mono);font-size:13px;color:var(--cyan-text);font-weight:500;margin-bottom:5px}
+.rcard-desc{font-size:13px;color:var(--muted);line-height:1.5}
+
+/* Cards (collapsible) */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:10px;margin-bottom:10px;overflow:hidden;transition:border-color .2s}
+.card:hover{border-color:var(--border-strong)}
+.ch{display:flex;align-items:center;justify-content:space-between;padding:15px 18px;cursor:pointer;user-select:none;transition:background .15s}
+.ch:hover{background:var(--surface2)}
+.cl{display:flex;align-items:center;gap:10px}
+.cbadge{font-family:var(--mono);font-size:10px;padding:2px 8px;border-radius:4px;font-weight:500}
+.bskill{background:var(--cyan-bg);color:var(--cyan-text);border:1px solid var(--cyan-border)}
+.bagent{background:var(--accent-bg);color:var(--accent-text);border:1px solid var(--accent-border)}
+.bdocs{background:var(--green-bg);color:var(--green-text);border:1px solid var(--green-border)}
+.cname{font-family:var(--mono);font-size:13px;color:var(--text);font-weight:500}
+.cdesc{font-size:12px;color:var(--muted);margin-top:2px}
+.ctog{color:var(--muted);font-size:16px;transition:transform .2s;flex-shrink:0}
+.card.open .ctog{transform:rotate(180deg)}
+.cbody{display:none;padding:16px 18px;border-top:1px solid var(--border)}
+.card.open .cbody{display:block}
+.cbody p{font-size:13px}
+.cbody li{font-size:13px}
+.cbody ol{padding-left:20px;counter-reset:none}
+
+/* Workflow steps */
+.wstep{display:flex;align-items:flex-start;gap:14px;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:15px;margin-bottom:10px}
+.wnum{width:30px;height:30px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:12px;font-weight:600;background:var(--accent-bg);color:var(--accent-text);border:1px solid var(--accent-border);flex-shrink:0}
+.wbody h4{font-family:var(--mono);font-size:13px;color:var(--text);font-weight:500;margin-bottom:3px}
+.wbody p{font-size:13px;color:var(--muted);margin:0}
+
+/* Anti-patterns */
+.ap{margin-bottom:16px}
+.aprow{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.avoid{background:var(--red-bg);border:1px solid var(--red-border);border-radius:10px;padding:14px}
+.prefer{background:var(--green-bg);border:1px solid var(--green-border);border-radius:10px;padding:14px}
+.aplabel{font-size:10px;font-family:var(--mono);text-transform:uppercase;letter-spacing:.08em;font-weight:600;margin-bottom:8px;display:flex;align-items:center;gap:5px}
+.avoid .aplabel{color:var(--red-text)}
+.prefer .aplabel{color:var(--green-text)}
+.apcode{font-family:var(--mono);font-size:12px;color:var(--subtle);line-height:1.85}
+
+/* Pipeline */
+.pipeline{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:2px;margin:32px 0}
+.pnode{display:flex;flex-direction:column;align-items:center;gap:6px}
+.pdot{width:46px;height:46px;border-radius:50%;background:var(--accent-bg);border:1.5px solid var(--accent-border);display:flex;align-items:center;justify-content:center;font-size:18px;color:var(--accent-text)}
+.plabel{font-size:10px;color:var(--muted);text-align:center;max-width:52px;line-height:1.35;font-family:var(--mono)}
+.parr{color:var(--muted);font-size:16px;margin:0 4px;margin-bottom:22px}
+
+/* Principles grid */
+.pgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}
+.pcard{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:15px}
+.pcard h4{font-size:14px;font-weight:500;color:var(--text);margin-bottom:6px;display:flex;align-items:center;gap:7px}
+.pcard p{font-size:13px;color:var(--muted);margin:0}
+.pcard i{color:var(--accent-text)}
+
+/* Callout */
+.callout{background:var(--accent-bg);border:1px solid var(--accent-border);border-radius:10px;padding:13px 16px;margin:14px 0;font-size:13px;color:var(--subtle);display:flex;gap:10px;align-items:flex-start;line-height:1.5}
+.callout i{color:var(--accent-text);font-size:16px;flex-shrink:0;margin-top:1px}
+
+hr{border:none;border-top:1px solid var(--border);margin:32px 0}
+
+/* OS Tabs */
+.os-tabs{border:1px solid var(--border);border-radius:12px;overflow:hidden}
+.os-tab-bar{display:flex;background:var(--surface2);border-bottom:1px solid var(--border)}
+.os-tab{background:none;border:none;padding:10px 18px;font-size:13px;color:var(--muted);cursor:pointer;display:flex;align-items:center;gap:6px;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .15s;font-family:inherit}
+.os-tab:hover{color:var(--text)}
+.os-tab.active{color:var(--accent-text);border-bottom-color:var(--accent);font-weight:500}
+.os-tab-panel{display:none}
+.os-tab-panel.active{display:block}
+.os-tab-panel .cb{border:none;border-radius:0;margin:0}
+.os-tab-panel .cb-head{border-radius:0}
+
+@media(max-width:600px){
+  .aprow,.pgrid,.rgrid{grid-template-columns:1fr}
+  .hero h1{font-size:24px}
+  .wrap{padding:0 16px 60px}
+  .pipeline{gap:0}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<!-- Hero -->
+<div class="hero">
+  <div class="hero-badge"><i class="ti ti-terminal-2"></i> agentic-ai-dev &nbsp;·&nbsp; intermediate level</div>
+  <h1>Claude Code <span>Agentic</span> Project Setup</h1>
+  <p class="hero-desc">A Claude Code-compatible agentic development setup template you can copy into any software project — skills, sub-agents, CLAUDE.md, and a standard folder structure, all in one document.</p>
+  <div class="tags">
+    <span class="tag">claude-code</span>
+    <span class="tag">skills</span>
+    <span class="tag">sub-agents</span>
+    <span class="tag">CLAUDE.md</span>
+    <span class="tag">ADR</span>
+    <span class="tag">agentic workflow</span>
+    <span class="tag">mattpocock/skills</span>
+  </div>
+</div>
+
+<!-- TOC -->
+<div class="toc">
+  <div class="toc-title"><i class="ti ti-list"></i> Table of Contents</div>
+  <div class="toc-grid">
+    <a class="toc-link" href="#s1"><span class="toc-num">01</span>Target Folder Structure</a>
+    <a class="toc-link" href="#s2"><span class="toc-num">02</span>Folder Responsibilities</a>
+    <a class="toc-link" href="#s3"><span class="toc-num">03</span>Setup Commands</a>
+    <a class="toc-link" href="#s4"><span class="toc-num">04</span>CLAUDE.md Template</a>
+    <a class="toc-link" href="#s5"><span class="toc-num">05</span>Skill Set</a>
+    <a class="toc-link" href="#s6"><span class="toc-num">06</span>Skill Files</a>
+    <a class="toc-link" href="#s7"><span class="toc-num">07</span>Agent Definitions</a>
+    <a class="toc-link" href="#s8"><span class="toc-num">08</span>Docs README Templates</a>
+    <a class="toc-link" href="#s9"><span class="toc-num">09</span>Workflow</a>
+    <a class="toc-link" href="#s10"><span class="toc-num">10</span>Usage Principles</a>
+    <a class="toc-link" href="#s11"><span class="toc-num">11</span>Anti-Patterns</a>
+    <a class="toc-link" href="#s12"><span class="toc-num">12</span>Summary</a>
+  </div>
+</div>
+
+<!-- S1 Folder Structure -->
+<div class="section" id="s1">
+  <div class="sec-head">
+    <span class="sec-num">01</span>
+    <h2>Target Folder Structure</h2>
+  </div>
+  <p>The following structure is created in every new project:</p>
+  <ul class="ftree-ul">
+    <li>
+      <span class="ft-row"><i class="ti ti-folder-open ft-icon-folder"></i><span class="ft-dir-name">your-project/</span></span>
+      <ul>
+        <li><span class="ft-row"><i class="ti ti-file-description ft-icon-special"></i><span class="ft-special-name">CLAUDE.md</span></span></li>
+        <li>
+          <span class="ft-row"><i class="ti ti-folder ft-icon-folder"></i><span class="ft-dir-name">.claude/</span></span>
+          <ul>
+            <li>
+              <span class="ft-row"><i class="ti ti-folder ft-icon-folder"></i><span class="ft-dir-name">skills/</span></span>
+              <ul>
+                <li><span class="ft-row"><i class="ti ti-file-code ft-icon-file"></i><span class="ft-file-name">grill-with-docs/<strong>SKILL.md</strong></span></span></li>
+                <li><span class="ft-row"><i class="ti ti-file-code ft-icon-file"></i><span class="ft-file-name">to-prd/<strong>SKILL.md</strong></span></span></li>
+                <li><span class="ft-row"><i class="ti ti-file-code ft-icon-file"></i><span class="ft-file-name">to-issues/<strong>SKILL.md</strong></span></span></li>
+                <li><span class="ft-row"><i class="ti ti-file-code ft-icon-file"></i><span class="ft-file-name">tdd/<strong>SKILL.md</strong></span></span></li>
+                <li><span class="ft-row"><i class="ti ti-file-code ft-icon-file"></i><span class="ft-file-name">codebase-design/<strong>SKILL.md</strong></span></span></li>
+                <li><span class="ft-row"><i class="ti ti-file-code ft-icon-file"></i><span class="ft-file-name">diagnosing-bugs/<strong>SKILL.md</strong></span></span></li>
+                <li><span class="ft-row"><i class="ti ti-file-code ft-icon-file"></i><span class="ft-file-name">improve-codebase-architecture/<strong>SKILL.md</strong></span></span></li>
+              </ul>
+            </li>
+            <li>
+              <span class="ft-row"><i class="ti ti-folder ft-icon-folder"></i><span class="ft-dir-name">agents/</span></span>
+              <ul>
+                <li><span class="ft-row"><i class="ti ti-file-text ft-icon-file"></i><span class="ft-file-name">planner-agent.md</span></span></li>
+                <li><span class="ft-row"><i class="ti ti-file-text ft-icon-file"></i><span class="ft-file-name">implementation-agent.md</span></span></li>
+                <li><span class="ft-row"><i class="ti ti-file-text ft-icon-file"></i><span class="ft-file-name">debugging-agent.md</span></span></li>
+                <li><span class="ft-row"><i class="ti ti-file-text ft-icon-file"></i><span class="ft-file-name">architecture-review-agent.md</span></span></li>
+                <li><span class="ft-row"><i class="ti ti-file-text ft-icon-file"></i><span class="ft-file-name">documentation-agent.md</span></span></li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+        <li>
+          <span class="ft-row"><i class="ti ti-folder ft-icon-folder"></i><span class="ft-dir-name">docs/</span></span>
+          <ul>
+            <li><span class="ft-row"><i class="ti ti-file-description ft-icon-special"></i><span class="ft-special-name">CONTEXT.md</span></span></li>
+            <li><span class="ft-row"><i class="ti ti-folder ft-icon-folder"></i><span class="ft-dir-name">prd/</span></span></li>
+            <li><span class="ft-row"><i class="ti ti-folder ft-icon-folder"></i><span class="ft-dir-name">issues/</span></span></li>
+            <li><span class="ft-row"><i class="ti ti-folder ft-icon-folder"></i><span class="ft-dir-name">adr/</span></span></li>
+            <li><span class="ft-row"><i class="ti ti-folder ft-icon-folder"></i><span class="ft-dir-name">architecture/</span></span></li>
+            <li><span class="ft-row"><i class="ti ti-folder ft-icon-folder"></i><span class="ft-dir-name">decisions/</span></span></li>
+          </ul>
+        </li>
+        <li><span class="ft-row"><i class="ti ti-folder ft-icon-folder"></i><span class="ft-dir-name">src/</span></span></li>
+        <li><span class="ft-row"><i class="ti ti-folder ft-icon-folder"></i><span class="ft-dir-name">tests/</span></span></li>
+        <li><span class="ft-row"><i class="ti ti-file-text ft-icon-file"></i><span class="ft-file-name">README.md</span></span></li>
+      </ul>
+    </li>
+  </ul>
+</div>
+
+<!-- S2 Folder Responsibilities -->
+<div class="section" id="s2">
+  <div class="sec-head">
+    <span class="sec-num">02</span>
+    <h2>Folders' Responsibilities</h2>
+  </div>
+  <div class="rgrid">
+    <div class="rcard">
+      <div class="rcard-icon"><i class="ti ti-file-description"></i></div>
+      <div class="rcard-name">CLAUDE.md</div>
+      <div class="rcard-desc">The main agent manifest. Project purpose, architecture rules, test commands, skill and agent workflow, agent boundaries. Long procedures go in <code>skills/*/SKILL.md</code>.</div>
+    </div>
+    <div class="rcard">
+      <div class="rcard-icon"><i class="ti ti-tools"></i></div>
+      <div class="rcard-name">.claude/skills/</div>
+      <div class="rcard-desc">Reusable working disciplines. A skill is not a "role" — it is the <strong>procedure</strong> the agent applies.</div>
+    </div>
+    <div class="rcard">
+      <div class="rcard-icon"><i class="ti ti-robot"></i></div>
+      <div class="rcard-name">.claude/agents/</div>
+      <div class="rcard-desc">Specialist agent roles. Each agent owns a specific job and may use multiple skills.</div>
+    </div>
+    <div class="rcard">
+      <div class="rcard-icon"><i class="ti ti-notebook"></i></div>
+      <div class="rcard-name">docs/CONTEXT.md</div>
+      <div class="rcard-desc">The living context file. Domain language, key concepts, system boundaries, module responsibilities, and architectural assumptions.</div>
+    </div>
+    <div class="rcard">
+      <div class="rcard-icon"><i class="ti ti-layout-list"></i></div>
+      <div class="rcard-name">docs/prd/</div>
+      <div class="rcard-desc">Product requirements documents. E.g.: <code>001-initial-product-requirements.md</code></div>
+    </div>
+    <div class="rcard">
+      <div class="rcard-icon"><i class="ti ti-checklist"></i></div>
+      <div class="rcard-name">docs/issues/</div>
+      <div class="rcard-desc">Work items handed to agents. Every issue must be a <strong>vertical slice</strong> — never a horizontal layer task.</div>
+    </div>
+    <div class="rcard">
+      <div class="rcard-icon"><i class="ti ti-git-branch"></i></div>
+      <div class="rcard-name">docs/adr/</div>
+      <div class="rcard-desc">Architecture Decision Records. E.g.: <code>0001-use-config-file-for-pricing.md</code></div>
+    </div>
+    <div class="rcard">
+      <div class="rcard-icon"><i class="ti ti-sitemap"></i></div>
+      <div class="rcard-name">docs/architecture/</div>
+      <div class="rcard-desc">System architecture, module map, data flow, sequence diagrams, and high-level design documents.</div>
+    </div>
+    <div class="rcard">
+      <div class="rcard-icon"><i class="ti ti-notes"></i></div>
+      <div class="rcard-name">docs/decisions/</div>
+      <div class="rcard-desc">Smaller product, technical, or process decisions that don't warrant a full ADR but still need tracking.</div>
+    </div>
+  </div>
+</div>
+
+<!-- S3 Setup Commands -->
+<div class="section" id="s3">
+  <div class="sec-head">
+    <span class="sec-num">03</span>
+    <h2>Setup Commands</h2>
+  </div>
+  <p>In a new project, the following commands can be run:</p>
+
+  <div class="os-tabs">
+    <div class="os-tab-bar">
+      <button class="os-tab active" onclick="switchTab('linux')"><i class="ti ti-brand-ubuntu"></i> Linux / macOS</button>
+      <button class="os-tab" onclick="switchTab('windows')"><i class="ti ti-brand-windows"></i> Windows (PowerShell)</button>
+    </div>
+
+    <div id="tab-linux" class="os-tab-panel active">
+      <div class="cb">
+        <div class="cb-head">
+          <span class="cb-lang">bash</span>
+          <button class="cb-copy" onclick="cp(this)"><i class="ti ti-copy"></i> Copy</button>
+        </div>
+        <pre>mkdir -p .claude/skills/{grill-with-docs,to-prd,to-issues,tdd,codebase-design,diagnosing-bugs,improve-codebase-architecture}
+mkdir -p .claude/agents
+mkdir -p docs/{prd,issues,adr,architecture,decisions}
+mkdir -p src tests
+
+touch CLAUDE.md
+touch docs/CONTEXT.md
+touch docs/prd/README.md
+touch docs/issues/README.md
+touch docs/adr/README.md
+touch docs/architecture/README.md
+touch docs/decisions/README.md
+
+touch .claude/skills/grill-with-docs/SKILL.md
+touch .claude/skills/to-prd/SKILL.md
+touch .claude/skills/to-issues/SKILL.md
+touch .claude/skills/tdd/SKILL.md
+touch .claude/skills/codebase-design/SKILL.md
+touch .claude/skills/diagnosing-bugs/SKILL.md
+touch .claude/skills/improve-codebase-architecture/SKILL.md
+
+touch .claude/agents/planner-agent.md
+touch .claude/agents/implementation-agent.md
+touch .claude/agents/debugging-agent.md
+touch .claude/agents/architecture-review-agent.md
+touch .claude/agents/documentation-agent.md</pre>
+      </div>
+    </div>
+
+    <div id="tab-windows" class="os-tab-panel">
+      <div class="cb">
+        <div class="cb-head">
+          <span class="cb-lang">powershell</span>
+          <button class="cb-copy" onclick="cp(this)"><i class="ti ti-copy"></i> Copy</button>
+        </div>
+        <pre># Create folders
+@(
+  ".claude\skills\grill-with-docs",
+  ".claude\skills\to-prd",
+  ".claude\skills\to-issues",
+  ".claude\skills\tdd",
+  ".claude\skills\codebase-design",
+  ".claude\skills\diagnosing-bugs",
+  ".claude\skills\improve-codebase-architecture",
+  ".claude\agents",
+  "docs\prd",
+  "docs\issues",
+  "docs\adr",
+  "docs\architecture",
+  "docs\decisions",
+  "src",
+  "tests"
+) | ForEach-Object { New-Item -ItemType Directory -Force $_ | Out-Null }
+
+# Create files
+@(
+  "CLAUDE.md",
+  "docs\CONTEXT.md",
+  "docs\prd\README.md",
+  "docs\issues\README.md",
+  "docs\adr\README.md",
+  "docs\architecture\README.md",
+  "docs\decisions\README.md",
+  ".claude\skills\grill-with-docs\SKILL.md",
+  ".claude\skills\to-prd\SKILL.md",
+  ".claude\skills\to-issues\SKILL.md",
+  ".claude\skills\tdd\SKILL.md",
+  ".claude\skills\codebase-design\SKILL.md",
+  ".claude\skills\diagnosing-bugs\SKILL.md",
+  ".claude\skills\improve-codebase-architecture\SKILL.md",
+  ".claude\agents\planner-agent.md",
+  ".claude\agents\implementation-agent.md",
+  ".claude\agents\debugging-agent.md",
+  ".claude\agents\architecture-review-agent.md",
+  ".claude\agents\documentation-agent.md"
+) | ForEach-Object { New-Item -ItemType File -Force $_ | Out-Null }</pre>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- S4 CLAUDE.md Template -->
+<div class="section" id="s4">
+  <div class="sec-head">
+    <span class="sec-num">04</span>
+    <h2>CLAUDE.md Template</h2>
+  </div>
+  <p>Put the following content in a <code>CLAUDE.md</code> file at your project root.</p>
+  <div class="card" id="c-claudemd">
+    <div class="ch" onclick="tog('c-claudemd')">
+      <div class="cl">
+        <span class="cbadge bdocs"><i class="ti ti-file-description"></i> CLAUDE.md</span>
+        <div>
+          <div class="cname">Project Instructions for Claude Code</div>
+          <div class="cdesc">Expand to see the full template</div>
+        </div>
+      </div>
+      <i class="ti ti-chevron-down ctog"></i>
+    </div>
+    <div class="cbody">
+      <div class="cb">
+        <div class="cb-head">
+          <span class="cb-lang">markdown</span>
+          <button class="cb-copy" onclick="cp(this)"><i class="ti ti-copy"></i> Copy</button>
+        </div>
+        <pre># Project Instructions for Claude Code
+
+## Project Goal
+This repository uses an agentic development workflow.
+Claude should not work as a single monolithic coding assistant. Instead, Claude should:
+1. Understand the project context.
+2. Clarify requirements.
+3. Produce PRDs when needed.
+4. Break work into vertical slice issues.
+5. Implement one issue at a time.
+6. Use TDD for deterministic behavior.
+7. Keep architecture decisions documented.
+8. Review architecture before finalizing milestones.
+
+## Repository Structure
+Important folders:
+- `docs/CONTEXT.md`: living project context and domain language
+- `docs/prd/`: product requirements documents
+- `docs/issues/`: agent-ready vertical slice implementation issues
+- `docs/adr/`: architecture decision records
+- `docs/architecture/`: high-level design and architecture notes
+- `docs/decisions/`: smaller non-ADR decisions
+- `.claude/skills/`: reusable workflows and engineering disciplines
+- `.claude/agents/`: specialized project agents
+
+## Default Workflow
+For new features:
+1. Use `/grill-with-docs` if the requirement is unclear.
+2. Use `/to-prd` for medium or large features.
+3. Use `/to-issues` to split PRD into vertical slice issues.
+4. Use `implementation-agent` for implementation.
+5. Implementation must follow `/tdd`.
+6. Use `/codebase-design` when changing module boundaries.
+7. Use `debugging-agent` with `/diagnosing-bugs` when tests fail unexpectedly.
+8. Use `/improve-codebase-architecture` before milestone completion.
+
+## Architecture Rules
+- Prefer vertical slices over horizontal layer work.
+- Keep business logic separate from presentation layers.
+- Keep public interfaces small.
+- Prefer deep modules over shallow modules.
+- Avoid unnecessary abstraction.
+- Avoid large rewrites unless explicitly requested.
+- Do not duplicate business logic across UI, API, CLI, or worker layers.
+- Document meaningful architecture decisions in `docs/adr/`.
+
+## Testing Rules
+- Use TDD for deterministic business logic.
+- Write one failing test before implementation.
+- Prefer behavior-focused tests.
+- Do not couple tests to private implementation details unless necessary.
+- Run relevant tests after each change.
+- Run the full test suite before marking an issue complete.
+
+## Documentation Rules
+- Keep `docs/CONTEXT.md` updated when domain language or module boundaries change.
+- Write PRDs under `docs/prd/`.
+- Write implementation issues under `docs/issues/`.
+- Write ADRs under `docs/adr/`.
+- Keep README accurate for setup and usage.
+
+## Issue Rules
+Issues under `docs/issues/` must include:
+- Title, User story, Acceptance criteria, Test expectations,
+  Dependencies, Suggested agent, Required skills, Out of scope
+
+Issues should be vertical slices. Avoid: "Create database layer", "Write pricing.py".
+Prefer: "User can run the first CLI tracer bullet and see a cost estimate".
+
+## Commands
+```bash
+# Run tests
+pytest
+
+# Run app
+# TODO: add project-specific run command
+```
+
+## Safety and Scope
+- Do not delete files without explicit instruction.
+- Do not introduce new dependencies without explaining why.
+- Do not change public behavior outside the active issue.
+- Do not perform unrelated refactors.
+- If a task is too broad, create or update an issue instead of coding immediately.</pre>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- S5 Skill Set -->
+<div class="section" id="s5">
+  <div class="sec-head">
+    <span class="sec-num">05</span>
+    <h2>Skill Set</h2>
+  </div>
+  <p>The core skill set chosen for this setup. Skill = a working discipline / procedure.</p>
+  <table class="stbl">
+    <thead>
+      <tr>
+        <th>Skill</th>
+        <th>Purpose</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td class="sc">grill-with-docs</td><td>Clarify ambiguous requirements, establish domain language and context</td></tr>
+      <tr><td class="sc">to-prd</td><td>Convert a conversation or feature idea into a PRD</td></tr>
+      <tr><td class="sc">to-issues</td><td>Split the PRD into vertical slice issues</td></tr>
+      <tr><td class="sc">tdd</td><td>Test-first implementation discipline</td></tr>
+      <tr><td class="sc">codebase-design</td><td>Preserve module boundaries, the deep module principle, and clean design</td></tr>
+      <tr><td class="sc">diagnosing-bugs</td><td>Systematically diagnose test or runtime failures</td></tr>
+      <tr><td class="sc">improve-codebase-architecture</td><td>Review the codebase architecturally at the end of a milestone</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- S6 Skill Files -->
+<div class="section" id="s6">
+  <div class="sec-head">
+    <span class="sec-num">06</span>
+    <h2>Skill Files</h2>
+  </div>
+  <p>The following files live under <code>.claude/skills/&lt;skill-name&gt;/SKILL.md</code>. Expand for details.</p>
+
+  <div class="card" id="sk1">
+    <div class="ch" onclick="tog('sk1')">
+      <div class="cl">
+        <span class="cbadge bskill">skill</span>
+        <div>
+          <div class="cname">grill-with-docs</div>
+          <div class="cdesc">Clarify ambiguous requirements, establish domain language</div>
+        </div>
+      </div>
+      <i class="ti ti-chevron-down ctog"></i>
+    </div>
+    <div class="cbody">
+      <p><strong>Purpose:</strong> Clarify project intent before producing a PRD.</p>
+      <p><strong>When to use it:</strong></p>
+      <ul>
+        <li>The requirement is broad or ambiguous</li>
+        <li>Project boundaries aren't clear</li>
+        <li>The agent is about to make an assumption</li>
+        <li>Shared domain language is missing</li>
+        <li>The user asked for a plan but key details are missing</li>
+      </ul>
+      <p><strong>Outputs:</strong> <code>docs/CONTEXT.md</code>, <code>docs/decisions/</code>, optional <code>docs/adr/</code> drafts</p>
+      <p><strong>Instructions:</strong></p>
+      <ol>
+        <li>Read any existing docs: <code>docs/CONTEXT.md</code>, <code>docs/prd/</code>, <code>docs/adr/</code>, <code>README.md</code></li>
+        <li>Determine: project goal, target users, core workflows, domain vocabulary, constraints, assumptions, open questions</li>
+        <li>Ask only the most important clarifying questions</li>
+        <li>If there is enough context, update <code>docs/CONTEXT.md</code></li>
+      </ol>
+      <p><strong>Rules:</strong> Don't implement code. Don't create issues (unless requested). Prefer concise context over long writing. Separate facts, assumptions, and open questions.</p>
+    </div>
+  </div>
+
+  <div class="card" id="sk2">
+    <div class="ch" onclick="tog('sk2')">
+      <div class="cl">
+        <span class="cbadge bskill">skill</span>
+        <div>
+          <div class="cname">to-prd</div>
+          <div class="cdesc">Convert a feature idea into a PRD</div>
+        </div>
+      </div>
+      <i class="ti ti-chevron-down ctog"></i>
+    </div>
+    <div class="cbody">
+      <p><strong>Purpose:</strong> Produce a PRD from the existing project context.</p>
+      <p><strong>Inputs:</strong> <code>docs/CONTEXT.md</code>, <code>docs/decisions/</code>, <code>docs/adr/</code>, <code>README.md</code>, the user's request in the current conversation</p>
+      <p><strong>Output location:</strong> <code>docs/prd/NNN-feature-name.md</code></p>
+      <p><strong>PRD structure (required fields):</strong></p>
+      <ul>
+        <li>Title, Problem statement, Goals, Non-goals</li>
+        <li>Target users, User stories</li>
+        <li>Functional requirements, Non-functional requirements</li>
+        <li>UX/interface expectations, Data/config requirements</li>
+        <li>Acceptance criteria, Out of scope, Open questions</li>
+      </ul>
+      <p><strong>Rules:</strong> Don't implement code. Don't produce a file-by-file implementation plan. Keep technical detail at the module-boundary level. If context is insufficient, run <code>grill-with-docs</code>.</p>
+    </div>
+  </div>
+
+  <div class="card" id="sk3">
+    <div class="ch" onclick="tog('sk3')">
+      <div class="cl">
+        <span class="cbadge bskill">skill</span>
+        <div>
+          <div class="cname">to-issues</div>
+          <div class="cdesc">Split the PRD into vertical slice issues</div>
+        </div>
+      </div>
+      <i class="ti ti-chevron-down ctog"></i>
+    </div>
+    <div class="cbody">
+      <p><strong>Inputs:</strong> <code>docs/prd/</code>, <code>docs/CONTEXT.md</code>, relevant ADRs</p>
+      <p><strong>Output:</strong> <code>docs/issues/NNN-short-title.md</code></p>
+      <p><strong>Issue structure:</strong> Title, User story, Background, Acceptance criteria, Test expectations, Dependencies, Suggested agent, Required skills, Out of scope, Done checklist</p>
+      <div class="callout"><i class="ti ti-alert-circle"></i> Issues must be vertical slices. NOT "Create database layer" or "Write pricing.py" — prefer behavior-focused issues like "User can load model pricing from config and get a cost estimate".</div>
+    </div>
+  </div>
+
+  <div class="card" id="sk4">
+    <div class="ch" onclick="tog('sk4')">
+      <div class="cl">
+        <span class="cbadge bskill">skill</span>
+        <div>
+          <div class="cname">tdd</div>
+          <div class="cdesc">Implementation via the red-green-refactor loop</div>
+        </div>
+      </div>
+      <i class="ti ti-chevron-down ctog"></i>
+    </div>
+    <div class="cbody">
+      <p><strong>Purpose:</strong> Drive implementation through the red-green-refactor loop.</p>
+      <p><strong>Steps:</strong></p>
+      <ol>
+        <li>Read the issue acceptance criteria</li>
+        <li>Pick a behavior</li>
+        <li>Write a failing test</li>
+        <li>Run the relevant test command</li>
+        <li>Confirm the test fails for the expected reason</li>
+        <li>Implement the smallest change that makes the test pass</li>
+        <li>Run the test again</li>
+        <li>Refactor once the test passes</li>
+        <li>Repeat until all acceptance criteria are covered</li>
+        <li>Run the full test suite before finishing</li>
+      </ol>
+      <p><strong>Test rules:</strong> Prefer behavior tests. Don't test private implementation details. Don't write brittle tests. Don't assert on volatile values. Use fixtures. Keep tests readable.</p>
+      <p><strong>Implementation rules:</strong> Don't write large amounts of production code before tests. Don't add unrelated features. Don't do unrelated refactors. Stay focused on the active issue.</p>
+    </div>
+  </div>
+
+  <div class="card" id="sk5">
+    <div class="ch" onclick="tog('sk5')">
+      <div class="cl">
+        <span class="cbadge bskill">skill</span>
+        <div>
+          <div class="cname">codebase-design</div>
+          <div class="cdesc">Preserve module boundaries and clean design</div>
+        </div>
+      </div>
+      <i class="ti ti-chevron-down ctog"></i>
+    </div>
+    <div class="cbody">
+      <p><strong>Design principles:</strong></p>
+      <ul>
+        <li>Prefer deep modules with small public interfaces</li>
+        <li>Separate business logic from delivery mechanisms (UI, CLI, API, DB)</li>
+        <li>Keep adapters thin</li>
+        <li>Don't duplicate business logic</li>
+        <li>Avoid unnecessary abstraction</li>
+        <li>Use clear names from the domain language</li>
+        <li>Write code that both humans and agents can navigate easily</li>
+      </ul>
+      <p><strong>ADR triggers:</strong> Framework choice, persistence strategy, module boundary definition/change, public interface stabilization, tradeoffs future agents need to understand.</p>
+    </div>
+  </div>
+
+  <div class="card" id="sk6">
+    <div class="ch" onclick="tog('sk6')">
+      <div class="cl">
+        <span class="cbadge bskill">skill</span>
+        <div>
+          <div class="cname">diagnosing-bugs</div>
+          <div class="cdesc">Diagnose bugs systematically</div>
+        </div>
+      </div>
+      <i class="ti ti-chevron-down ctog"></i>
+    </div>
+    <div class="cbody">
+      <p><strong>Bug diagnosis steps:</strong></p>
+      <ol>
+        <li>Reproduce the bug</li>
+        <li>Capture the full error message</li>
+        <li>Identify the smallest failing command or test</li>
+        <li>Review recent changes</li>
+        <li>Form a hypothesis</li>
+        <li>Make the smallest change that confirms or refutes the hypothesis</li>
+        <li>Re-run the failing test</li>
+        <li>Only then apply the fix</li>
+        <li>Run nearby tests, finish with the full suite</li>
+      </ol>
+      <p><strong>Rules:</strong> Don't guess and rewrite large sections. Don't fix multiple unrelated bugs at once. Don't suppress an error without understanding it. Prefer adding a regression test before the fix. Record surprising root causes in <code>docs/decisions/</code>.</p>
+    </div>
+  </div>
+
+  <div class="card" id="sk7">
+    <div class="ch" onclick="tog('sk7')">
+      <div class="cl">
+        <span class="cbadge bskill">skill</span>
+        <div>
+          <div class="cname">improve-codebase-architecture</div>
+          <div class="cdesc">Architecture review before a milestone</div>
+        </div>
+      </div>
+      <i class="ti ti-chevron-down ctog"></i>
+    </div>
+    <div class="cbody">
+      <p><strong>Review areas:</strong> Module boundaries, duplicate business logic, shallow modules, framework leakage into core logic, missing tests, confusing names, missing ADRs, inaccurate README, overengineering, under-documented decisions.</p>
+      <p><strong>Output format:</strong></p>
+      <ol>
+        <li>Findings — grouped by severity: <strong>critical</strong> / <strong>important</strong> / <strong>minor</strong></li>
+        <li>Suggested fixes</li>
+        <li>Apply only low-risk fixes without user approval</li>
+        <li>Update docs if the architecture changed</li>
+        <li>Run tests after the changes</li>
+      </ol>
+      <p><strong>Rules:</strong> Don't do large rewrites without explicit approval. Don't change public behavior outside of bug fixes. Prefer small, reversible refactors. Preserve existing tests.</p>
+    </div>
+  </div>
+</div>
+
+<!-- S7 Agent Definitions -->
+<div class="section" id="s7">
+  <div class="sec-head">
+    <span class="sec-num">07</span>
+    <h2>Agent Definitions</h2>
+  </div>
+  <p>The following files live under <code>.claude/agents/*.md</code>. Agent = a role / specialist worker.</p>
+
+  <div class="card" id="ag1">
+    <div class="ch" onclick="tog('ag1')">
+      <div class="cl">
+        <span class="cbadge bagent">agent</span>
+        <div>
+          <div class="cname">planner-agent</div>
+          <div class="cdesc">Requirement clarification, PRD and issues — doesn't write code</div>
+        </div>
+      </div>
+      <i class="ti ti-chevron-down ctog"></i>
+    </div>
+    <div class="cbody">
+      <p><strong>Model:</strong> sonnet &nbsp;·&nbsp; <strong>Effort:</strong> high &nbsp;·&nbsp; <strong>Tools:</strong> Read, Write, Edit, Glob, Grep</p>
+      <p><strong>Skills:</strong> grill-with-docs, to-prd, to-issues, codebase-design</p>
+      <p><strong>Responsibilities:</strong></p>
+      <ul>
+        <li>Clarify ambiguous requirements</li>
+        <li><code>docs/CONTEXT.md</code> updates</li>
+        <li>Write the PRD under <code>docs/prd/</code></li>
+        <li>Split the PRD into vertical slice issues → <code>docs/issues/</code></li>
+        <li>Draft ADRs under <code>docs/adr/</code> for architectural decisions</li>
+      </ul>
+      <p><strong>Rules:</strong> Don't write production code unless requested. Don't create horizontal-layer issues. Prefer tracer-bullet issues. Every issue must include acceptance criteria and test expectations.</p>
+    </div>
+  </div>
+
+  <div class="card" id="ag2">
+    <div class="ch" onclick="tog('ag2')">
+      <div class="cl">
+        <span class="cbadge bagent">agent</span>
+        <div>
+          <div class="cname">implementation-agent</div>
+          <div class="cdesc">Implements a single scoped issue using TDD</div>
+        </div>
+      </div>
+      <i class="ti ti-chevron-down ctog"></i>
+    </div>
+    <div class="cbody">
+      <p><strong>Model:</strong> sonnet &nbsp;·&nbsp; <strong>Effort:</strong> high &nbsp;·&nbsp; <strong>Tools:</strong> Read, Write, Edit, Bash, Glob, Grep</p>
+      <p><strong>Skills:</strong> tdd, codebase-design</p>
+      <p><strong>Responsibilities:</strong></p>
+      <ul>
+        <li>Implement one issue at a time</li>
+        <li>Read the issue file before coding</li>
+        <li>Fully satisfy the acceptance criteria</li>
+        <li>Use TDD; run the relevant tests after every change</li>
+        <li>Update docs whenever behavior, commands, or architecture change</li>
+      </ul>
+      <p><strong>Rules:</strong> Don't start unrelated refactors. Don't duplicate business logic. Don't mix unrelated issues. Don't add a dependency without explaining why. Run the full test suite before finishing.</p>
+    </div>
+  </div>
+
+  <div class="card" id="ag3">
+    <div class="ch" onclick="tog('ag3')">
+      <div class="cl">
+        <span class="cbadge bagent">agent</span>
+        <div>
+          <div class="cname">debugging-agent</div>
+          <div class="cdesc">Diagnoses test failures and unexpected behavior</div>
+        </div>
+      </div>
+      <i class="ti ti-chevron-down ctog"></i>
+    </div>
+    <div class="cbody">
+      <p><strong>Model:</strong> sonnet &nbsp;·&nbsp; <strong>Effort:</strong> high &nbsp;·&nbsp; <strong>Tools:</strong> Read, Write, Edit, Bash, Glob, Grep</p>
+      <p><strong>Skills:</strong> diagnosing-bugs, tdd, codebase-design</p>
+      <p><strong>Responsibilities:</strong> Reproduce the bug → Find the smallest failing test → Diagnose before changing code → Add a regression test where appropriate → Apply the smallest safe fix → Run nearby + full tests</p>
+      <p><strong>Rules:</strong> Don't rewrite large sections. Don't suppress errors without understanding the code. Don't fix unrelated issues. Record surprising findings in issue notes or <code>docs/decisions/</code>.</p>
+    </div>
+  </div>
+
+  <div class="card" id="ag4">
+    <div class="ch" onclick="tog('ag4')">
+      <div class="cl">
+        <span class="cbadge bagent">agent</span>
+        <div>
+          <div class="cname">architecture-review-agent</div>
+          <div class="cdesc">Final architecture review before a milestone</div>
+        </div>
+      </div>
+      <i class="ti ti-chevron-down ctog"></i>
+    </div>
+    <div class="cbody">
+      <p><strong>Model:</strong> sonnet &nbsp;·&nbsp; <strong>Effort:</strong> high &nbsp;·&nbsp; <strong>Tools:</strong> Read, Write, Edit, Bash, Glob, Grep</p>
+      <p><strong>Skills:</strong> improve-codebase-architecture, codebase-design</p>
+      <p><strong>Responsibilities:</strong></p>
+      <ul>
+        <li>Review architecture, module boundaries, tests, docs, and ADRs</li>
+        <li>Detect duplication, coupling, and overengineering</li>
+        <li>Apply only low-risk fixes</li>
+      </ul>
+      <p><strong>Rules:</strong> Don't do large rewrites without approval. Don't change public behavior outside of bug fixes. Group findings by severity. Run tests after changes.</p>
+    </div>
+  </div>
+
+  <div class="card" id="ag5">
+    <div class="ch" onclick="tog('ag5')">
+      <div class="cl">
+        <span class="cbadge bagent">agent</span>
+        <div>
+          <div class="cname">documentation-agent</div>
+          <div class="cdesc">Updates README, ADRs, and project documentation</div>
+        </div>
+      </div>
+      <i class="ti ti-chevron-down ctog"></i>
+    </div>
+    <div class="cbody">
+      <p><strong>Model:</strong> sonnet &nbsp;·&nbsp; <strong>Effort:</strong> medium &nbsp;·&nbsp; <strong>Tools:</strong> Read, Write, Edit, Glob, Grep</p>
+      <p><strong>Skills:</strong> codebase-design</p>
+      <p><strong>Responsibilities:</strong></p>
+      <ul>
+        <li>Keep README current; update usage commands</li>
+        <li><code>docs/CONTEXT.md</code> updates</li>
+        <li>Create or polish ADRs</li>
+        <li>Keep docs concise and useful for future agents</li>
+        <li>Link related PRDs, ADRs, and issues to each other</li>
+      </ul>
+      <p><strong>Rules:</strong> Don't invent behavior that doesn't exist. Verify commands against the codebase where possible. Prefer concise documentation. Link related PRDs, ADRs, and issues.</p>
+    </div>
+  </div>
+</div>
+
+<!-- S8 Docs README Templates -->
+<div class="section" id="s8">
+  <div class="sec-head">
+    <span class="sec-num">08</span>
+    <h2>Docs README Templates</h2>
+  </div>
+
+  <div class="card" id="rd1">
+    <div class="ch" onclick="tog('rd1')">
+      <div class="cl">
+        <span class="cbadge bdocs">docs</span>
+        <div><div class="cname">docs/prd/README.md</div><div class="cdesc">PRD folder guide</div></div>
+      </div>
+      <i class="ti ti-chevron-down ctog"></i>
+    </div>
+    <div class="cbody">
+      <p>Naming: <code>NNN-short-feature-name.md</code> — e.g. <code>001-token-cost-calculator.md</code></p>
+      <p>Every PRD must include: goals, non-goals, user stories, requirements, acceptance criteria, and open questions.</p>
+    </div>
+  </div>
+
+  <div class="card" id="rd2">
+    <div class="ch" onclick="tog('rd2')">
+      <div class="cl">
+        <span class="cbadge bdocs">docs</span>
+        <div><div class="cname">docs/issues/README.md</div><div class="cdesc">Issue folder guide</div></div>
+      </div>
+      <i class="ti ti-chevron-down ctog"></i>
+    </div>
+    <div class="cbody">
+      <p>Every issue must be a vertical slice. Behavior-focused examples:</p>
+      <ul>
+        <li>"User can submit a form and see a result"</li>
+        <li>"User can run a CLI command and get JSON output"</li>
+        <li>"System rejects invalid config with a useful error"</li>
+      </ul>
+      <p>Every issue must include: Title, User story, Acceptance criteria, Test expectations, Dependencies, Suggested agent, Required skills, Done checklist.</p>
+    </div>
+  </div>
+
+  <div class="card" id="rd3">
+    <div class="ch" onclick="tog('rd3')">
+      <div class="cl">
+        <span class="cbadge bdocs">docs</span>
+        <div><div class="cname">docs/adr/README.md</div><div class="cdesc">Architecture Decision Records guide</div></div>
+      </div>
+      <i class="ti ti-chevron-down ctog"></i>
+    </div>
+    <div class="cbody">
+      <p><strong>When to create an ADR:</strong> Framework choice, persistence strategy choice, module boundary definition, public interface stabilization, tradeoffs future agents need to understand.</p>
+      <p>Naming: <code>NNNN-short-title.md</code> — e.g. <code>0001-use-fastapi-for-api-layer.md</code></p>
+    </div>
+  </div>
+
+  <div class="card" id="rd4">
+    <div class="ch" onclick="tog('rd4')">
+      <div class="cl">
+        <span class="cbadge bdocs">docs</span>
+        <div><div class="cname">docs/architecture/README.md</div><div class="cdesc">High-level architecture notes</div></div>
+      </div>
+      <i class="ti ti-chevron-down ctog"></i>
+    </div>
+    <div class="cbody">
+      <p>This folder contains: module map, data flow, sequence diagrams, integration boundaries, deployment notes.</p>
+    </div>
+  </div>
+
+  <div class="card" id="rd5">
+    <div class="ch" onclick="tog('rd5')">
+      <div class="cl">
+        <span class="cbadge bdocs">docs</span>
+        <div><div class="cname">docs/decisions/README.md</div><div class="cdesc">Lightweight decision notes</div></div>
+      </div>
+      <i class="ti ti-chevron-down ctog"></i>
+    </div>
+    <div class="cbody">
+      <p>For decisions that don't warrant a full ADR. Use cases:</p>
+      <ul>
+        <li>Small product decisions</li>
+        <li>Naming decisions</li>
+        <li>Temporary constraints</li>
+        <li>Known tradeoffs</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- S9 Workflow -->
+<div class="section" id="s9">
+  <div class="sec-head">
+    <span class="sec-num">09</span>
+    <h2>Recommended Workflow</h2>
+  </div>
+
+  <h3>When starting a new project</h3>
+  <div class="wstep">
+    <div class="wnum">1</div>
+    <div class="wbody">
+      <h4>/grill-with-docs</h4>
+      <p>Clarify the project, extract domain language, create <code>docs/CONTEXT.md</code>, list open questions</p>
+    </div>
+  </div>
+  <div class="wstep">
+    <div class="wnum">2</div>
+    <div class="wbody">
+      <h4>/to-prd</h4>
+      <p>Write the first PRD under <code>docs/prd/</code></p>
+    </div>
+  </div>
+  <div class="wstep">
+    <div class="wnum">3</div>
+    <div class="wbody">
+      <h4>/to-issues</h4>
+      <p>Split the PRD into agent-ready vertical slice issues → <code>docs/issues/</code></p>
+    </div>
+  </div>
+
+  <h3 style="margin-top:28px">When implementing an issue</h3>
+  <div class="cb">
+    <div class="cb-head">
+      <span class="cb-lang">text — Claude Code</span>
+      <button class="cb-copy" onclick="cp(this)"><i class="ti ti-copy"></i> Copy</button>
+    </div>
+    <pre>Use implementation-agent.
+
+Implement docs/issues/001-example-feature.md.
+
+Follow the tdd and codebase-design skills.
+Keep changes scoped to this issue.
+Run tests before finishing.</pre>
+  </div>
+
+  <h3>When a test breaks</h3>
+  <div class="cb">
+    <div class="cb-head">
+      <span class="cb-lang">text — Claude Code</span>
+      <button class="cb-copy" onclick="cp(this)"><i class="ti ti-copy"></i> Copy</button>
+    </div>
+    <pre>Use debugging-agent.
+
+Diagnose the failing test using the diagnosing-bugs skill.
+Do not rewrite large sections.
+Add a regression test if appropriate.</pre>
+  </div>
+
+  <h3>At the end of a milestone</h3>
+  <div class="cb">
+    <div class="cb-head">
+      <span class="cb-lang">text — Claude Code</span>
+      <button class="cb-copy" onclick="cp(this)"><i class="ti ti-copy"></i> Copy</button>
+    </div>
+    <pre>Use architecture-review-agent.
+
+Run improve-codebase-architecture.
+Review module boundaries, tests, docs and ADRs.
+Apply only low-risk fixes.</pre>
+  </div>
+</div>
+
+<!-- S10 Usage Principles -->
+<div class="section" id="s10">
+  <div class="sec-head">
+    <span class="sec-num">10</span>
+    <h2>Usage Principles</h2>
+  </div>
+  <div class="pgrid">
+    <div class="pcard">
+      <h4><i class="ti ti-tools"></i> What is a skill?</h4>
+      <p>A working discipline or procedure. <code>tdd</code> is a skill. <code>codebase-design</code> is a skill.</p>
+    </div>
+    <div class="pcard">
+      <h4><i class="ti ti-robot"></i> What is an agent?</h4>
+      <p>A role or specialist worker. <code>implementation-agent</code> is an agent. It uses the <code>tdd</code> and <code>codebase-design</code> skills.</p>
+    </div>
+    <div class="pcard">
+      <h4><i class="ti ti-folder-cog"></i> Project-level setup</h4>
+      <p>Each repo keeps <code>.claude/skills/</code>, <code>.claude/agents/</code>, <code>CLAUDE.md</code>, and <code>docs/</code>. The project carries its own agentic workflow.</p>
+    </div>
+    <div class="pcard">
+      <h4><i class="ti ti-home"></i> Personal-level setup</h4>
+      <p>Use <code>~/.claude/skills/</code> and <code>~/.claude/agents/</code> to share the same definitions globally across all projects. For team projects, however, project-level is safer.</p>
+    </div>
+  </div>
+</div>
+
+<!-- S11 Anti-Patterns -->
+<div class="section" id="s11">
+  <div class="sec-head">
+    <span class="sec-num">11</span>
+    <h2>Anti-Patterns</h2>
+  </div>
+
+  <div class="ap">
+    <div class="aprow">
+      <div class="avoid">
+        <div class="aplabel"><i class="ti ti-x"></i> Avoid</div>
+        <div class="apcode">Build me the entire app.</div>
+      </div>
+      <div class="prefer">
+        <div class="aplabel"><i class="ti ti-check"></i> Prefer</div>
+        <div class="apcode">Use planner-agent to create vertical slice issues from the PRD.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="ap">
+    <div class="aprow">
+      <div class="avoid">
+        <div class="aplabel"><i class="ti ti-x"></i> Avoid</div>
+        <div class="apcode">Write pricing.py.</div>
+      </div>
+      <div class="prefer">
+        <div class="aplabel"><i class="ti ti-check"></i> Prefer</div>
+        <div class="apcode">Implement the issue: user can load model pricing from config and get a cost estimate.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="ap">
+    <div class="aprow">
+      <div class="avoid">
+        <div class="aplabel"><i class="ti ti-x"></i> Avoid</div>
+        <div class="apcode">Tests are broken, fix them.</div>
+      </div>
+      <div class="prefer">
+        <div class="aplabel"><i class="ti ti-check"></i> Prefer</div>
+        <div class="apcode">Use debugging-agent and diagnosing-bugs. Reproduce the failure, identify the root cause, add a regression test if needed, then fix.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- S12 Summary -->
+<div class="section" id="s12">
+  <div class="sec-head">
+    <span class="sec-num">12</span>
+    <h2>Summary</h2>
+  </div>
+  <p>This setup's goal — an agentic delivery pipeline where each step feeds the next:</p>
+
+  <div class="pipeline">
+    <div class="pnode">
+      <div class="pdot"><i class="ti ti-bulb"></i></div>
+      <div class="plabel">Intent</div>
+    </div>
+    <span class="parr">→</span>
+    <div class="pnode">
+      <div class="pdot"><i class="ti ti-notebook"></i></div>
+      <div class="plabel">Context</div>
+    </div>
+    <span class="parr">→</span>
+    <div class="pnode">
+      <div class="pdot"><i class="ti ti-file-text"></i></div>
+      <div class="plabel">PRD</div>
+    </div>
+    <span class="parr">→</span>
+    <div class="pnode">
+      <div class="pdot"><i class="ti ti-checklist"></i></div>
+      <div class="plabel">Issues</div>
+    </div>
+    <span class="parr">→</span>
+    <div class="pnode">
+      <div class="pdot"><i class="ti ti-robot"></i></div>
+      <div class="plabel">Agents</div>
+    </div>
+    <span class="parr">→</span>
+    <div class="pnode">
+      <div class="pdot"><i class="ti ti-test-pipe"></i></div>
+      <div class="plabel">TDD</div>
+    </div>
+    <span class="parr">→</span>
+    <div class="pnode">
+      <div class="pdot"><i class="ti ti-eye"></i></div>
+      <div class="plabel">Review</div>
+    </div>
+    <span class="parr">→</span>
+    <div class="pnode">
+      <div class="pdot"><i class="ti ti-books"></i></div>
+      <div class="plabel">Docs</div>
+    </div>
+  </div>
+
+  <p>With this structure, Claude Code:</p>
+  <ul>
+    <li>Knows what to write where</li>
+    <li>Uses standard folders when producing PRDs and issues</li>
+    <li>Keeps ADR decisions in the right place</li>
+    <li>Applies TDD during implementation</li>
+    <li>Preserves module boundaries</li>
+    <li>At the end of a milestone mimari review yapar</li>
+  </ul>
+  <div class="callout" style="margin-top:20px">
+    <i class="ti ti-sparkles"></i>
+    This is the foundation for moving beyond "one big prompt to one agent" and building a real <strong>agentic software delivery workflow</strong>.
+  </div>
+</div>
+
+</div>
+
+<script>
+function tog(id){
+  const c=document.getElementById(id);
+  c.classList.toggle('open');
+}
+function cp(btn){
+  const pre=btn.closest('.cb').querySelector('pre');
+  navigator.clipboard.writeText(pre.textContent.trim()).then(()=>{
+    const o=btn.innerHTML;
+    btn.innerHTML='<i class="ti ti-check"></i> Copied';
+    setTimeout(()=>{btn.innerHTML=o},2000);
+  });
+}
+function switchTab(os){
+  document.querySelectorAll('.os-tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.os-tab-panel').forEach(p=>p.classList.remove('active'));
+  document.getElementById('tab-'+os).classList.add('active');
+  event.currentTarget.classList.add('active');
+}
+</script>
+</body>
+</html>

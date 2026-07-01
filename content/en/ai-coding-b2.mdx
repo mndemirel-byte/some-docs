@@ -1,0 +1,448 @@
+import {
+  IconBook2,
+  IconBolt,
+  IconBuilding,
+  IconUsers,
+  IconUser,
+  IconRobot,
+  IconPrompt,
+  IconSparkles,
+  IconVideo,
+} from "@tabler/icons-react";
+import { Hero, Accent } from "@/components/doc/hero";
+import { KeyQuote } from "@/components/doc/key-quote";
+import { Toc } from "@/components/doc/toc";
+import { Section } from "@/components/doc/section";
+import { Callout } from "@/components/doc/callout";
+import { DoDontList, DoItem, DontItem } from "@/components/doc/do-dont-list";
+import { Playbook } from "@/components/doc/playbook";
+import { SkillCard, SkillCols, SkillCol } from "@/components/doc/skill-card";
+import { CodeBlock } from "@/components/doc/code-block";
+import { DataTable } from "@/components/doc/data-table";
+import { TeamGrid, TeamCard } from "@/components/doc/team-grid";
+import { Session, DevTurn, AiTurn } from "@/components/doc/session";
+import { NumberedGrid, NumberedItem } from "@/components/doc/numbered-grid";
+import { Formula } from "@/components/doc/formula";
+
+<Hero
+  badge="AI Coding Series · Part 2"
+  variant="eyebrow"
+  title={<>Best Practices, <Accent>Skill Map</Accent>, and Team Model</>}
+  description="Things to always do and never do, practical playbooks, a five-dimension skill map, and a team responsibility model. This is the continuation of Part 1."
+  tags={["best-practices", "skill-map", "team-model", "playbook", "AFK"]}
+/>
+
+<Callout icon={IconBook2} kind="warning">
+  <strong>Prerequisite:</strong> Before reading this part, it&apos;s recommended you read <strong>Part 1</strong> (workflow, stages, PRD and issue structure).
+</Callout>
+
+<Toc
+  title="Table of Contents"
+  entries={[
+    { id: "s4", num: "04", label: "Things You Must Always Do" },
+    { id: "s5", num: "05", label: "Things You Must Never Do" },
+    { id: "s6", num: "06", label: "The Recommended AI Coding Playbook" },
+    {
+      id: "s7",
+      num: "07",
+      label: "The AI Coding Skill Map",
+      subEntries: [
+        { id: "da", num: "A", label: "Pair Programming with AI" },
+        { id: "db", num: "B", label: "Structured Prompting" },
+        { id: "dc", num: "C", label: "PRD- and Issue-Based Work" },
+        { id: "dd", num: "D", label: "Agentic Coding with TDD" },
+        { id: "de", num: "E", label: "Agent Workflow and AFK Coding" },
+        { id: "routing", num: "—", label: "Which Dimension Should I Start With?" },
+      ],
+    },
+    { id: "s8", num: "08", label: "Areas of Responsibility for Teams" },
+    { id: "s9", num: "09", label: "An Example AI Coding Session Flow" },
+    { id: "s10", num: "10", label: "The Most Important Best Practices" },
+    { id: "s11", num: "11", label: "Short Summary" },
+    { id: "resources", num: "—", label: "Resources" },
+  ]}
+  layout="list"
+/>
+
+<Section id="s4" num="04" title="Things You Must Always Do">
+
+<DoDontList>
+  <DoItem title="1. Break every job into small pieces">
+    <p>Instead of telling AI "rewrite this whole module," tell it to "complete this small vertical slice with these acceptance criteria."</p>
+  </DoItem>
+  <DoItem title="2. Watch token and context usage">
+    <p>The model's performance drops over long sessions. Signs of declining quality: repeated mistakes, forgetting decisions it made earlier, producing irrelevant code. When you see these signs, clear the session and continue with fresh context. If the tool supports it, make token usage visible.</p>
+  </DoItem>
+  <DoItem title="3. Make the codebase readable for AI">
+    <p>Well-named modules, clean interfaces, clear test boundaries, an up-to-date README, and local development commands directly increase agent success.</p>
+  </DoItem>
+  <DoItem title="4. Keep PRD and issue artifacts as files">
+    <p>Decisions left in conversation with AI get lost. Decisions should be made permanent in the repository as Markdown issues, PRDs, ADRs, or test plans.</p>
+  </DoItem>
+  <DoItem title="5. Give AI the test commands explicitly">
+    <CodeBlock lang="text — TypeScript/JS">
+{`After implementation, run:
+- npm test
+- npm run typecheck
+- npm run lint
+- npm run build`}
+    </CodeBlock>
+    <CodeBlock lang="text — Python">
+{`After implementation, run:
+- pytest
+- ruff check .
+- mypy .`}
+    </CodeBlock>
+  </DoItem>
+  <DoItem title="6. Never skip review">
+    <p>As AI produces more code, the review burden grows. Human review and QA preserve quality and the engineering instinct we call "taste" — evaluating not just whether the code works, but whether it was designed correctly, is maintainable, and meets team standards.</p>
+  </DoItem>
+</DoDontList>
+
+</Section>
+
+<Section id="s5" num="05" title="Things You Must Never Do">
+
+<DoDontList>
+  <DontItem title='1. Don&apos;t try to build "an entire feature in one prompt"'>
+    <p>It bloats context, grows scope, and makes the model harder to control.</p>
+  </DontItem>
+  <DontItem title="2. Don't just fix the spec and move on without reading the code">
+    <p>This approach disconnects the developer from the code. <strong>Code is still the primary reality.</strong> Spec-first is correct in areas like API contracts and migration plans — but after writing the spec, you still need to read and understand the resulting code.</p>
+  </DontItem>
+  <DontItem title="3. Don't merge untested AI code">
+    <p>Code AI produces may compile but might not behave correctly. It's not trustworthy without tests, typecheck, and a build.</p>
+  </DontItem>
+  <DontItem title="4. Don't blindly follow a horizontal phase plan">
+    <p>A plan that goes database only → then API → then frontend delays feedback. Vertical slices should be preferred.</p>
+  </DontItem>
+  <DontItem title="5. Don't create huge CLAUDE.md / system prompt files">
+    <p>Files like <code>CLAUDE.md</code> and <code>.cursorrules</code> should be kept small. If the starting context is too large, the model starts burning through its effective attention capacity before it even begins work.</p>
+  </DontItem>
+  <DontItem title="6. Don't leave stale documents lying around the repo">
+    <p>Old PRDs or closed decision documents can mislead AI. PRDs should be closed and archived after implementation.</p>
+  </DontItem>
+</DoDontList>
+
+</Section>
+
+<Section id="s6" num="06" title="The Recommended AI Coding Playbook">
+
+<Playbook
+  icon={IconBolt}
+  iconColor="var(--green-text)"
+  title="For a simple feature"
+  steps={[
+    <><strong>Read the brief.</strong></>,
+    <><strong>Interrogate me,</strong> extract the missing decisions.</>,
+    <><strong>Produce a PRD.</strong></>,
+    <>Split the PRD into <strong>vertical slice issues.</strong></>,
+    <>Implement the first issue <strong>using TDD.</strong></>,
+    <>Run <strong>test / typecheck / build.</strong></>,
+    <>Write a <strong>summary.</strong></>,
+    <>I will <strong>review</strong> it.</>,
+  ]}
+/>
+
+<Playbook
+  icon={IconBuilding}
+  iconColor="var(--accent-text)"
+  title="For a larger feature"
+  steps={[
+    <>A grilling session with <strong>domain expert + developer + AI.</strong></>,
+    <>Produce a <strong>PRD.</strong></>,
+    <>Build a <strong>prototype</strong> if a technical spike is needed.</>,
+    <>Split the PRD into <strong>Kanban issues.</strong></>,
+    <>Order the issues as a <strong>dependency graph.</strong></>,
+    <>Hand <strong>independent issues to parallel</strong> agents.</>,
+    <>Each agent works in its own <strong>branch / worktree / sandbox.</strong></>,
+    <>Make <strong>test and build</strong> signals mandatory.</>,
+    <><strong>Human review</strong> before merge.</>,
+    <>Close the PRD / issue, <strong>archive the document.</strong></>,
+  ]}
+/>
+
+</Section>
+
+<Section id="s7" num="07" title="The AI Coding Skill Map">
+
+The skill areas below aren't a linear sequence — they are **dimensions you can develop independently.** A senior developer can start directly with dimension D or E. You should set your own priority based on your experience and needs.
+
+<SkillCard id="da" letter="A" name="Pair Programming with AI" goal="Using AI as a thinking partner, not autocomplete" prereq="Basic programming" forWho="Everyone; the entry point into AI coding.">
+  <SkillCols>
+    <SkillCol title="Topics to work on">
+      <ul>
+        <li>Writing prompts</li>
+        <li>Having it do small refactors</li>
+        <li>Having it write unit tests</li>
+        <li>Having it analyze error messages</li>
+        <li>Having it explain code</li>
+        <li>Comparing alternative solutions</li>
+      </ul>
+    </SkillCol>
+    <SkillCol title="Practice task">
+      <CodeBlock lang={<><IconPrompt size={12} /> task</>} kind="prompt">
+{`Pick a small existing function.
+Ask AI to write a test for it first.
+Then have it refactor the function.
+Then have it add edge case tests.`}
+      </CodeBlock>
+    </SkillCol>
+  </SkillCols>
+</SkillCard>
+
+<SkillCard id="db" letter="B" name="Structured Prompting" goal="Giving AI a formatted task instead of free-form code requests" prereq="Basic AI experience" forWho="Everyone, especially those who want to improve prompt quality.">
+  <SkillCols>
+    <SkillCol title="Patterns to learn">
+      <ul>
+        <li>Role</li>
+        <li>Context</li>
+        <li>Goal</li>
+        <li>Constraints</li>
+        <li>Acceptance Criteria</li>
+        <li>Test Plan</li>
+        <li>Output Format</li>
+      </ul>
+    </SkillCol>
+    <SkillCol title="Example structure">
+      <CodeBlock lang={<><IconPrompt size={12} /> example</>} kind="prompt">
+{`Role: Senior backend developer
+Context: FastAPI + PostgreSQL project
+Goal: Add user activity logging
+Constraints:
+- Do not change public API
+- Keep changes minimal
+- Add tests
+Acceptance Criteria:
+- Login event is logged
+- Failed login is logged
+- Tests pass
+Output:
+- Changed files
+- Test results
+- Summary`}
+      </CodeBlock>
+    </SkillCol>
+  </SkillCols>
+</SkillCard>
+
+<SkillCard id="dc" letter="C" name="PRD- and Issue-Based Work" goal="Turning conversation with AI into permanent development artifacts" prereq="Basic product development" forWho="Developers, product managers, technical leads.">
+  <SkillCols>
+    <SkillCol title="Things to learn">
+      <ul>
+        <li>Having it write a PRD</li>
+        <li>Creating user stories</li>
+        <li>Writing acceptance criteria</li>
+        <li>Separating scope / non-scope</li>
+        <li>Producing Markdown issues</li>
+        <li>Identifying dependencies</li>
+      </ul>
+    </SkillCol>
+    <SkillCol title="Practice task">
+      <CodeBlock lang={<><IconPrompt size={12} /> task</>} kind="prompt">
+{`Pick a small feature idea.
+Have AI ask you 20 questions first.
+Then have it write a PRD.
+Then have it split the PRD into
+3 vertical slice issues.`}
+      </CodeBlock>
+    </SkillCol>
+  </SkillCols>
+</SkillCard>
+
+<SkillCard id="dd" letter="D" name="Agentic Coding with TDD" goal="Tying AI's code generation to a test feedback loop" prereq="Test framework knowledge" forWho="Developers who have TDD experience or want to learn it.">
+  <SkillCols>
+    <SkillCol title="Things to learn">
+      <ul>
+        <li>Red-Green-Refactor</li>
+        <li>Unit tests</li>
+        <li>Integration tests</li>
+        <li>Typecheck</li>
+        <li>Lint</li>
+        <li>Build validation</li>
+        <li>Regression tests</li>
+      </ul>
+    </SkillCol>
+    <SkillCol title="Practice task">
+      <CodeBlock lang={<><IconPrompt size={12} /> task</>} kind="prompt">
+{`Give AI an issue.
+Require it to write the test
+before the code.
+Confirm the test fails.
+Then have it implement.
+Finally ask for the
+test/typecheck/build output.`}
+      </CodeBlock>
+    </SkillCol>
+  </SkillCols>
+</SkillCard>
+
+<SkillCard id="de" letter="E" name="Agent Workflow and AFK Coding" goal="Letting the agent finish small issues on its own" prereq="Git workflow + test infrastructure" forWho="Experienced developers looking to move into agentic coding.">
+  <SkillCols>
+    <SkillCol title="Things to learn">
+      <ul>
+        <li>Local issue files</li>
+        <li>Worktree / branch isolation</li>
+        <li>Commit discipline</li>
+        <li>Agent summary</li>
+        <li>Human review</li>
+        <li>Parallel agent execution</li>
+        <li>Merge conflict management</li>
+        <li>AFK safety conditions</li>
+      </ul>
+    </SkillCol>
+    <SkillCol title="Practice task">
+      <CodeBlock lang={<><IconPrompt size={12} /> task</>} kind="prompt">
+{`Create 3 independent issues.
+Open a separate branch/worktree
+for each issue.
+Have the agent implement each
+issue separately.
+Review the results and merge.`}
+      </CodeBlock>
+    </SkillCol>
+  </SkillCols>
+</SkillCard>
+
+### Which Dimension Should I Start With?
+
+<DataTable
+  headers={["Profile", "Recommended start", "Next step"]}
+  rows={[
+    ["Junior developer", "A · B", "C"],
+    ["Mid-level developer", "B · D", "C · E"],
+    ["Senior developer", "C · D", "E"],
+    ["Tech lead / Architect", "C · E", "D (TDD discipline)"],
+    ["Product manager", "A · C", "B"],
+  ]}
+/>
+
+</Section>
+
+<Section id="s8" num="08" title="Areas of Responsibility for Teams">
+
+The areas of responsibility below don't need to be separate roles. On a small team, one person can own multiple areas. What matters is that every area is **consciously owned by someone.**
+
+<DataTable
+  headers={["Area of Responsibility", "Scope", "Who can own it?"]}
+  rows={[
+    ["Requirements and domain knowledge", "Edge cases, user behavior, business rules", "Product manager, domain expert, senior developer"],
+    ["Code quality and implementation", "Module design, writing code, tests", "Developer"],
+    ["Architecture decisions", "Module boundaries, dependency management, deep module design", "Senior developer, architect"],
+    ["AI agent management", "Issue-based task distribution, agent configuration, AFK conditions", "Developer, tech lead"],
+    ["Review", "Code quality, security, maintainability", "Another developer, senior developer"],
+    ["QA and test strategy", "Test scenarios, regression, e2e verification", "Developer, QA engineer"],
+    ["Orchestration", "Issue order, dependency graph, parallel agent coordination", "Tech lead, senior developer"],
+  ]}
+/>
+
+### Small Team Examples
+
+<TeamGrid>
+  <TeamCard icon={IconUsers} title="A team of 2">
+    Developer A: requirement clarification, implementation, agent management, and QA.<br />Developer B: review, architecture decisions, and orchestration.<br />Roles can rotate.
+  </TeamCard>
+  <TeamCard icon={IconUser} title="Solo developer">
+    All areas fall on one person. In this case it&apos;s useful to use the AI agent as a "second pair of eyes" — having it review its own code in a different session, asking it to suggest missing tests, and so on.
+  </TeamCard>
+</TeamGrid>
+
+</Section>
+
+<Section id="s9" num="09" title="An Example AI Coding Session Flow">
+
+An example showing how all the stages turn into a real conversation in practice. Scenario: adding a simple points system to an education platform.
+
+<Session>
+  <DevTurn label="Developer">
+    <p>Read this feature brief. Don&apos;t write code. Interrogate me first.</p>
+  </DevTurn>
+  <AiTurn label="AI">
+    <ul>
+      <li>Which user segment is this feature for?</li>
+      <li>What's the success metric?</li>
+      <li>Will existing data be processed retroactively?</li>
+      <li>Where will the UI appear?</li>
+      <li>What are the edge cases?</li>
+    </ul>
+  </AiTurn>
+  <DevTurn label="Developer">
+    <p>Gives the answers.</p>
+  </DevTurn>
+  <AiTurn label="AI">
+    <p>Produces a PRD → <code>docs/prd/gamification-points.md</code></p>
+  </AiTurn>
+  <DevTurn label="Developer">
+    <p>Split the PRD into vertical slice issues.</p>
+  </DevTurn>
+  <AiTurn label="AI">
+    <ul>
+      <li>Issue 01: Minimal end-to-end flow</li>
+      <li>Issue 02: Edge case handling</li>
+      <li>Issue 03: Admin visibility</li>
+      <li>Issue 04: Migration / backfill</li>
+      <li>Issue 05: Tests and cleanup</li>
+    </ul>
+  </AiTurn>
+  <DevTurn label="Developer">
+    <p>Implement Issue 01 using TDD. Don&apos;t go outside scope.</p>
+  </DevTurn>
+  <AiTurn label="AI">
+    <p>Writes tests → implements → runs the tests → gives a summary.</p>
+  </AiTurn>
+  <DevTurn label="Developer">
+    <p>Reviews, asks for changes, or merges.</p>
+  </DevTurn>
+</Session>
+
+</Section>
+
+<Section id="s10" num="10" title="The Most Important Best Practices">
+
+<NumberedGrid>
+  <NumberedItem num={1}><strong>Don&apos;t have AI write code directly;</strong> ask it to interrogate you first.</NumberedItem>
+  <NumberedItem num={2}>Aim for <strong>shared understanding, not a plan.</strong></NumberedItem>
+  <NumberedItem num={3}><strong>Produce a PRD, but don&apos;t treat it as living truth;</strong> the code is the truth.</NumberedItem>
+  <NumberedItem num={4}>Split issues as <strong>vertical slices.</strong></NumberedItem>
+  <NumberedItem num={5}>Give the agent <strong>small, independent, testable</strong> work.</NumberedItem>
+  <NumberedItem num={6}><strong>Use TDD;</strong> have AI write tests first.</NumberedItem>
+  <NumberedItem num={7}><strong>Keep context small;</strong> don&apos;t rely on long sessions.</NumberedItem>
+  <NumberedItem num={8}>When using sub-agents, <strong>keep the parent context clean.</strong></NumberedItem>
+  <NumberedItem num={9}><strong>Build a deep module architecture;</strong> avoid the shallow dependency soup.</NumberedItem>
+  <NumberedItem num={10}>Make <strong>human review and QA</strong> a mandatory part of the process.</NumberedItem>
+  <NumberedItem num={11} wide><strong>AFK coding is not unconditionally safe;</strong> branch isolation, an iteration limit, and diff review are mandatory.</NumberedItem>
+</NumberedGrid>
+
+</Section>
+
+<Section id="s11" num="11" title="Short Summary">
+
+The essence of AI coding isn't "knowing how to write a prompt." The real issue is this:
+
+<KeyQuote>
+  Getting AI to do the right work, at the right size, with the right context, inside the right feedback loop.
+</KeyQuote>
+
+That's why a successful AI coding process can be reduced to this formula:
+
+<Formula
+  nodes={["Alignment", "PRD", "Vertical Slice Issues", "TDD Impl.", "Auto Checks", "Human Review", "Merge"]}
+/>
+
+AI coding doesn't automatically turn an undisciplined developer into a good one. On the contrary, **it amplifies the lack of discipline.** But combined with good software engineering practices, it becomes a powerful production model that ships well-planned, testable, small, independent pieces of work very quickly.
+
+<Callout icon={IconSparkles} kind="tip">
+  Taken together with Part 1, this framework forms the foundation for building an agentic software delivery workflow regardless of which language or tool you choose.
+</Callout>
+
+</Section>
+
+<Section id="resources" title="Resources">
+
+The core framework and examples in this document were compiled from the video presentation below, then restructured into a standalone tutorial.
+
+<Callout icon={IconVideo} kind="info">
+  <strong>Video:</strong> <em>Disciplined Software Development with AI Coding Agents</em> — covers the Smart Zone / Dumb Zone, the Grill Me technique, vertical slice / tracer bullet, deep vs. shallow modules, TDD with agentic coding, and AFK task management.
+</Callout>
+
+</Section>

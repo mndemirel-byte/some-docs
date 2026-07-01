@@ -1,0 +1,718 @@
+import {
+  IconBrandUbuntu,
+  IconBrandWindows,
+  IconFileDescription,
+  IconTools,
+  IconRobot,
+  IconNotebook,
+  IconLayoutList,
+  IconChecklist,
+  IconGitBranch,
+  IconSitemap,
+  IconNotes,
+  IconAlertCircle,
+  IconFolderCog,
+  IconHome,
+  IconBulb,
+  IconFileText,
+  IconTestPipe,
+  IconEye,
+  IconBooks,
+  IconSparkles,
+} from "@tabler/icons-react";
+import { Hero, Accent } from "@/components/doc/hero";
+import { Toc } from "@/components/doc/toc";
+import { Section } from "@/components/doc/section";
+import { FileTree, Dir, File, Special } from "@/components/doc/file-tree";
+import { ResponsiveCardGrid, ResponsiveCard } from "@/components/doc/responsive-card-grid";
+import { OsTabs } from "@/components/doc/os-tabs";
+import { CodeBlock } from "@/components/doc/code-block";
+import { CollapsibleCard } from "@/components/doc/collapsible-card";
+import { SkillTable } from "@/components/doc/skill-table";
+import { WorkflowStep } from "@/components/doc/workflow-step";
+import { Callout } from "@/components/doc/callout";
+import { PrinciplesGrid, PrincipleCard } from "@/components/doc/principles-grid";
+import { AntiPatternRow } from "@/components/doc/anti-pattern-row";
+import { Pipeline } from "@/components/doc/pipeline";
+
+<Hero
+  badge="agentic-ai-dev · intermediate level"
+  title={<>Claude Code <Accent>Agentic</Accent> Project Setup</>}
+  description="A Claude Code-compatible agentic development setup template you can copy into any software project — skills, sub-agents, CLAUDE.md, and a standard folder structure, all in one document."
+  tags={["claude-code", "skills", "sub-agents", "CLAUDE.md", "ADR", "agentic workflow", "mattpocock/skills"]}
+/>
+
+<Toc
+  title="Table of Contents"
+  entries={[
+    { id: "s1", num: "01", label: "Target Folder Structure" },
+    { id: "s2", num: "02", label: "Folder Responsibilities" },
+    { id: "s3", num: "03", label: "Setup Commands" },
+    { id: "s4", num: "04", label: "CLAUDE.md Template" },
+    { id: "s5", num: "05", label: "Skill Set" },
+    { id: "s6", num: "06", label: "Skill Files" },
+    { id: "s7", num: "07", label: "Agent Definitions" },
+    { id: "s8", num: "08", label: "Docs README Templates" },
+    { id: "s9", num: "09", label: "Workflow" },
+    { id: "s10", num: "10", label: "Usage Principles" },
+    { id: "s11", num: "11", label: "Anti-Patterns" },
+    { id: "s12", num: "12", label: "Summary" },
+  ]}
+/>
+
+<Section id="s1" num="01" title="Target Folder Structure">
+
+The following structure is created in every new project:
+
+<FileTree>
+  <Dir name="your-project/" root>
+    <Special name="CLAUDE.md" />
+    <Dir name=".claude/">
+      <Dir name="skills/">
+        <File kind="code" name={<>grill-with-docs/<strong>SKILL.md</strong></>} />
+        <File kind="code" name={<>to-prd/<strong>SKILL.md</strong></>} />
+        <File kind="code" name={<>to-issues/<strong>SKILL.md</strong></>} />
+        <File kind="code" name={<>tdd/<strong>SKILL.md</strong></>} />
+        <File kind="code" name={<>codebase-design/<strong>SKILL.md</strong></>} />
+        <File kind="code" name={<>diagnosing-bugs/<strong>SKILL.md</strong></>} />
+        <File kind="code" name={<>improve-codebase-architecture/<strong>SKILL.md</strong></>} />
+      </Dir>
+      <Dir name="agents/">
+        <File name="planner-agent.md" />
+        <File name="implementation-agent.md" />
+        <File name="debugging-agent.md" />
+        <File name="architecture-review-agent.md" />
+        <File name="documentation-agent.md" />
+      </Dir>
+    </Dir>
+    <Dir name="docs/">
+      <Special name="CONTEXT.md" />
+      <Dir name="prd/" />
+      <Dir name="issues/" />
+      <Dir name="adr/" />
+      <Dir name="architecture/" />
+      <Dir name="decisions/" />
+    </Dir>
+    <Dir name="src/" />
+    <Dir name="tests/" />
+    <File name="README.md" />
+  </Dir>
+</FileTree>
+
+</Section>
+
+<Section id="s2" num="02" title="Folders' Responsibilities">
+
+<ResponsiveCardGrid>
+  <ResponsiveCard icon={IconFileDescription} name="CLAUDE.md">
+    The main agent manifest. Project purpose, architecture rules, test commands, skill and agent workflow, agent boundaries. Long procedures go in <code>skills/*/SKILL.md</code>.
+  </ResponsiveCard>
+  <ResponsiveCard icon={IconTools} name=".claude/skills/">
+    Reusable working disciplines. A skill is not a "role" — it is the <strong>procedure</strong> the agent applies.
+  </ResponsiveCard>
+  <ResponsiveCard icon={IconRobot} name=".claude/agents/">
+    Specialist agent roles. Each agent owns a specific job and may use multiple skills.
+  </ResponsiveCard>
+  <ResponsiveCard icon={IconNotebook} name="docs/CONTEXT.md">
+    The living context file. Domain language, key concepts, system boundaries, module responsibilities, and architectural assumptions.
+  </ResponsiveCard>
+  <ResponsiveCard icon={IconLayoutList} name="docs/prd/">
+    Product requirements documents. E.g.: <code>001-initial-product-requirements.md</code>
+  </ResponsiveCard>
+  <ResponsiveCard icon={IconChecklist} name="docs/issues/">
+    Work items handed to agents. Every issue must be a <strong>vertical slice</strong> — never a horizontal layer task.
+  </ResponsiveCard>
+  <ResponsiveCard icon={IconGitBranch} name="docs/adr/">
+    Architecture Decision Records. E.g.: <code>0001-use-config-file-for-pricing.md</code>
+  </ResponsiveCard>
+  <ResponsiveCard icon={IconSitemap} name="docs/architecture/">
+    System architecture, module map, data flow, sequence diagrams, and high-level design documents.
+  </ResponsiveCard>
+  <ResponsiveCard icon={IconNotes} name="docs/decisions/">
+    Smaller product, technical, or process decisions that don't warrant a full ADR but still need tracking.
+  </ResponsiveCard>
+</ResponsiveCardGrid>
+
+</Section>
+
+<Section id="s3" num="03" title="Setup Commands">
+
+In a new project, the following commands can be run:
+
+<OsTabs
+  tabs={[
+    { id: "linux", label: <><IconBrandUbuntu size={16} /> Linux / macOS</> },
+    { id: "windows", label: <><IconBrandWindows size={16} /> Windows (PowerShell)</> },
+  ]}
+>
+
+<CodeBlock lang="bash">
+{`mkdir -p .claude/skills/{grill-with-docs,to-prd,to-issues,tdd,codebase-design,diagnosing-bugs,improve-codebase-architecture}
+mkdir -p .claude/agents
+mkdir -p docs/{prd,issues,adr,architecture,decisions}
+mkdir -p src tests
+
+touch CLAUDE.md
+touch docs/CONTEXT.md
+touch docs/prd/README.md
+touch docs/issues/README.md
+touch docs/adr/README.md
+touch docs/architecture/README.md
+touch docs/decisions/README.md
+
+touch .claude/skills/grill-with-docs/SKILL.md
+touch .claude/skills/to-prd/SKILL.md
+touch .claude/skills/to-issues/SKILL.md
+touch .claude/skills/tdd/SKILL.md
+touch .claude/skills/codebase-design/SKILL.md
+touch .claude/skills/diagnosing-bugs/SKILL.md
+touch .claude/skills/improve-codebase-architecture/SKILL.md
+
+touch .claude/agents/planner-agent.md
+touch .claude/agents/implementation-agent.md
+touch .claude/agents/debugging-agent.md
+touch .claude/agents/architecture-review-agent.md
+touch .claude/agents/documentation-agent.md`}
+</CodeBlock>
+
+<CodeBlock lang="powershell">
+{`# Create folders
+@(
+  ".claude\\skills\\grill-with-docs",
+  ".claude\\skills\\to-prd",
+  ".claude\\skills\\to-issues",
+  ".claude\\skills\\tdd",
+  ".claude\\skills\\codebase-design",
+  ".claude\\skills\\diagnosing-bugs",
+  ".claude\\skills\\improve-codebase-architecture",
+  ".claude\\agents",
+  "docs\\prd",
+  "docs\\issues",
+  "docs\\adr",
+  "docs\\architecture",
+  "docs\\decisions",
+  "src",
+  "tests"
+) | ForEach-Object { New-Item -ItemType Directory -Force $_ | Out-Null }
+
+# Create files
+@(
+  "CLAUDE.md",
+  "docs\\CONTEXT.md",
+  "docs\\prd\\README.md",
+  "docs\\issues\\README.md",
+  "docs\\adr\\README.md",
+  "docs\\architecture\\README.md",
+  "docs\\decisions\\README.md",
+  ".claude\\skills\\grill-with-docs\\SKILL.md",
+  ".claude\\skills\\to-prd\\SKILL.md",
+  ".claude\\skills\\to-issues\\SKILL.md",
+  ".claude\\skills\\tdd\\SKILL.md",
+  ".claude\\skills\\codebase-design\\SKILL.md",
+  ".claude\\skills\\diagnosing-bugs\\SKILL.md",
+  ".claude\\skills\\improve-codebase-architecture\\SKILL.md",
+  ".claude\\agents\\planner-agent.md",
+  ".claude\\agents\\implementation-agent.md",
+  ".claude\\agents\\debugging-agent.md",
+  ".claude\\agents\\architecture-review-agent.md",
+  ".claude\\agents\\documentation-agent.md"
+) | ForEach-Object { New-Item -ItemType File -Force $_ | Out-Null }`}
+</CodeBlock>
+
+</OsTabs>
+
+</Section>
+
+<Section id="s4" num="04" title="CLAUDE.md Template">
+
+Put the following content in a <code>CLAUDE.md</code> file at your project root.
+
+<CollapsibleCard
+  badge={<><IconFileDescription size={12} /> CLAUDE.md</>}
+  badgeKind="docs"
+  name="Project Instructions for Claude Code"
+  description="Expand to see the full template"
+>
+
+<CodeBlock lang="markdown">
+{`# Project Instructions for Claude Code
+
+## Project Goal
+This repository uses an agentic development workflow.
+Claude should not work as a single monolithic coding assistant. Instead, Claude should:
+1. Understand the project context.
+2. Clarify requirements.
+3. Produce PRDs when needed.
+4. Break work into vertical slice issues.
+5. Implement one issue at a time.
+6. Use TDD for deterministic behavior.
+7. Keep architecture decisions documented.
+8. Review architecture before finalizing milestones.
+
+## Repository Structure
+Important folders:
+- \`docs/CONTEXT.md\`: living project context and domain language
+- \`docs/prd/\`: product requirements documents
+- \`docs/issues/\`: agent-ready vertical slice implementation issues
+- \`docs/adr/\`: architecture decision records
+- \`docs/architecture/\`: high-level design and architecture notes
+- \`docs/decisions/\`: smaller non-ADR decisions
+- \`.claude/skills/\`: reusable workflows and engineering disciplines
+- \`.claude/agents/\`: specialized project agents
+
+## Default Workflow
+For new features:
+1. Use \`/grill-with-docs\` if the requirement is unclear.
+2. Use \`/to-prd\` for medium or large features.
+3. Use \`/to-issues\` to split PRD into vertical slice issues.
+4. Use \`implementation-agent\` for implementation.
+5. Implementation must follow \`/tdd\`.
+6. Use \`/codebase-design\` when changing module boundaries.
+7. Use \`debugging-agent\` with \`/diagnosing-bugs\` when tests fail unexpectedly.
+8. Use \`/improve-codebase-architecture\` before milestone completion.
+
+## Architecture Rules
+- Prefer vertical slices over horizontal layer work.
+- Keep business logic separate from presentation layers.
+- Keep public interfaces small.
+- Prefer deep modules over shallow modules.
+- Avoid unnecessary abstraction.
+- Avoid large rewrites unless explicitly requested.
+- Do not duplicate business logic across UI, API, CLI, or worker layers.
+- Document meaningful architecture decisions in \`docs/adr/\`.
+
+## Testing Rules
+- Use TDD for deterministic business logic.
+- Write one failing test before implementation.
+- Prefer behavior-focused tests.
+- Do not couple tests to private implementation details unless necessary.
+- Run relevant tests after each change.
+- Run the full test suite before marking an issue complete.
+
+## Documentation Rules
+- Keep \`docs/CONTEXT.md\` updated when domain language or module boundaries change.
+- Write PRDs under \`docs/prd/\`.
+- Write implementation issues under \`docs/issues/\`.
+- Write ADRs under \`docs/adr/\`.
+- Keep README accurate for setup and usage.
+
+## Issue Rules
+Issues under \`docs/issues/\` must include:
+- Title, User story, Acceptance criteria, Test expectations,
+  Dependencies, Suggested agent, Required skills, Out of scope
+
+Issues should be vertical slices. Avoid: "Create database layer", "Write pricing.py".
+Prefer: "User can run the first CLI tracer bullet and see a cost estimate".
+
+## Commands
+\`\`\`bash
+# Run tests
+pytest
+
+# Run app
+# TODO: add project-specific run command
+\`\`\`
+
+## Safety and Scope
+- Do not delete files without explicit instruction.
+- Do not introduce new dependencies without explaining why.
+- Do not change public behavior outside the active issue.
+- Do not perform unrelated refactors.
+- If a task is too broad, create or update an issue instead of coding immediately.`}
+</CodeBlock>
+
+</CollapsibleCard>
+
+</Section>
+
+<Section id="s5" num="05" title="Skill Set">
+
+The core skill set chosen for this setup. Skill = a working discipline / procedure.
+
+<SkillTable
+  skillHeader="Skill"
+  purposeHeader="Purpose"
+  rows={[
+    { skill: "grill-with-docs", purpose: "Clarify ambiguous requirements, establish domain language and context" },
+    { skill: "to-prd", purpose: "Convert a conversation or feature idea into a PRD" },
+    { skill: "to-issues", purpose: "Split the PRD into vertical slice issues" },
+    { skill: "tdd", purpose: "Test-first implementation discipline" },
+    { skill: "codebase-design", purpose: "Preserve module boundaries, the deep module principle, and clean design" },
+    { skill: "diagnosing-bugs", purpose: "Systematically diagnose test or runtime failures" },
+    { skill: "improve-codebase-architecture", purpose: "Review the codebase architecturally at the end of a milestone" },
+  ]}
+/>
+
+</Section>
+
+<Section id="s6" num="06" title="Skill Files">
+
+The following files live under <code>.claude/skills/&lt;skill-name&gt;/SKILL.md</code>. Expand for details.
+
+<CollapsibleCard badge="skill" badgeKind="skill" name="grill-with-docs" description="Clarify ambiguous requirements, establish domain language">
+
+<p><strong>Purpose:</strong> Clarify project intent before producing a PRD.</p>
+<p><strong>When to use it:</strong></p>
+<ul>
+  <li>The requirement is broad or ambiguous</li>
+  <li>Project boundaries aren't clear</li>
+  <li>The agent is about to make an assumption</li>
+  <li>Shared domain language is missing</li>
+  <li>The user asked for a plan but key details are missing</li>
+</ul>
+<p><strong>Outputs:</strong> <code>docs/CONTEXT.md</code>, <code>docs/decisions/</code>, optional <code>docs/adr/</code> drafts</p>
+<p><strong>Instructions:</strong></p>
+<ol>
+  <li>Read any existing docs: <code>docs/CONTEXT.md</code>, <code>docs/prd/</code>, <code>docs/adr/</code>, <code>README.md</code></li>
+  <li>Determine: project goal, target users, core workflows, domain vocabulary, constraints, assumptions, open questions</li>
+  <li>Ask only the most important clarifying questions</li>
+  <li>If there is enough context, update <code>docs/CONTEXT.md</code></li>
+</ol>
+<p><strong>Rules:</strong> Don't implement code. Don't create issues (unless requested). Prefer concise context over long writing. Separate facts, assumptions, and open questions.</p>
+
+</CollapsibleCard>
+
+<CollapsibleCard badge="skill" badgeKind="skill" name="to-prd" description="Convert a feature idea into a PRD">
+
+<p><strong>Purpose:</strong> Produce a PRD from the existing project context.</p>
+<p><strong>Inputs:</strong> <code>docs/CONTEXT.md</code>, <code>docs/decisions/</code>, <code>docs/adr/</code>, <code>README.md</code>, the user's request in the current conversation</p>
+<p><strong>Output location:</strong> <code>docs/prd/NNN-feature-name.md</code></p>
+<p><strong>PRD structure (required fields):</strong></p>
+<ul>
+  <li>Title, Problem statement, Goals, Non-goals</li>
+  <li>Target users, User stories</li>
+  <li>Functional requirements, Non-functional requirements</li>
+  <li>UX/interface expectations, Data/config requirements</li>
+  <li>Acceptance criteria, Out of scope, Open questions</li>
+</ul>
+<p><strong>Rules:</strong> Don't implement code. Don't produce a file-by-file implementation plan. Keep technical detail at the module-boundary level. If context is insufficient, run <code>grill-with-docs</code>.</p>
+
+</CollapsibleCard>
+
+<CollapsibleCard badge="skill" badgeKind="skill" name="to-issues" description="Split the PRD into vertical slice issues">
+
+<p><strong>Inputs:</strong> <code>docs/prd/</code>, <code>docs/CONTEXT.md</code>, relevant ADRs</p>
+<p><strong>Output:</strong> <code>docs/issues/NNN-short-title.md</code></p>
+<p><strong>Issue structure:</strong> Title, User story, Background, Acceptance criteria, Test expectations, Dependencies, Suggested agent, Required skills, Out of scope, Done checklist</p>
+<Callout icon={IconAlertCircle}>Issues must be vertical slices. NOT "Create database layer" or "Write pricing.py" — prefer behavior-focused issues like "User can load model pricing from config and get a cost estimate".</Callout>
+
+</CollapsibleCard>
+
+<CollapsibleCard badge="skill" badgeKind="skill" name="tdd" description="Implementation via the red-green-refactor loop">
+
+<p><strong>Purpose:</strong> Drive implementation through the red-green-refactor loop.</p>
+<p><strong>Steps:</strong></p>
+<ol>
+  <li>Read the issue acceptance criteria</li>
+  <li>Pick a behavior</li>
+  <li>Write a failing test</li>
+  <li>Run the relevant test command</li>
+  <li>Confirm the test fails for the expected reason</li>
+  <li>Implement the smallest change that makes the test pass</li>
+  <li>Run the test again</li>
+  <li>Refactor once the test passes</li>
+  <li>Repeat until all acceptance criteria are covered</li>
+  <li>Run the full test suite before finishing</li>
+</ol>
+<p><strong>Test rules:</strong> Prefer behavior tests. Don't test private implementation details. Don't write brittle tests. Don't assert on volatile values. Use fixtures. Keep tests readable.</p>
+<p><strong>Implementation rules:</strong> Don't write large amounts of production code before tests. Don't add unrelated features. Don't do unrelated refactors. Stay focused on the active issue.</p>
+
+</CollapsibleCard>
+
+<CollapsibleCard badge="skill" badgeKind="skill" name="codebase-design" description="Preserve module boundaries and clean design">
+
+<p><strong>Design principles:</strong></p>
+<ul>
+  <li>Prefer deep modules with small public interfaces</li>
+  <li>Separate business logic from delivery mechanisms (UI, CLI, API, DB)</li>
+  <li>Keep adapters thin</li>
+  <li>Don't duplicate business logic</li>
+  <li>Avoid unnecessary abstraction</li>
+  <li>Use clear names from the domain language</li>
+  <li>Write code that both humans and agents can navigate easily</li>
+</ul>
+<p><strong>ADR triggers:</strong> Framework choice, persistence strategy, module boundary definition/change, public interface stabilization, tradeoffs future agents need to understand.</p>
+
+</CollapsibleCard>
+
+<CollapsibleCard badge="skill" badgeKind="skill" name="diagnosing-bugs" description="Diagnose bugs systematically">
+
+<p><strong>Bug diagnosis steps:</strong></p>
+<ol>
+  <li>Reproduce the bug</li>
+  <li>Capture the full error message</li>
+  <li>Identify the smallest failing command or test</li>
+  <li>Review recent changes</li>
+  <li>Form a hypothesis</li>
+  <li>Make the smallest change that confirms or refutes the hypothesis</li>
+  <li>Re-run the failing test</li>
+  <li>Only then apply the fix</li>
+  <li>Run nearby tests, finish with the full suite</li>
+</ol>
+<p><strong>Rules:</strong> Don't guess and rewrite large sections. Don't fix multiple unrelated bugs at once. Don't suppress an error without understanding it. Prefer adding a regression test before the fix. Record surprising root causes in <code>docs/decisions/</code>.</p>
+
+</CollapsibleCard>
+
+<CollapsibleCard badge="skill" badgeKind="skill" name="improve-codebase-architecture" description="Architecture review before a milestone">
+
+<p><strong>Review areas:</strong> Module boundaries, duplicate business logic, shallow modules, framework leakage into core logic, missing tests, confusing names, missing ADRs, inaccurate README, overengineering, under-documented decisions.</p>
+<p><strong>Output format:</strong></p>
+<ol>
+  <li>Findings — grouped by severity: <strong>critical</strong> / <strong>important</strong> / <strong>minor</strong></li>
+  <li>Suggested fixes</li>
+  <li>Apply only low-risk fixes without user approval</li>
+  <li>Update docs if the architecture changed</li>
+  <li>Run tests after the changes</li>
+</ol>
+<p><strong>Rules:</strong> Don't do large rewrites without explicit approval. Don't change public behavior outside of bug fixes. Prefer small, reversible refactors. Preserve existing tests.</p>
+
+</CollapsibleCard>
+
+</Section>
+
+<Section id="s7" num="07" title="Agent Definitions">
+
+The following files live under <code>.claude/agents/*.md</code>. Agent = a role / specialist worker.
+
+<CollapsibleCard badge="agent" badgeKind="agent" name="planner-agent" description="Requirement clarification, PRD and issues — doesn't write code">
+
+<p><strong>Model:</strong> sonnet &nbsp;·&nbsp; <strong>Effort:</strong> high &nbsp;·&nbsp; <strong>Tools:</strong> Read, Write, Edit, Glob, Grep</p>
+<p><strong>Skills:</strong> grill-with-docs, to-prd, to-issues, codebase-design</p>
+<p><strong>Responsibilities:</strong></p>
+<ul>
+  <li>Clarify ambiguous requirements</li>
+  <li><code>docs/CONTEXT.md</code> updates</li>
+  <li>Write the PRD under <code>docs/prd/</code></li>
+  <li>Split the PRD into vertical slice issues → <code>docs/issues/</code></li>
+  <li>Draft ADRs under <code>docs/adr/</code> for architectural decisions</li>
+</ul>
+<p><strong>Rules:</strong> Don't write production code unless requested. Don't create horizontal-layer issues. Prefer tracer-bullet issues. Every issue must include acceptance criteria and test expectations.</p>
+
+</CollapsibleCard>
+
+<CollapsibleCard badge="agent" badgeKind="agent" name="implementation-agent" description="Implements a single scoped issue using TDD">
+
+<p><strong>Model:</strong> sonnet &nbsp;·&nbsp; <strong>Effort:</strong> high &nbsp;·&nbsp; <strong>Tools:</strong> Read, Write, Edit, Bash, Glob, Grep</p>
+<p><strong>Skills:</strong> tdd, codebase-design</p>
+<p><strong>Responsibilities:</strong></p>
+<ul>
+  <li>Implement one issue at a time</li>
+  <li>Read the issue file before coding</li>
+  <li>Fully satisfy the acceptance criteria</li>
+  <li>Use TDD; run the relevant tests after every change</li>
+  <li>Update docs whenever behavior, commands, or architecture change</li>
+</ul>
+<p><strong>Rules:</strong> Don't start unrelated refactors. Don't duplicate business logic. Don't mix unrelated issues. Don't add a dependency without explaining why. Run the full test suite before finishing.</p>
+
+</CollapsibleCard>
+
+<CollapsibleCard badge="agent" badgeKind="agent" name="debugging-agent" description="Diagnoses test failures and unexpected behavior">
+
+<p><strong>Model:</strong> sonnet &nbsp;·&nbsp; <strong>Effort:</strong> high &nbsp;·&nbsp; <strong>Tools:</strong> Read, Write, Edit, Bash, Glob, Grep</p>
+<p><strong>Skills:</strong> diagnosing-bugs, tdd, codebase-design</p>
+<p><strong>Responsibilities:</strong> Reproduce the bug → Find the smallest failing test → Diagnose before changing code → Add a regression test where appropriate → Apply the smallest safe fix → Run nearby + full tests</p>
+<p><strong>Rules:</strong> Don't rewrite large sections. Don't suppress errors without understanding the code. Don't fix unrelated issues. Record surprising findings in issue notes or <code>docs/decisions/</code>.</p>
+
+</CollapsibleCard>
+
+<CollapsibleCard badge="agent" badgeKind="agent" name="architecture-review-agent" description="Final architecture review before a milestone">
+
+<p><strong>Model:</strong> sonnet &nbsp;·&nbsp; <strong>Effort:</strong> high &nbsp;·&nbsp; <strong>Tools:</strong> Read, Write, Edit, Bash, Glob, Grep</p>
+<p><strong>Skills:</strong> improve-codebase-architecture, codebase-design</p>
+<p><strong>Responsibilities:</strong></p>
+<ul>
+  <li>Review architecture, module boundaries, tests, docs, and ADRs</li>
+  <li>Detect duplication, coupling, and overengineering</li>
+  <li>Apply only low-risk fixes</li>
+</ul>
+<p><strong>Rules:</strong> Don't do large rewrites without approval. Don't change public behavior outside of bug fixes. Group findings by severity. Run tests after changes.</p>
+
+</CollapsibleCard>
+
+<CollapsibleCard badge="agent" badgeKind="agent" name="documentation-agent" description="Updates README, ADRs, and project documentation">
+
+<p><strong>Model:</strong> sonnet &nbsp;·&nbsp; <strong>Effort:</strong> medium &nbsp;·&nbsp; <strong>Tools:</strong> Read, Write, Edit, Glob, Grep</p>
+<p><strong>Skills:</strong> codebase-design</p>
+<p><strong>Responsibilities:</strong></p>
+<ul>
+  <li>Keep README current; update usage commands</li>
+  <li><code>docs/CONTEXT.md</code> updates</li>
+  <li>Create or polish ADRs</li>
+  <li>Keep docs concise and useful for future agents</li>
+  <li>Link related PRDs, ADRs, and issues to each other</li>
+</ul>
+<p><strong>Rules:</strong> Don't invent behavior that doesn't exist. Verify commands against the codebase where possible. Prefer concise documentation. Link related PRDs, ADRs, and issues.</p>
+
+</CollapsibleCard>
+
+</Section>
+
+<Section id="s8" num="08" title="Docs README Templates">
+
+<CollapsibleCard badge="docs" badgeKind="docs" name="docs/prd/README.md" description="PRD folder guide">
+
+<p>Naming: <code>NNN-short-feature-name.md</code> — e.g. <code>001-token-cost-calculator.md</code></p>
+<p>Every PRD must include: goals, non-goals, user stories, requirements, acceptance criteria, and open questions.</p>
+
+</CollapsibleCard>
+
+<CollapsibleCard badge="docs" badgeKind="docs" name="docs/issues/README.md" description="Issue folder guide">
+
+<p>Every issue must be a vertical slice. Behavior-focused examples:</p>
+<ul>
+  <li>"User can submit a form and see a result"</li>
+  <li>"User can run a CLI command and get JSON output"</li>
+  <li>"System rejects invalid config with a useful error"</li>
+</ul>
+<p>Every issue must include: Title, User story, Acceptance criteria, Test expectations, Dependencies, Suggested agent, Required skills, Done checklist.</p>
+
+</CollapsibleCard>
+
+<CollapsibleCard badge="docs" badgeKind="docs" name="docs/adr/README.md" description="Architecture Decision Records guide">
+
+<p><strong>When to create an ADR:</strong> Framework choice, persistence strategy choice, module boundary definition, public interface stabilization, tradeoffs future agents need to understand.</p>
+<p>Naming: <code>NNNN-short-title.md</code> — e.g. <code>0001-use-fastapi-for-api-layer.md</code></p>
+
+</CollapsibleCard>
+
+<CollapsibleCard badge="docs" badgeKind="docs" name="docs/architecture/README.md" description="High-level architecture notes">
+
+<p>This folder contains: module map, data flow, sequence diagrams, integration boundaries, deployment notes.</p>
+
+</CollapsibleCard>
+
+<CollapsibleCard badge="docs" badgeKind="docs" name="docs/decisions/README.md" description="Lightweight decision notes">
+
+<p>For decisions that don't warrant a full ADR. Use cases:</p>
+<ul>
+  <li>Small product decisions</li>
+  <li>Naming decisions</li>
+  <li>Temporary constraints</li>
+  <li>Known tradeoffs</li>
+</ul>
+
+</CollapsibleCard>
+
+</Section>
+
+<Section id="s9" num="09" title="Recommended Workflow">
+
+### When starting a new project
+
+<WorkflowStep num={1} title="/grill-with-docs">
+  Clarify the project, extract domain language, create <code>docs/CONTEXT.md</code>, list open questions
+</WorkflowStep>
+<WorkflowStep num={2} title="/to-prd">
+  Write the first PRD under <code>docs/prd/</code>
+</WorkflowStep>
+<WorkflowStep num={3} title="/to-issues">
+  Split the PRD into agent-ready vertical slice issues → <code>docs/issues/</code>
+</WorkflowStep>
+
+### When implementing an issue
+
+<CodeBlock lang="text — Claude Code">
+{`Use implementation-agent.
+
+Implement docs/issues/001-example-feature.md.
+
+Follow the tdd and codebase-design skills.
+Keep changes scoped to this issue.
+Run tests before finishing.`}
+</CodeBlock>
+
+### When a test breaks
+
+<CodeBlock lang="text — Claude Code">
+{`Use debugging-agent.
+
+Diagnose the failing test using the diagnosing-bugs skill.
+Do not rewrite large sections.
+Add a regression test if appropriate.`}
+</CodeBlock>
+
+### At the end of a milestone
+
+<CodeBlock lang="text — Claude Code">
+{`Use architecture-review-agent.
+
+Run improve-codebase-architecture.
+Review module boundaries, tests, docs and ADRs.
+Apply only low-risk fixes.`}
+</CodeBlock>
+
+</Section>
+
+<Section id="s10" num="10" title="Usage Principles">
+
+<PrinciplesGrid>
+  <PrincipleCard icon={IconTools} title="What is a skill?">
+    A working discipline or procedure. <code>tdd</code> is a skill. <code>codebase-design</code> is a skill.
+  </PrincipleCard>
+  <PrincipleCard icon={IconRobot} title="What is an agent?">
+    A role or specialist worker. <code>implementation-agent</code> is an agent. It uses the <code>tdd</code> and <code>codebase-design</code> skills.
+  </PrincipleCard>
+  <PrincipleCard icon={IconFolderCog} title="Project-level setup">
+    Each repo keeps <code>.claude/skills/</code>, <code>.claude/agents/</code>, <code>CLAUDE.md</code>, and <code>docs/</code>. The project carries its own agentic workflow.
+  </PrincipleCard>
+  <PrincipleCard icon={IconHome} title="Personal-level setup">
+    Use <code>~/.claude/skills/</code> and <code>~/.claude/agents/</code> to share the same definitions globally across all projects. For team projects, however, project-level is safer.
+  </PrincipleCard>
+</PrinciplesGrid>
+
+</Section>
+
+<Section id="s11" num="11" title="Anti-Patterns">
+
+<AntiPatternRow
+  avoidLabel="Avoid"
+  preferLabel="Prefer"
+  avoid="Build me the entire app."
+  prefer="Use planner-agent to create vertical slice issues from the PRD."
+/>
+<AntiPatternRow
+  avoidLabel="Avoid"
+  preferLabel="Prefer"
+  avoid="Write pricing.py."
+  prefer="Implement the issue: user can load model pricing from config and get a cost estimate."
+/>
+<AntiPatternRow
+  avoidLabel="Avoid"
+  preferLabel="Prefer"
+  avoid="Tests are broken, fix them."
+  prefer="Use debugging-agent and diagnosing-bugs. Reproduce the failure, identify the root cause, add a regression test if needed, then fix."
+/>
+
+</Section>
+
+<Section id="s12" num="12" title="Summary">
+
+This setup's goal — an agentic delivery pipeline where each step feeds the next:
+
+<Pipeline
+  nodes={[
+    { icon: IconBulb, label: "Intent" },
+    { icon: IconNotebook, label: "Context" },
+    { icon: IconFileText, label: "PRD" },
+    { icon: IconChecklist, label: "Issues" },
+    { icon: IconRobot, label: "Agents" },
+    { icon: IconTestPipe, label: "TDD" },
+    { icon: IconEye, label: "Review" },
+    { icon: IconBooks, label: "Docs" },
+  ]}
+/>
+
+With this structure, Claude Code:
+
+- Knows what to write where
+- Uses standard folders when producing PRDs and issues
+- Keeps ADR decisions in the right place
+- Applies TDD during implementation
+- Preserves module boundaries
+- Runs an architecture review at the end of a milestone
+
+<Callout icon={IconSparkles}>
+  This is the foundation for moving beyond "one big prompt to one agent" and building a real <strong>agentic software delivery workflow</strong>.
+</Callout>
+
+</Section>

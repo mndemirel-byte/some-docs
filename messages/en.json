@@ -1,0 +1,51 @@
+{
+  "IndexPage": {
+    "eyebrow": "Document Library",
+    "title": "Disciplined Software<br></br>Development with <em>AI Coding</em>",
+    "description": "Claude Code, skills, TDD, vertical slices, and AFK agent workflows. Four comprehensive guides applicable at every level — from individual developers to team models.",
+    "meta": {
+      "documents": "4 documents",
+      "prompts": "Copyable prompts",
+      "compatible": "Claude Code compatible"
+    },
+    "cards": [
+      {
+        "num": "01",
+        "type": "Reference Template",
+        "title": "Claude Code Agentic Project Setup",
+        "subtitle": "Folder structure · CLAUDE.md · Skills · Agents",
+        "desc": "An agentic development template you can copy into any new project. 7 skill files, 5 agent definitions, a CLAUDE.md template, docs folder structure, and Windows/macOS setup commands in one document.",
+        "tags": ["CLAUDE.md", "skills", "agents", "ADR", "setup"],
+        "cta": "Open Document"
+      },
+      {
+        "num": "02",
+        "type": "Training Series · Part 1",
+        "title": "Disciplined Development with AI Coding",
+        "subtitle": "Core problems · 7-stage workflow · AFK agent",
+        "desc": "Smart Zone / Dumb Zone, the Grill Me technique, horizontal vs. vertical slicing, the TDD feedback loop, and deep module architecture. Stage 0 through Stage 6: idea → PRD → issues → TDD → AFK → architecture review.",
+        "tags": ["PRD", "vertical-slice", "TDD", "AFK", "context-window"],
+        "cta": "Open Document"
+      },
+      {
+        "num": "03",
+        "type": "Training Series · Part 2",
+        "title": "Best Practices and Team Model",
+        "subtitle": "Skill map · Playbooks · Areas of responsibility",
+        "desc": "6 things to always do, 6 things to never do, playbooks for simple and large features, a 5-dimension skill map (A–E), a team responsibility table, and the Alignment → Merge summary formula.",
+        "tags": ["best-practices", "skill-map", "playbook", "team-model"],
+        "cta": "Open Document"
+      },
+      {
+        "num": "04",
+        "type": "Practical Guide",
+        "title": "Building a Project with Matt Pocock Skills",
+        "subtitle": "/grill-with-docs · /to-prd · /tdd · /diagnose",
+        "desc": "A complete skill workflow through a URL Shortener example. /setup, /grill-with-docs, /to-prd, /to-issues, /tdd, /triage, /improve-codebase-architecture, and supporting skills — with real terminal output.",
+        "tags": ["slash-commands", "CONTEXT.md", "ADR", "URL-shortener", "TypeScript"],
+        "cta": "Open Document"
+      }
+    ],
+    "footer": "Links work when all documents are in the same folder · Claude Code Agentic Development Series"
+  }
+}

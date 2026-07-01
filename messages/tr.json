@@ -1,0 +1,51 @@
+{
+  "IndexPage": {
+    "eyebrow": "Doküman Kütüphanesi",
+    "title": "AI Coding ile<br></br><em>Disiplinli</em> Yazılım Geliştirme",
+    "description": "Claude Code, skill'ler, TDD, vertical slice ve AFK agent workflow'u. Bireysel developer'dan ekip modeline kadar her seviyede uygulanabilir dört kapsamlı rehber.",
+    "meta": {
+      "documents": "4 doküman",
+      "prompts": "Kopyalanabilir prompt'lar",
+      "compatible": "Claude Code uyumlu"
+    },
+    "cards": [
+      {
+        "num": "01",
+        "type": "Referans Şablonu",
+        "title": "Claude Code Agentic Project Setup",
+        "subtitle": "Klasör yapısı · CLAUDE.md · Skill'ler · Agent'lar",
+        "desc": "Her yeni projeye kopyalanabilecek agentic development şablonu. 7 skill dosyası, 5 agent tanımı, CLAUDE.md şablonu, docs klasör yapısı ve Windows/macOS setup komutları tek dokümanda.",
+        "tags": ["CLAUDE.md", "skills", "agents", "ADR", "setup"],
+        "cta": "Dokümana Git"
+      },
+      {
+        "num": "02",
+        "type": "Eğitim Serisi · Bölüm 1",
+        "title": "AI Coding ile Disiplinli Geliştirme",
+        "subtitle": "Temel problemler · 7 aşamalı workflow · AFK agent",
+        "desc": "Smart Zone / Dumb Zone, Grill Me tekniği, horizontal vs vertical slice, TDD feedback loop ve deep module mimarisi. Aşama 0'dan Aşama 6'ya: fikir → PRD → issue → TDD → AFK → mimari review.",
+        "tags": ["PRD", "vertical-slice", "TDD", "AFK", "context-window"],
+        "cta": "Dokümana Git"
+      },
+      {
+        "num": "03",
+        "type": "Eğitim Serisi · Bölüm 2",
+        "title": "Best Practice'ler ve Takım Modeli",
+        "subtitle": "Beceri haritası · Playbook'lar · Sorumluluk alanları",
+        "desc": "6 yapılması / 6 yapılmaması gereken, basit ve büyük feature playbook'ları, A–E arası 5 boyutlu beceri haritası, takım sorumluluk tablosu ve Alignment → Merge özet formülü.",
+        "tags": ["best-practices", "beceri-haritası", "playbook", "takım-modeli"],
+        "cta": "Dokümana Git"
+      },
+      {
+        "num": "04",
+        "type": "Pratik Rehber",
+        "title": "Matt Pocock Skills ile Proje Geliştirme",
+        "subtitle": "/grill-with-docs · /to-prd · /tdd · /diagnose",
+        "desc": "URL Shortener örneği üzerinden komple skill akışı. /setup, /grill-with-docs, /to-prd, /to-issues, /tdd, /triage, /improve-codebase-architecture ve yardımcı skill'ler. Gerçek terminal çıktılarıyla.",
+        "tags": ["slash-commands", "CONTEXT.md", "ADR", "URL-shortener", "TypeScript"],
+        "cta": "Dokümana Git"
+      }
+    ],
+    "footer": "Tüm dokümanlar aynı klasörde olduğunda linklerin çalışır · Claude Code Agentic Development Serisi"
+  }
+}

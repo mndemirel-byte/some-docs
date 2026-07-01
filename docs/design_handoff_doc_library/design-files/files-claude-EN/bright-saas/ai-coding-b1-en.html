@@ -1,0 +1,956 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Disciplined Software Development with AI Coding Agents — Part 1</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
+<style>
+:root{
+  --bg:#120D24;--surface:#1C1633;--surface2:#261E45;
+  --border:#372C5C;--border-strong:#4D3F80;
+  --accent:#A78BFA;--accent-bg:rgba(167,139,250,.14);--accent-border:rgba(167,139,250,.38);--accent-text:#A78BFA;
+  --blue:#22D3EE;--blue-bg:rgba(34,211,238,.14);--blue-border:rgba(34,211,238,.38);--blue-text:#22D3EE;
+  --green:#A3E635;--green-bg:rgba(163,230,53,.14);--green-border:rgba(163,230,53,.38);--green-text:#A3E635;
+  --red:#FB7185;--red-bg:rgba(251,113,133,.14);--red-border:rgba(251,113,133,.38);--red-text:#FB7185;
+  --amber:#FBBF24;--amber-bg:rgba(251,191,36,.14);--amber-border:rgba(251,191,36,.38);--amber-text:#FBBF24;
+  --text:#F7F4FF;--muted:#948CB8;--subtle:#CBC4ED;
+  --mono:'JetBrains Mono','Fira Code',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);line-height:1.7;font-size:15px}
+a{color:var(--accent-text);text-decoration:none}a:hover{text-decoration:underline}
+.wrap{max-width:860px;margin:0 auto;padding:0 24px 80px}
+
+/* Hero */
+.hero{padding:48px 0 36px;border-bottom:1px solid var(--border);margin-bottom:40px}
+.hero-eyebrow{font-family:var(--mono);font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:12px}
+.hero h1{font-size:30px;font-weight:700;line-height:1.2;color:var(--text);margin-bottom:12px}
+.hero h1 em{font-style:normal;color:var(--accent-text)}
+.hero-desc{font-size:15px;color:var(--subtle);max-width:680px;line-height:1.65;margin-bottom:20px}
+.tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:16px}
+.tag{font-family:var(--mono);font-size:11px;padding:3px 9px;border-radius:4px;background:var(--surface2);border:1px solid var(--border);color:var(--muted)}
+
+/* Key quote */
+.keyquote{background:var(--accent-bg);border-left:4px solid var(--accent);border-radius:0 10px 10px 0;padding:16px 20px;margin:20px 0}
+.keyquote p{font-size:15px;font-weight:500;color:var(--text);margin:0;line-height:1.6}
+
+/* TOC */
+.toc{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px 24px;margin-bottom:48px}
+.toc-title{font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:14px;display:flex;align-items:center;gap:6px}
+.toc-list{list-style:none;padding:0}
+.toc-list li{margin-bottom:2px}
+.toc-list a{display:flex;align-items:center;gap:8px;padding:5px 8px;font-size:13px;color:var(--subtle);border-radius:6px;transition:all .15s}
+.toc-list a:hover{color:var(--accent-text);background:var(--accent-bg);text-decoration:none}
+.toc-num{font-family:var(--mono);font-size:10px;color:var(--accent-text);min-width:24px}
+.toc-sub{list-style:none;padding:2px 0 2px 30px}
+.toc-sub a{font-size:12px;padding:3px 8px;color:var(--muted)}
+
+/* Sections */
+.section{margin-bottom:56px;scroll-margin-top:20px}
+.sec-head{display:flex;align-items:center;gap:10px;margin-bottom:20px;padding-bottom:14px;border-bottom:1px solid var(--border)}
+.sec-num{font-family:var(--mono);font-size:10px;background:var(--accent-bg);color:var(--accent-text);border:1px solid var(--accent-border);padding:2px 8px;border-radius:4px;letter-spacing:.04em}
+.sec-head h2{font-size:22px;font-weight:600;color:var(--text)}
+h3{font-size:16px;font-weight:600;color:var(--text);margin:26px 0 10px}
+h4{font-size:14px;font-weight:600;color:var(--text);margin:14px 0 6px}
+p{color:var(--subtle);font-size:14px;margin-bottom:12px;line-height:1.7}
+ul,ol{padding-left:20px;margin-bottom:12px}
+li{font-size:14px;color:var(--subtle);margin-bottom:5px;line-height:1.6}
+strong{color:var(--text);font-weight:600}
+hr{border:none;border-top:1px solid var(--border);margin:36px 0}
+
+code{font-family:var(--mono);font-size:12px;background:var(--surface2);border:1px solid var(--border);padding:1px 5px;border-radius:4px;color:var(--blue-text)}
+
+/* 2-col grids */
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:14px 0}
+.gcard{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px}
+.gcard h4{font-size:13px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;font-family:var(--mono);margin:0 0 10px;display:flex;align-items:center;gap:6px}
+.gcard ul{padding-left:16px;margin:0}
+.gcard li{font-size:13px;color:var(--subtle);margin-bottom:4px}
+
+/* Terms table */
+.gtbl{width:100%;border-collapse:collapse;margin:12px 0}
+.gtbl th{text-align:left;padding:8px 12px;font-size:11px;color:var(--muted);font-family:var(--mono);border-bottom:1px solid var(--border-strong);font-weight:500;text-transform:uppercase;letter-spacing:.05em}
+.gtbl td{padding:10px 12px;border-bottom:1px solid var(--border);font-size:13px;vertical-align:top}
+.gtbl tr:last-child td{border-bottom:none}
+.gtbl tr:hover td{background:var(--surface2)}
+.gtbl .term{font-family:var(--mono);font-size:12px;color:var(--accent-text);white-space:nowrap;font-weight:500}
+.gtbl .def{color:var(--subtle);line-height:1.55}
+
+/* Challenge cards */
+.cc{background:var(--surface);border:1px solid var(--border);border-radius:12px;margin-bottom:10px;overflow:hidden}
+.cc-head{display:flex;align-items:center;gap:12px;padding:15px 18px;cursor:pointer;transition:background .15s;user-select:none}
+.cc-head:hover{background:var(--surface2)}
+.cc-num{width:28px;height:28px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:12px;font-weight:600;background:var(--red-bg);color:var(--red-text);border:1px solid var(--red-border);flex-shrink:0}
+.cc-title{font-size:15px;font-weight:600;color:var(--text);flex:1}
+.cc-tog{color:var(--muted);font-size:16px;transition:transform .2s}
+.cc.open .cc-tog{transform:rotate(180deg)}
+.cc-body{display:none;padding:0 18px 18px;border-top:1px solid var(--border)}
+.cc.open .cc-body{display:block;padding-top:16px}
+.cc-body p,.cc-body li{font-size:14px}
+
+/* Problem / Solution */
+.pb2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:14px 0}
+.pb{border-radius:8px;padding:14px 16px}
+.pb-bad{background:var(--red-bg);border:1px solid var(--red-border)}
+.pb-good{background:var(--green-bg);border:1px solid var(--green-border)}
+.pb-neutral{background:var(--surface2);border:1px solid var(--border)}
+.pb-label{font-size:10px;font-family:var(--mono);text-transform:uppercase;letter-spacing:.08em;font-weight:600;margin-bottom:8px;display:flex;align-items:center;gap:5px}
+.pb-bad .pb-label{color:var(--red-text)}
+.pb-good .pb-label{color:var(--green-text)}
+.pb p{font-size:13px;color:var(--subtle);margin:0;line-height:1.55}
+.pb code{font-size:11px}
+
+/* Phase sections */
+.phase{margin-bottom:52px;scroll-margin-top:20px}
+.phase-head{display:flex;align-items:center;gap:16px;margin-bottom:20px;padding-bottom:16px;border-bottom:2px solid var(--accent-border)}
+.phase-num{width:50px;height:50px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:22px;font-weight:700;background:var(--accent-bg);color:var(--accent-text);border:2px solid var(--accent-border);flex-shrink:0}
+.phase-info h2{font-size:20px;font-weight:700;color:var(--text);margin-bottom:3px}
+.phase-sub{font-size:12px;color:var(--muted);font-family:var(--mono);display:flex;align-items:center;gap:8px}
+.opt-badge{background:var(--amber-bg);color:var(--amber-text);border:1px solid var(--amber-border);font-size:10px;padding:2px 7px;border-radius:4px;font-weight:600;font-family:var(--mono)}
+
+/* Code blocks */
+.cb{background:var(--surface);border:1px solid var(--border);border-radius:12px;margin:14px 0;overflow:hidden}
+.cb-head{display:flex;align-items:center;justify-content:space-between;padding:9px 16px;border-bottom:1px solid var(--border);background:var(--surface2)}
+.cb-lang{font-family:var(--mono);font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;display:flex;align-items:center;gap:5px}
+.cb-lang.lp{color:var(--accent-text)}
+.cb-lang.le{color:var(--blue-text)}
+.cb-lang.lf{color:var(--green-text)}
+.cb-copy{background:none;border:1px solid var(--border);color:var(--muted);font-size:11px;font-family:var(--mono);padding:3px 10px;border-radius:4px;cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:4px}
+.cb-copy:hover{background:var(--surface);color:var(--text);border-color:var(--border-strong)}
+.cb pre{padding:15px 18px;overflow-x:auto;font-family:var(--mono);font-size:12.5px;line-height:1.75;color:var(--subtle);max-height:460px;overflow-y:auto}
+
+/* Collapsible example */
+.ex-wrap{margin:10px 0}
+.ex-btn{display:flex;align-items:center;gap:8px;padding:10px 16px;background:var(--blue-bg);border:1px solid var(--blue-border);border-radius:8px;cursor:pointer;font-size:13px;color:var(--blue-text);user-select:none;transition:background .15s}
+.ex-btn:hover{background:rgba(3,105,161,.12)}
+.ex-btn i.ch{margin-left:auto;transition:transform .2s}
+.ex-wrap.open .ex-btn i.ch{transform:rotate(180deg)}
+.ex-content{display:none}
+.ex-wrap.open .ex-content{display:block}
+
+/* Callouts */
+.callout{border-radius:10px;padding:13px 16px;margin:14px 0;font-size:14px;display:flex;gap:10px;align-items:flex-start;line-height:1.55}
+.callout i{font-size:17px;flex-shrink:0;margin-top:1px}
+.callout p{margin:0;font-size:13px}
+.ci{background:var(--blue-bg);border:1px solid var(--blue-border)}
+.ci i,.ci strong{color:var(--blue-text)}
+.ct{background:var(--green-bg);border:1px solid var(--green-border)}
+.ct i,.ct strong{color:var(--green-text)}
+.cw{background:var(--amber-bg);border:1px solid var(--amber-border)}
+.cw i,.cw strong{color:var(--amber-text)}
+
+/* AFK condition cards */
+.cond-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:14px 0}
+.cond{border-radius:10px;padding:14px 16px}
+.cond-safe{background:var(--green-bg);border:1px solid var(--green-border)}
+.cond-risk{background:var(--red-bg);border:1px solid var(--red-border)}
+.cond-title{font-size:11px;font-family:var(--mono);font-weight:600;text-transform:uppercase;letter-spacing:.07em;margin-bottom:8px;display:flex;align-items:center;gap:5px}
+.cond-safe .cond-title{color:var(--green-text)}
+.cond-risk .cond-title{color:var(--red-text)}
+.cond ul{padding-left:16px;margin:0}
+.cond li{font-size:13px;color:var(--subtle);margin-bottom:4px}
+
+/* Flow steps */
+.fsteps{list-style:none;padding:0;margin:14px 0}
+.fstep{display:flex;gap:14px;margin-bottom:18px;align-items:flex-start}
+.fstep-n{width:28px;height:28px;border-radius:50%;background:var(--accent-bg);border:1px solid var(--accent-border);color:var(--accent-text);font-family:var(--mono);font-size:12px;font-weight:600;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px}
+.fstep-b h4{font-size:14px;font-weight:600;color:var(--text);margin:0 0 4px}
+.fstep-b p{font-size:13px;color:var(--subtle);margin:0 0 6px}
+
+.phase-sep{border:none;border-top:2px dashed var(--border);margin:48px 0}
+
+@media(max-width:600px){
+  .grid2,.pb2,.cond-grid{grid-template-columns:1fr}
+  .hero h1{font-size:22px}
+  .wrap{padding:0 16px 60px}
+  .phase-head{flex-wrap:wrap}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-eyebrow">AI Coding Series · Part 1</div>
+  <h1>Disciplined Software Development with <em>AI Coding</em> Agents</h1>
+  <p class="hero-desc">AI coding may look like a new paradigm, but the foundation of using it successfully is still classic software engineering discipline. This document offers a practical roadmap: from idea to PRD, from PRD to vertical slices, and from there to test-backed AFK agent implementation.</p>
+  <div class="keyquote">
+    <p>Instead of force-feeding the model a huge task, break the work into pieces small enough for the model to stay sharp.</p>
+  </div>
+  <div class="tags">
+    <span class="tag">TDD</span><span class="tag">vertical-slice</span><span class="tag">AFK-agent</span>
+    <span class="tag">PRD</span><span class="tag">deep-module</span><span class="tag">claude-code</span>
+  </div>
+</div>
+
+<!-- TOC -->
+<div class="toc">
+  <div class="toc-title"><i class="ti ti-list"></i> Table of Contents</div>
+  <ul class="toc-list">
+    <li><a href="#intro"><span class="toc-num">—</span>Who This Document Is For &amp; Prerequisites</a></li>
+    <li><a href="#terms"><span class="toc-num">—</span>Abbreviations and Terms</a></li>
+    <li><a href="#s1"><span class="toc-num">01</span>The Core Problem: AI Is Smart, But Not Unlimited</a></li>
+    <li>
+      <a href="#s2"><span class="toc-num">02</span>Challenges Encountered During AI Coding</a>
+      <ul class="toc-sub">
+        <li><a href="#c1"><span class="toc-num">2.1</span>Misunderstood Requirements</a></li>
+        <li><a href="#c2"><span class="toc-num">2.2</span>The Limits of Spec-Driven Development</a></li>
+        <li><a href="#c3"><span class="toc-num">2.3</span>Context Bloat</a></li>
+        <li><a href="#c4"><span class="toc-num">2.4</span>The Tendency Toward Horizontal Implementation</a></li>
+        <li><a href="#c5"><span class="toc-num">2.5</span>Lack of Tests</a></li>
+        <li><a href="#c6"><span class="toc-num">2.6</span>Bad Architecture: Shallow Modules</a></li>
+      </ul>
+    </li>
+    <li>
+      <a href="#s3"><span class="toc-num">03</span>The Recommended AI Coding Workflow</a>
+      <ul class="toc-sub">
+        <li><a href="#p0"><span class="toc-num">A.0</span>Break the Idea into Features (Optional)</a></li>
+        <li><a href="#p1"><span class="toc-num">A.1</span>Interrogate the Feature Brief</a></li>
+        <li><a href="#p2"><span class="toc-num">A.2</span>Produce a PRD / Destination Document</a></li>
+        <li><a href="#p3"><span class="toc-num">A.3</span>Split the PRD into Issues</a></li>
+        <li><a href="#p4"><span class="toc-num">A.4</span>Have the Agent Write Code with TDD</a></li>
+        <li><a href="#p5"><span class="toc-num">A.5</span>Human-in-the-Loop vs. AFK Split</a></li>
+        <li><a href="#p6"><span class="toc-num">A.6</span>Improve the Codebase</a></li>
+      </ul>
+    </li>
+    <li><a href="#resources"><span class="toc-num">—</span>Resources</a></li>
+  </ul>
+</div>
+
+<!-- INTRO -->
+<div class="section" id="intro">
+  <div class="sec-head"><h2>Who Is This Document For?</h2></div>
+  <p>This is aimed at software professionals who want to integrate AI coding tools into their daily workflow. The primary audience is <strong>software developers</strong> at every level, from junior to senior. The sections on clarifying requirements, producing a PRD, breaking down work, and reviewing are also directly applicable to <strong>technical leads, architects, and product managers</strong>.</p>
+  <div class="callout ci"><i class="ti ti-info-circle"></i><p>This document is not tied to a specific language or tool. Examples are drawn mostly from the TypeScript/Python ecosystems, but the principles (vertical slices, TDD, deep modules, context management) are language- and tool-agnostic.</p></div>
+  <div class="grid2">
+    <div class="gcard">
+      <h4><i class="ti ti-circle-check" style="color:var(--red-text)"></i>Required prerequisites</h4>
+      <ul>
+        <li>Basic competency in at least one language</li>
+        <li>Basic Git knowledge (commit, branch, merge)</li>
+        <li>Familiarity with any AI coding tool</li>
+      </ul>
+    </div>
+    <div class="gcard">
+      <h4><i class="ti ti-circle-plus" style="color:var(--green-text)"></i>Helpful but not required</h4>
+      <ul>
+        <li>Experience writing tests (unit, integration)</li>
+        <li>Command line: build, test, lint</li>
+        <li>Basic product development understanding</li>
+        <li>Knowledge of CI/CD pipelines</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- TERMS -->
+<div class="section" id="terms">
+  <div class="sec-head"><h2>Abbreviations and Terms</h2></div>
+  <table class="gtbl">
+    <thead><tr><th>Term</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td class="term">PRD</td><td class="def">Product Requirements Document — a requirements document defining what a feature will do, why, its scope, and success criteria.</td></tr>
+      <tr><td class="term">AFK</td><td class="def">Away From Keyboard — the mode in which an agent works on its own without active developer intervention.</td></tr>
+      <tr><td class="term">TDD</td><td class="def">Test-Driven Development — write a test first, watch it fail, write the code, then refactor. The Red-Green-Refactor loop.</td></tr>
+      <tr><td class="term">ADR</td><td class="def">Architecture Decision Record — a document recording what an architectural decision was, why it was made, and its alternatives.</td></tr>
+      <tr><td class="term">LLM</td><td class="def">Large Language Model — large language models like GPT, Claude. The foundation of AI coding agents.</td></tr>
+      <tr><td class="term">Context window</td><td class="def">The amount of text (in tokens) a model can process at once. Code, conversation history, the system prompt, and files all share this window.</td></tr>
+      <tr><td class="term">Compacting</td><td class="def">A technique for shrinking the context window by summarizing long conversation history.</td></tr>
+      <tr><td class="term">Vertical slice</td><td class="def">An end-to-end slice that spans all of a feature's layers, from database to UI, while keeping scope narrow.</td></tr>
+      <tr><td class="term">Horizontal slice</td><td class="def">A work item that covers only a single layer of a feature (e.g. only the database, only the API).</td></tr>
+      <tr><td class="term">Deep module</td><td class="def">A module with a small, simple public interface that does a meaningful amount of work internally. Its test boundary is clear.</td></tr>
+      <tr><td class="term">Shallow module</td><td class="def">A module that does very little work but exposes broad dependencies outward. Creates a tangled dependency web.</td></tr>
+      <tr><td class="term">Tracer bullet</td><td class="def">The metaphor of firing a lit round in the dark to see if it reaches the target. Describes getting early feedback with a minimal schema + service + API + UI.</td></tr>
+      <tr><td class="term">E2E / CI / QA</td><td class="def">End-to-End test · Continuous Integration (automatic build/test per commit) · Quality Assurance.</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- S1 -->
+<div class="section" id="s1">
+  <div class="sec-head"><span class="sec-num">01</span><h2>The Core Problem: AI Is Smart, But Not Unlimited</h2></div>
+  <p>The biggest misconception with LLM-based coding agents is: <strong>"If the context window is big, I can give it everything."</strong> In practice, however, there's a dynamic you could call the <strong>Smart Zone / Dumb Zone</strong>. The model performs better at the start of a conversation; as context grows, attention relationships become more complex and the model gradually starts making worse decisions.</p>
+  <div class="callout cw"><i class="ti ti-alert-triangle"></i><p>A model's context window might be 200K tokens — but when you load 150K tokens of code plus conversation history, the model makes far more mistakes and produces inconsistent code compared to a 20K-token session. <strong>Nominal capacity ≠ effective attention capacity.</strong></p></div>
+  <p>This decline happens at different rates depending on the model and task type. The practical rule: the smaller you keep the context, the more reliably the model works. Rather than memorizing a fixed token threshold, it's healthier to actively observe response quality throughout the session and clear the context to start fresh once you feel quality dropping.</p>
+  <div class="keyquote"><p>Instead of force-feeding the model a huge task, break the work into pieces small enough for the model to stay sharp.</p></div>
+</div>
+
+<!-- S2 -->
+<div class="section" id="s2">
+  <div class="sec-head"><span class="sec-num">02</span><h2>Challenges Encountered During AI Coding</h2></div>
+  <p>Click any heading to expand its description, problem, and solution.</p>
+
+  <div class="cc" id="c1"><div class="cc-head" onclick="tog('c1')"><div class="cc-num">1</div><div class="cc-title">Misunderstood Requirements</div><i class="ti ti-chevron-down cc-tog"></i></div>
+  <div class="cc-body">
+    <p>AI very often produces a plan far too early. You say "I want a feature like this," and the agent immediately suggests architecture, a file list, and code. But the underlying assumptions haven't been clarified yet.</p>
+    <p><strong>Example — Gamification:</strong> When you say "add a points system," the AI produces a plan right away — but these questions go unanswered: Which actions earn points? Are already-completed lessons scored retroactively? What does the level curve look like? Where in the UI is the score shown?</p>
+    <div class="pb2">
+      <div class="pb pb-bad"><div class="pb-label"><i class="ti ti-x"></i>Problem</div><p>AI is ready to write code, but product decisions, domain decisions, and edge-case decisions are still missing.</p></div>
+      <div class="pb pb-good"><div class="pb-label"><i class="ti ti-check"></i>Solution</div><p>Alignment must happen before code. Use the AI as a <strong>"Grill Me" interrogation partner</strong>: the AI asks questions, surfaces assumptions, and builds a shared design understanding.</p></div>
+    </div>
+  </div></div>
+
+  <div class="cc" id="c2"><div class="cc-head" onclick="tog('c2')"><div class="cc-num">2</div><div class="cc-title">The Limits of Spec-Driven Development</div><i class="ti ti-chevron-down cc-tog"></i></div>
+  <div class="cc-body">
+    <p>A common approach: "Write a spec, let the AI turn it into code; if the code is wrong, fix the spec and regenerate." This alone isn't enough, because the developer becomes disconnected from the code. <strong>Code is still the battlefield.</strong></p>
+    <p><strong>Where spec-first is strong:</strong> API contract design (OpenAPI/Swagger), database migration planning, protocol/interface definitions, system integration points.</p>
+    <div class="pb2">
+      <div class="pb pb-bad"><div class="pb-label"><i class="ti ti-x"></i>Problem</div><p>The developer gets reduced to editing specs only; code quality and architectural control are lost.</p></div>
+      <div class="pb pb-good"><div class="pb-label"><i class="ti ti-check"></i>Solution</div><p><strong>If you're writing a spec, read the code too; if you're writing code, update the spec too.</strong> The developer must understand modules, define test boundaries, and actively manage architectural quality.</p></div>
+    </div>
+  </div></div>
+
+  <div class="cc" id="c3"><div class="cc-head" onclick="tog('c3')"><div class="cc-num">3</div><div class="cc-title">Context Bloat and Over-Reliance on Compacting</div><i class="ti ti-chevron-down cc-tog"></i></div>
+  <div class="cc-body">
+    <p>As a session grows, the model's performance drops. Compacting summarizes history but is a limited solution. Details can be lost during summarization, and the remnants of old, no-longer-valid decisions (<strong>sediment</strong>) can mislead the agent.</p>
+    <div class="pb2">
+      <div class="pb pb-bad"><div class="pb-label"><i class="ti ti-x"></i>Problem</div><p>In a long conversation, the agent can confuse past decisions, file changes, and intent.</p></div>
+      <div class="pb pb-good"><div class="pb-label"><i class="ti ti-check"></i>Solution</div><p>Keep sessions small; clear context when needed. Write important decisions into permanent artifacts: PRDs, issues, ADRs, test plans.</p></div>
+    </div>
+  </div></div>
+
+  <div class="cc" id="c4"><div class="cc-head" onclick="tog('c4')"><div class="cc-num">4</div><div class="cc-title">The Tendency Toward Horizontal Implementation</div><i class="ti ti-chevron-down cc-tog"></i></div>
+  <div class="cc-body">
+    <p>AI naturally tends to split work into horizontal layers: database first, then API, then frontend. It looks classic, but feedback arrives very late. Something that actually works end-to-end only emerges in the third phase.</p>
+    <p><strong>Vertical slice / Tracer bullet:</strong> You fire a lit round in the dark to see whether it reaches the target. A minimal schema + service + API + small UI are built together. The agent gets early feedback, and the wrong direction is caught early.</p>
+    <div class="pb2">
+      <div class="pb pb-bad"><div class="pb-label"><i class="ti ti-x"></i>Problem</div><p>Horizontal development produces late feedback; AI writes "blind" code for long stretches.</p></div>
+      <div class="pb pb-good"><div class="pb-label"><i class="ti ti-check"></i>Solution</div><p>Every issue should produce end-to-end, testable, visible value wherever possible.</p></div>
+    </div>
+  </div></div>
+
+  <div class="cc" id="c5"><div class="cc-head" onclick="tog('c5')"><div class="cc-num">5</div><div class="cc-title">Lack of Tests</div><i class="ti ti-chevron-down cc-tog"></i></div>
+  <div class="cc-body">
+    <p>Without a test signal, AI struggles to understand errors. It writes code, then breaks a working part while fixing another bug. <strong>TDD is an especially powerful method for AI coding:</strong> a failing test is written first, then the implementation, then the test and typecheck are run. This loop continuously signals the agent "are you on the right track?" It also reduces the agent's risk of hard-coding or taking shortcuts.</p>
+    <div class="pb2">
+      <div class="pb pb-bad"><div class="pb-label"><i class="ti ti-x"></i>Problem</div><p>Without a feedback loop, it's unclear whether the agent is on the right track.</p></div>
+      <div class="pb pb-good"><div class="pb-label"><i class="ti ti-check"></i>Solution</div><p>Unit tests, integration tests, typecheck, lint, build, and e2e tests where possible should be a mandatory part of the agent workflow.</p></div>
+    </div>
+  </div></div>
+
+  <div class="cc" id="c6"><div class="cc-head" onclick="tog('c6')"><div class="cc-num">6</div><div class="cc-title">Bad Architecture: Shallow Modules</div><i class="ti ti-chevron-down cc-tog"></i></div>
+  <div class="cc-body">
+    <p><em>John Ousterhout — "A Philosophy of Software Design"</em> — the concepts below come from this book:</p>
+    <div class="pb2" style="margin-top:10px">
+      <div class="pb pb-bad"><div class="pb-label"><i class="ti ti-layers-subtract"></i>Shallow Module</div><p>A module that does very little work and exposes wide dependencies. Dozens of 10–15 line files, all importing each other. AI has to load dozens of files into context just to understand one piece of logic.</p></div>
+      <div class="pb pb-good"><div class="pb-label"><i class="ti ti-layers-intersect"></i>Deep Module</div><p>A module with a small, simple public interface that does meaningful work internally. Looks simple from the outside; encapsulates internal complexity. Test boundary is clear: you test the public interface.</p></div>
+    </div>
+    <div class="pb2">
+      <div class="pb pb-bad"><div class="pb-label"><i class="ti ti-x"></i>Problem</div><p>Bad architecture lowers an AI agent's capacity for both understanding and producing tests.</p></div>
+      <div class="pb pb-good"><div class="pb-label"><i class="ti ti-check"></i>Solution</div><p>Simplify module boundaries, shrink the public interface, enrich internal behavior, clarify test boundaries.</p></div>
+    </div>
+  </div></div>
+</div>
+
+<!-- S3 WORKFLOW -->
+<div class="section" id="s3">
+  <div class="sec-head"><span class="sec-num">03</span><h2>The Recommended AI Coding Workflow</h2></div>
+  <p>The workflow consists of two layers:</p>
+  <div class="grid2">
+    <div class="gcard">
+      <h4><i class="ti ti-arrow-up-circle" style="color:var(--accent-text)"></i>Top layer (once)</h4>
+      <ul>
+        <li>If you have an idea or vision → start with Stage 0</li>
+        <li>If you're adding a known feature → skip to Stage 1</li>
+        <li>Output: a prioritized list of feature briefs</li>
+      </ul>
+    </div>
+    <div class="gcard">
+      <h4><i class="ti ti-refresh" style="color:var(--accent-text)"></i>Bottom layer (per feature)</h4>
+      <ul>
+        <li>Each feature brief goes through Stages 1–6</li>
+        <li>Once a feature is done, the next brief is picked up</li>
+        <li>The loop starts over</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<hr class="phase-sep">
+
+<!-- STAGE 0 -->
+<div class="phase" id="p0">
+  <div class="phase-head">
+    <div class="phase-num">0</div>
+    <div class="phase-info">
+      <h2>Break the Idea into Features</h2>
+      <div class="phase-sub">product discovery <span class="opt-badge">Optional</span></div>
+    </div>
+  </div>
+  <p><strong>When it's needed:</strong> When you don't have a clear feature brief yet — a new product idea, a major pivot, a project starting from scratch, or a broad vision.</p>
+  <p><strong>When to skip it:</strong> If you're adding a known, well-defined feature to an existing product, skip straight to Stage 1.</p>
+  <p>In this stage, AI acts as a <strong>product discovery partner</strong>. The goal: break the idea into independent, prioritizable features that produce user value.</p>
+  <h3>Decomposition Prompt</h3>
+  <div class="cb"><div class="cb-head"><span class="cb-lang lp"><i class="ti ti-prompt"></i> prompt</span><button class="cb-copy" onclick="cp(this)"><i class="ti ti-copy"></i> Copy</button></div>
+<pre>Read the idea below. Don't produce a feature list right away.
+
+&lt;idea&gt;
+We want to build an online education platform. Students will be
+able to watch lessons, take quizzes, and earn certificates.
+Instructors will be able to upload content. Gamification will
+be used to boost motivation. It will be accessible on mobile
+and web.
+&lt;/idea&gt;
+
+First, interrogate me. Ask about anything unclear under these
+headings:
+- Who is the target user?
+- What problem is being solved?
+- What's the revenue model?
+- What are the technical constraints?
+- What's must-have for the MVP vs. what can wait?
+- What are the platform constraints?
+
+Ask one question at a time. Offer your own suggestion with
+each question.
+
+Once all questions are done, produce output in this format:
+&lt;feature_list&gt;
+## MVP Features
+1. Feature name — 1-2 sentence description
+
+## Phase 2 Features
+1. Feature name — 1-2 sentence description
+
+## Dependency Map
+- Feature X → must happen before Feature Y
+
+## Recommended Order
+1. First feature (why: ...)
+&lt;/feature_list&gt;</pre></div>
+
+  <div class="ex-wrap" id="ex0"><div class="ex-btn" onclick="toggleEx('ex0')"><i class="ti ti-eye"></i><span>Example output</span><i class="ti ti-chevron-down ch"></i></div>
+  <div class="ex-content"><div class="cb"><div class="cb-head"><span class="cb-lang le"><i class="ti ti-eye"></i> example output</span></div>
+<pre>&lt;feature_list&gt;
+## MVP Features
+1. Lesson viewing — Student can watch video lessons; progress is saved.
+2. Instructor content upload — Can upload video and materials.
+3. Basic quiz — A multiple-choice quiz can be taken at the end of a lesson.
+4. User authentication — Sign up, log in, profile management.
+
+## Phase 2 Features
+1. Gamification (points, badges, leaderboard)
+2. Certificate generation and verification
+3. Mobile app (native)
+4. Instructor analytics dashboard
+
+## Dependency Map
+- Lesson viewing → after user authentication
+- Gamification → after lesson viewing + quizzes
+
+## Recommended Order
+1. User authentication (why: foundation for everything else)
+2. Instructor content upload (why: platform is empty without content)
+3. Lesson viewing (why: core value for the student)
+4. Basic quiz (why: validates learning)
+&lt;/feature_list&gt;</pre></div></div></div>
+
+  <div class="callout ct"><i class="ti ti-lightbulb"></i><p>Keep the feature list in a file like <code>docs/feature-backlog.md</code>. Update each feature's status as it's implemented (backlog → in progress → done).</p></div>
+</div>
+
+<hr class="phase-sep">
+
+<!-- STAGE 1 -->
+<div class="phase" id="p1">
+  <div class="phase-head">
+    <div class="phase-num">1</div>
+    <div class="phase-info">
+      <h2>Interrogate the Feature Brief</h2>
+      <div class="phase-sub">analyst / product thinking partner</div>
+    </div>
+  </div>
+  <p>The first step shouldn't be "make a plan" — it should be: clarify assumptions, edge cases, the data model, test decisions, and what's out of scope, one at a time. In this stage, AI works like an <strong>analyst</strong>. The output isn't code — it's a <strong>list of clarified decisions</strong>.</p>
+  <h3>Interrogation Prompt (Grill Me)</h3>
+  <div class="cb"><div class="cb-head"><span class="cb-lang lp"><i class="ti ti-prompt"></i> prompt</span><button class="cb-copy" onclick="cp(this)"><i class="ti ti-copy"></i> Copy</button></div>
+<pre>Read this feature brief. Don't produce a plan or code right away.
+
+&lt;feature_brief&gt;
+We're adding a gamification system to our education platform.
+Students will earn points when they complete a lesson, and their
+total points will show on the dashboard. Badges and a leaderboard
+will be added later, but the first version is just the points
+system.
+&lt;/feature_brief&gt;
+
+First, relentlessly interview me. Question me under these
+headings:
+- Product goal and success criteria
+- User scenarios and edge cases
+- Data model decisions
+- Retroactive data migration
+- UI placement and behavior
+- What's out of scope
+- Testing decisions
+
+Rules:
+- Ask one question at a time.
+- Offer your own suggestion with each question.
+- Once all questions are done, summarize the decisions:
+
+  &lt;decisions&gt;
+  - Decision title: Description
+  &lt;/decisions&gt;</pre></div>
+
+  <div class="ex-wrap" id="ex1"><div class="ex-btn" onclick="toggleEx('ex1')"><i class="ti ti-message-dots"></i><span>Example interrogation flow and decisions</span><i class="ti ti-chevron-down ch"></i></div>
+  <div class="ex-content"><div class="cb"><div class="cb-head"><span class="cb-lang le"><i class="ti ti-eye"></i> example flow</span></div>
+<pre>AI: Do points only come from completing a lesson, or do actions
+like taking a quiz or leaving a comment also earn points?
+My suggestion: Just lesson completion for v1.
+
+Developer: Yes, just lesson completion.
+
+AI: There are already completed lessons in the system. Should
+they be scored retroactively? My suggestion: No, only count
+completions from now on.
+
+Developer: Agreed, no retroactive scoring.
+
+(...more questions...)
+
+AI: All questions are done. Decisions reached:
+
+&lt;decisions&gt;
+- Point source: Lesson completion only.
+- Point amount: 10 points per lesson completion.
+- Retroactive scoring: No.
+- Repeat completion of the same lesson: No points awarded.
+- UI: A "Total Points" widget on the dashboard.
+- Level system: Not in v1.
+- Data model: points table (user_id, lesson_id, points, created_at).
+- Migration: No retroactive migration.
+&lt;/decisions&gt;</pre></div></div></div>
+</div>
+
+<hr class="phase-sep">
+
+<!-- STAGE 2 -->
+<div class="phase" id="p2">
+  <div class="phase-head">
+    <div class="phase-num">2</div>
+    <div class="phase-info">
+      <h2>Produce a PRD / Destination Document</h2>
+      <div class="phase-sub">build the destination document</div>
+    </div>
+  </div>
+  <p>Here, the PRD isn't a "bureaucratic document" — it's the <strong>destination document</strong>: the single reference point everyone on the team can use to answer "what are we doing, why, and where do we stand."</p>
+
+  <h3>PRD Template — <code>docs/templates/prd-template.md</code></h3>
+  <div class="cb"><div class="cb-head"><span class="cb-lang lf"><i class="ti ti-file-text"></i> prd-template.md</span><button class="cb-copy" onclick="cp(this)"><i class="ti ti-copy"></i> Copy</button></div>
+<pre># Feature PRD: &lt;Feature Name&gt;
+
+## Problem
+What problem is the user experiencing?
+
+## Goal
+What outcome should this feature produce?
+
+## Non-Goals
+What's out of scope for this work.
+
+## User Stories
+- As a user, I want...
+
+## Acceptance Criteria
+- Every criterion must be testable. Don't use vague phrasing like "good experience."
+
+## Implementation Decisions
+- Reflect only the decisions from the &lt;decisions&gt; section — don't add new ones.
+
+## Testing Decisions
+- Unit tests, Integration tests, E2E tests, Edge case tests
+
+## Definition of Done
+- Tests pass · Typecheck passes · Build passes · Review complete</pre></div>
+
+  <h3>PRD Generation Prompt</h3>
+  <div class="cb"><div class="cb-head"><span class="cb-lang lp"><i class="ti ti-prompt"></i> prompt</span><button class="cb-copy" onclick="cp(this)"><i class="ti ti-copy"></i> Copy</button></div>
+<pre>Read the file docs/templates/prd-template.md.
+
+Using the feature brief and decisions below, produce a PRD.
+
+&lt;feature_brief&gt;
+We're adding a gamification system to our education platform.
+Students will earn points when they complete a lesson, and
+their total points will show on the dashboard.
+&lt;/feature_brief&gt;
+
+&lt;decisions&gt;
+- Point source: Lesson completion only.
+- Point amount: 10 points per lesson completion.
+- Retroactive scoring: No.
+- Repeat completion of the same lesson: No points awarded.
+- UI: A "Total Points" widget on the dashboard.
+- Data model: points table (user_id, lesson_id, points, created_at).
+&lt;/decisions&gt;
+
+Rules:
+- Fill in every section of the template.
+- In Implementation Decisions, reflect only the &lt;decisions&gt; — nothing new.
+- Every Acceptance Criteria item must be verifiable.
+- Save the PRD as docs/prd/gamification-points.md.</pre></div>
+
+  <div class="callout ci"><i class="ti ti-info-circle"></i><p><strong>File referencing per tool:</strong> Claude Code → <code>read the file</code> is enough. Cursor → <code>@docs/templates/prd-template.md</code>. What matters is that the template is read from a file rather than pasted into the prompt every time.</p></div>
+</div>
+
+<hr class="phase-sep">
+
+<!-- STAGE 3 -->
+<div class="phase" id="p3">
+  <div class="phase-head">
+    <div class="phase-num">3</div>
+    <div class="phase-info">
+      <h2>Split the PRD into Kanban Issues</h2>
+      <div class="phase-sub">create vertical slice issues</div>
+    </div>
+  </div>
+  <p>Instead of the classic "Phase 1: DB, Phase 2: API, Phase 3: UI," split the PRD into <strong>vertical slice issues</strong>. A vertical slice is an end-to-end slice that covers all technical layers while keeping scope narrow.</p>
+
+  <div class="pb2">
+    <div class="pb pb-bad"><div class="pb-label"><i class="ti ti-x"></i>Weak issue (horizontal)</div><p><code>Create database schema for gamification</code><br><br>Can't be tested independently on its own; produces no visible result for the user.</p></div>
+    <div class="pb pb-good"><div class="pb-label"><i class="ti ti-check"></i>Strong issue (vertical slice)</div><p><code>Award points for lesson completion and show total on dashboard</code><br><br>Produces end-to-end value: data + service + API + UI + test all work together.</p></div>
+  </div>
+
+  <h3>Issue Template — <code>docs/templates/issue-template.md</code></h3>
+  <div class="cb"><div class="cb-head"><span class="cb-lang lf"><i class="ti ti-file-text"></i> issue-template.md</span><button class="cb-copy" onclick="cp(this)"><i class="ti ti-copy"></i> Copy</button></div>
+<pre># Issue &lt;NUMBER&gt; — &lt;Short title&gt;
+
+## Type
+feature | bug | refactor
+
+## Goal
+What will the user or system be able to do once this issue is done?
+
+## Scope
+- Database / schema change
+- Backend service / business logic
+- API endpoint
+- UI component
+- Test (unit, integration, smoke)
+
+## Out of Scope
+Things explicitly NOT done in this issue.
+
+## Dependencies
+Issues this depends on. "None" if there aren't any.
+
+## Acceptance Criteria
+- Criterion 1 (verifiable, no vague phrasing like "should work properly")
+- Criterion 2
+
+## Test Plan
+- Unit: Which module will be tested?
+- Integration: Which flow will be tested end-to-end?
+- UI smoke: Which screen render will be verified?</pre></div>
+
+  <h3>Issue Generation Prompt</h3>
+  <div class="cb"><div class="cb-head"><span class="cb-lang lp"><i class="ti ti-prompt"></i> prompt</span><button class="cb-copy" onclick="cp(this)"><i class="ti ti-copy"></i> Copy</button></div>
+<pre>Read these two files:
+- docs/prd/gamification-points.md
+- docs/templates/issue-template.md
+
+Split the PRD's scope into vertical slice issues.
+
+Rules:
+- Every issue must produce end-to-end value — no single-layer issues.
+- Every issue must be independently testable and demoable.
+- Number the issues in dependency order.
+- Fill in the Out of Scope section explicitly.
+- Save the issues as separate files:
+  docs/issues/issue-01.md, docs/issues/issue-02.md, ...
+- Finally, summarize the dependency graph.</pre></div>
+
+  <div class="ex-wrap" id="ex3"><div class="ex-btn" onclick="toggleEx('ex3')"><i class="ti ti-git-branch"></i><span>Example dependency graph output</span><i class="ti ti-chevron-down ch"></i></div>
+  <div class="ex-content"><div class="cb"><div class="cb-head"><span class="cb-lang le"><i class="ti ti-eye"></i> example output</span></div>
+<pre>docs/issues/issue-01.md → Award points for lesson completion
+                          and show total on dashboard
+docs/issues/issue-02.md → Prevent duplicate points for same lesson
+docs/issues/issue-03.md → Admin endpoint to view user points
+docs/issues/issue-04.md → Edge case handling (deleted lesson,
+                          deactivated user)
+
+Dependency graph:
+- Issue 01: Independent (build first)
+- Issue 02: Depends on Issue 01
+- Issue 03: Depends on Issue 01
+- Issue 04: Depends on Issue 01 + 02</pre></div></div></div>
+</div>
+
+<hr class="phase-sep">
+
+<!-- STAGE 4 -->
+<div class="phase" id="p4">
+  <div class="phase-head">
+    <div class="phase-num">4</div>
+    <div class="phase-info">
+      <h2>Have the Agent Write Code with TDD</h2>
+      <div class="phase-sub">human-in-the-loop implementation</div>
+    </div>
+  </div>
+  <p>The safest implementation method in AI coding is TDD. For the agent to put tests in the right place, it needs to know the project's test conventions: defined in <code>docs/test-conventions.md</code> (directory structure, file naming, test format, test commands).</p>
+
+  <h3>TDD Implementation Prompt</h3>
+  <p>Used while the developer is sitting at the keyboard (human-in-the-loop), observing every step.</p>
+  <div class="cb"><div class="cb-head"><span class="cb-lang lp"><i class="ti ti-prompt"></i> prompt — human-in-the-loop</span><button class="cb-copy" onclick="cp(this)"><i class="ti ti-copy"></i> Copy</button></div>
+<pre>Read these files:
+- docs/issues/issue-01.md
+- docs/test-conventions.md
+
+Implement using the TDD loop. Read the Type field and decide your
+strategy:
+
+[If Type = feature]
+  Step 1 — Write a test (Red):
+  - Write at least one test per Acceptance Criterion.
+  - Run the tests: npm test
+  - Confirm all new tests FAIL.
+    If a test passes without implementation, it was written wrong.
+
+  Step 2 — Implement (Green):
+  - Write the minimal code to pass the tests. Don't add unnecessary
+    abstraction.
+  - Run the tests again: npm test → all tests should PASS.
+
+[If Type = bug]
+  Step 1 — Reproduce the bug: write a failing test first. It must FAIL.
+  Step 2 — Fix: minimal change. The test must PASS.
+
+[If Type = refactor]
+  Step 1 — Confirm all existing tests PASS.
+  Step 2 — Refactor without changing behavior.
+  Step 3 — Tests must still PASS.
+
+[For all types]
+  Step 3 — Verify:
+  - npm run typecheck · npm run lint · npm run build
+  - Fix any errors and re-run.
+
+  Step 4 — Write a summary:
+  ## Implementation Summary
+  - Test files added: ...
+  - Source files added/changed: ...
+  - Test results: (paste the output)
+  - Typecheck/lint/build: pass/fail
+  - Out-of-scope notes: ...</pre></div>
+
+  <h3>What to Do When the Agent Is Stuck</h3>
+  <p>If it can't solve it after 2-3 attempts, there are 4 options:</p>
+  <div class="grid2">
+    <div class="gcard"><h4><i class="ti ti-info-circle" style="color:var(--blue-text)"></i>Give context, continue</h4><p style="margin:0;font-size:13px">For cases like a missing env variable or wrong file path, give the info and continue. No new issue needed.</p></div>
+    <div class="gcard"><h4><i class="ti ti-scissors" style="color:var(--amber-text)"></i>Shrink the issue</h4><p style="margin:0;font-size:13px">Scope may be too large. Narrow the acceptance criteria, turn the rest into a new issue.</p></div>
+    <div class="gcard"><h4><i class="ti ti-user" style="color:var(--green-text)"></i>Write the hard part yourself</h4><p style="margin:0;font-size:13px">Write the complex part yourself (race conditions, legacy side effects). Let the agent continue with the rest.</p></div>
+    <div class="gcard"><h4><i class="ti ti-file-alert" style="color:var(--red-text)"></i>Stop, analyze, open an issue</h4><p style="margin:0;font-size:13px">If it's a systemic problem, document it. Create a new issue using the Blocker Report format.</p></div>
+  </div>
+</div>
+
+<hr class="phase-sep">
+
+<!-- STAGE 5 -->
+<div class="phase" id="p5">
+  <div class="phase-head">
+    <div class="phase-num">5</div>
+    <div class="phase-info">
+      <h2>Human-in-the-Loop vs. AFK Task Split</h2>
+      <div class="phase-sub">task distribution and AFK execution</div>
+    </div>
+  </div>
+  <p>Not every task should be handed to AI. Some are <strong>human-in-the-loop</strong>, others can be <strong>AFK</strong> (without developer intervention).</p>
+
+  <div class="cond-grid">
+    <div class="cond cond-safe"><div class="cond-title"><i class="ti ti-user-check"></i>Human-in-the-loop work</div><ul>
+      <li>Requirement clarification</li><li>Product decisions</li><li>Architecture boundary decisions</li>
+      <li>Data model decisions</li><li>Risky migration decisions</li><li>Code review · Final QA</li>
+    </ul></div>
+    <div class="cond" style="background:var(--blue-bg);border:1px solid var(--blue-border)"><div class="cond-title" style="color:var(--blue-text)"><i class="ti ti-robot"></i>Work that can go AFK</div><ul>
+      <li>Small issue implementation</li><li>Writing tests</li>
+      <li>Fixing typecheck / lint / build</li>
+      <li>Updating documentation</li><li>Simple refactors</li>
+    </ul></div>
+  </div>
+
+  <h3>Conditions and Risks of Running AFK</h3>
+  <div class="cond-grid">
+    <div class="cond cond-safe"><div class="cond-title"><i class="ti ti-shield-check"></i>Safe AFK conditions</div><ul>
+      <li>Issue is small and scope is clear</li>
+      <li>Working in a separate branch / worktree</li>
+      <li>Test, typecheck, and build commands are defined</li>
+      <li>A max-iteration limit is set</li>
+    </ul></div>
+    <div class="cond cond-risk"><div class="cond-title"><i class="ti ti-alert-triangle"></i>AFK risks and mitigations</div><ul>
+      <li><strong>Loop risk</strong> — set a max-10-attempts rule</li>
+      <li><strong>Scope drift</strong> — fill in the Out of Scope section</li>
+      <li><strong>Silent failure</strong> — include test output in the summary</li>
+      <li><strong>Wrong file changes</strong> — diff review before merge</li>
+    </ul></div>
+  </div>
+
+  <h3>Running AFK — 3 Steps</h3>
+  <ul class="fsteps">
+    <li class="fstep"><div class="fstep-n">1</div><div class="fstep-b">
+      <h4>Preparation (~2 min)</h4>
+      <p>Create a separate branch for the issue. Confirm the issue file and test-conventions file are ready.</p>
+      <div class="cb"><div class="cb-head"><span class="cb-lang">bash</span><button class="cb-copy" onclick="cp(this)"><i class="ti ti-copy"></i> Copy</button></div>
+<pre>git checkout -b feature/gamification-points
+# Optional: parallel worktree
+git worktree add ../project-issue-01 feature/gamification-points</pre></div>
+    </div></li>
+    <li class="fstep"><div class="fstep-n">2</div><div class="fstep-b">
+      <h4>Start the Agent with the AFK Prompt</h4>
+      <p>After giving this prompt, the developer can step away from the computer.</p>
+      <div class="cb"><div class="cb-head"><span class="cb-lang lp"><i class="ti ti-prompt"></i> prompt — AFK mode</span><button class="cb-copy" onclick="cp(this)"><i class="ti ti-copy"></i> Copy</button></div>
+<pre>Read these files:
+- docs/issues/issue-01.md
+- docs/test-conventions.md
+
+Implement this issue.
+
+Working rules:
+1. Read the Type, Scope, and Out of Scope sections.
+   Do only the work in Scope.
+2. Decide your test strategy based on Type:
+   - feature → Write tests first (must fail), then implement.
+   - bug → Write a reproduction test first (must fail), then fix.
+   - refactor → Verify existing tests, refactor, verify again.
+3. Implement minimally.
+4. Run the commands and confirm all pass:
+   npm test · npm run typecheck · npm run lint · npm run build
+5. Fix errors if any. Maximum 10 attempts. Stop if unsolved after 10.
+6. Don't go outside scope.
+7. When done, write an Implementation Summary.
+   If unsolved, append a Blocker Report to the summary.</pre></div>
+    </div></li>
+    <li class="fstep"><div class="fstep-n">3</div><div class="fstep-b">
+      <h4>Review When You Return</h4>
+      <div class="cb"><div class="cb-head"><span class="cb-lang">bash</span><button class="cb-copy" onclick="cp(this)"><i class="ti ti-copy"></i> Copy</button></div>
+<pre># Inspect the actual diff
+git diff main...feature/gamification-points
+# Check for unexpected file changes
+git diff --name-only main...feature/gamification-points
+# Run the tests yourself
+npm test && npm run typecheck && npm run build</pre></div>
+      <div class="callout cw" style="margin-top:8px"><i class="ti ti-alert-circle"></i><p>After AFK coding, always review the changes by reading <code>git diff</code>. Trust the actual diff, not the agent's claim of "success."</p></div>
+    </div></li>
+  </ul>
+
+  <h3>Blocker Report Format</h3>
+  <p>When the agent can't solve it, it appends this format to the end of the summary:</p>
+  <div class="cb"><div class="cb-head"><span class="cb-lang"><i class="ti ti-file-alert"></i> Blocker Report</span><button class="cb-copy" onclick="cp(this)"><i class="ti ti-copy"></i> Copy</button></div>
+<pre>## Blocker Report
+### Issue
+Short description: what happened?
+### Error output
+Relevant error message or test output
+### Solutions tried
+1. Attempt: ... → Result: ...
+2. Attempt: ... → Result: ...
+### Likely root cause
+Your guess (developer should verify)
+### Affected acceptance criteria
+Which criterion wasn't met?
+### Suggested action
+- Update the scope of the existing issue
+- Open a new issue (suggested title: ...)
+- Environment/configuration issue — no issue needed</pre></div>
+
+  <h3>3 Options After a Blocker Report</h3>
+  <div class="grid2">
+    <div class="gcard"><h4><i class="ti ti-circle-check" style="color:var(--green-text)"></i>A — Fix it yourself, continue</h4><p style="margin:0;font-size:13px">If it's a simple config or env issue, the developer fixes it and says "continue." No new issue needed.</p></div>
+    <div class="gcard"><h4><i class="ti ti-plus" style="color:var(--blue-text)"></i>B — Open a new issue</h4><p style="margin:0;font-size:13px">If the problem is outside the current issue's scope, create a new issue and feed it into the pipeline.</p></div>
+  </div>
+  <div class="gcard" style="margin-top:12px"><h4><i class="ti ti-edit" style="color:var(--amber-text)"></i>C — Update the existing issue</h4><p style="margin:0;font-size:13px">If the problem stems from a poorly defined scope, fix the existing issue instead of opening a new one.</p></div>
+
+  <h3>Parallel AFK: Run Independent Issues Simultaneously</h3>
+  <div class="cb"><div class="cb-head"><span class="cb-lang">bash</span><button class="cb-copy" onclick="cp(this)"><i class="ti ti-copy"></i> Copy</button></div>
+<pre>git worktree add ../project-issue-01 -b feature/issue-01
+git worktree add ../project-issue-02 -b feature/issue-02
+git worktree add ../project-issue-03 -b feature/issue-03
+# Start a separate agent session in each worktree</pre></div>
+  <div class="callout ci"><i class="ti ti-info-circle"></i><p>If there's a merge-conflict risk (issues touching the same files), run them sequentially instead. Merge order should always follow the dependency graph.</p></div>
+</div>
+
+<hr class="phase-sep">
+
+<!-- STAGE 6 -->
+<div class="phase" id="p6">
+  <div class="phase-head">
+    <div class="phase-num">6</div>
+    <div class="phase-info">
+      <h2>Improve the Codebase</h2>
+      <div class="phase-sub">avoid the shallow module anti-pattern</div>
+    </div>
+  </div>
+  <p>Work isn't done once a feature ships. If left unchecked, the speed of AI coding creates <strong>shallow module buildup</strong>: lots of small files, each dependent on another, none of them doing meaningful work on its own. Every new feature then loads more files into the agent's context and raises maintenance costs.</p>
+
+  <h3>Signs of Shallow Modules</h3>
+  <ul>
+    <li>You need to open more than 5 files to understand one piece of logic.</li>
+    <li>Most modules are 10–30 lines, and nearly all import another module.</li>
+    <li>A lot is exported, but each piece does very little.</li>
+    <li>Testing a module requires mocking 3–4 dependencies.</li>
+    <li>There are "pass-through" layers: taking data and handing it to the next layer without adding anything.</li>
+  </ul>
+
+  <h3>Deep Module Refactoring Strategy</h3>
+  <ol>
+    <li><strong>Merge related small modules</strong> — Gather files related to the same domain concept into one module.</li>
+    <li><strong>Remove pass-through layers</strong> — Remove them if they don't provide real abstraction.</li>
+    <li><strong>Shrink the public interface</strong> — Only export what truly needs to be called from outside.</li>
+    <li><strong>Align test boundaries with module boundaries</strong> — Tests should be written against the public interface.</li>
+  </ol>
+
+  <h3>Refactoring with AI — 2 Steps</h3>
+  <div class="cb"><div class="cb-head"><span class="cb-lang lp"><i class="ti ti-prompt"></i> Step 1 — Analysis (don't change code)</span><button class="cb-copy" onclick="cp(this)"><i class="ti ti-copy"></i> Copy</button></div>
+<pre>Analyze this group of modules: [file list]
+
+Answer these questions:
+- Which files belong to the same domain concept?
+- Are there pass-through layers?
+- How wide is the public interface?
+- Could we merge these modules into a deep module?
+
+Don't change code. Present analysis and suggestions first.</pre></div>
+
+  <div class="cb"><div class="cb-head"><span class="cb-lang lp"><i class="ti ti-prompt"></i> Step 2 — Apply</span><button class="cb-copy" onclick="cp(this)"><i class="ti ti-copy"></i> Copy</button></div>
+<pre>Apply the refactoring plan you proposed.
+Make sure existing tests still pass.
+Add any tests missing for the new module structure.
+Run test/typecheck/build after refactoring.
+Note any public interface change in the summary.</pre></div>
+
+  <h3>When to Refactor</h3>
+  <ul>
+    <li><strong>After every feature is done:</strong> Review the new files the agent added.</li>
+    <li><strong>At the end of a sprint:</strong> If shallow-module buildup has increased, create refactoring issues.</li>
+    <li><strong>When agent performance drops:</strong> If it's making more mistakes on similar tasks, simplify the module structure.</li>
+  </ul>
+  <div class="callout ct"><i class="ti ti-lightbulb"></i><p>Keep refactoring issues small and independent, just like vertical slices. Set the Type in the issue template to <strong>refactor</strong> — when the agent sees this, it works by preserving existing tests instead of writing new ones.</p></div>
+</div>
+
+<hr class="phase-sep">
+
+<!-- RESOURCES -->
+<div class="section" id="resources">
+  <div class="sec-head"><h2>Resources</h2></div>
+  <p>The core framework and examples in this document were compiled from the video presentation below, then restructured into a standalone tutorial.</p>
+  <div class="callout ci"><i class="ti ti-video"></i><p><strong>Video:</strong> <em>Disciplined Software Development with AI Coding Agents</em> — covers the Smart Zone / Dumb Zone, the Grill Me technique, vertical slice / tracer bullet, deep vs. shallow modules, TDD with agentic coding, and AFK task management.</p></div>
+  <p style="margin-top:16px">See <strong>Part 2</strong> for the rest: best practices, the skill map, the team model, and playbooks.</p>
+</div>
+
+</div>
+<script>
+function tog(id){const c=document.getElementById(id);c.classList.toggle('open')}
+function cp(btn){
+  const pre=btn.closest('.cb').querySelector('pre');
+  navigator.clipboard.writeText(pre.textContent.trim()).then(()=>{
+    const o=btn.innerHTML;btn.innerHTML='<i class="ti ti-check"></i> Copied';
+    setTimeout(()=>{btn.innerHTML=o},2000);
+  });
+}
+function toggleEx(id){
+  const w=document.getElementById(id);
+  w.classList.toggle('open');
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,17 @@
+.author {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 16px;
+  padding: 10px 14px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  width: fit-content;
+  font-size: 13px;
+  color: var(--subtle);
+}
+
+.author strong {
+  color: var(--text);
+}

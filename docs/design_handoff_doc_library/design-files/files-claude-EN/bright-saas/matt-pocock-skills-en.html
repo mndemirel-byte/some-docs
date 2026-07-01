@@ -1,0 +1,993 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Building a Project from Scratch with Matt Pocock Skills</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
+<style>
+:root{
+  --bg:#120D24;--surface:#1C1633;--surface2:#261E45;
+  --border:#372C5C;--border-strong:#4D3F80;
+  --accent:#A78BFA;--accent-bg:rgba(167,139,250,.14);--accent-border:rgba(167,139,250,.38);--accent-text:#A78BFA;
+  --blue:#22D3EE;--blue-bg:rgba(34,211,238,.14);--blue-border:rgba(34,211,238,.38);--blue-text:#22D3EE;
+  --green:#A3E635;--green-bg:rgba(163,230,53,.14);--green-border:rgba(163,230,53,.38);--green-text:#A3E635;
+  --red:#FB7185;--red-bg:rgba(251,113,133,.14);--red-border:rgba(251,113,133,.38);--red-text:#FB7185;
+  --amber:#FBBF24;--amber-bg:rgba(251,191,36,.14);--amber-border:rgba(251,191,36,.38);--amber-text:#FBBF24;
+  --text:#F7F4FF;--muted:#948CB8;--subtle:#CBC4ED;
+  --mono:'JetBrains Mono','Fira Code',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);line-height:1.7;font-size:15px}
+a{color:var(--accent-text);text-decoration:none}a:hover{text-decoration:underline}
+.wrap{max-width:860px;margin:0 auto;padding:0 24px 80px}
+
+/* ─── Hero ─── */
+.hero{padding:48px 0 36px;border-bottom:1px solid var(--border);margin-bottom:40px}
+.hero-eyebrow{font-family:var(--mono);font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:12px}
+.hero h1{font-size:28px;font-weight:700;line-height:1.2;color:var(--text);margin-bottom:12px}
+.hero h1 em{font-style:normal;color:var(--accent-text)}
+.hero-desc{font-size:14px;color:var(--subtle);max-width:700px;line-height:1.7}
+.hero-author{display:flex;align-items:center;gap:8px;margin-top:16px;padding:10px 14px;background:var(--surface);border:1px solid var(--border);border-radius:8px;width:fit-content;font-size:13px;color:var(--subtle)}
+.hero-author strong{color:var(--text)}
+.tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:14px}
+.tag{font-family:var(--mono);font-size:11px;padding:3px 9px;border-radius:4px;background:var(--surface2);border:1px solid var(--border);color:var(--muted)}
+
+/* ─── TOC ─── */
+.toc{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px 24px;margin-bottom:48px}
+.toc-title{font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:14px;display:flex;align-items:center;gap:6px}
+.toc-list{list-style:none;padding:0;columns:2;column-gap:32px}
+.toc-list li{margin-bottom:2px;break-inside:avoid}
+.toc-list a{display:flex;align-items:center;gap:8px;padding:5px 8px;font-size:13px;color:var(--subtle);border-radius:6px;transition:all .15s}
+.toc-list a:hover{color:var(--accent-text);background:var(--accent-bg);text-decoration:none}
+.toc-num{font-family:var(--mono);font-size:10px;color:var(--accent-text);min-width:24px}
+
+/* ─── General ─── */
+.section{margin-bottom:56px;scroll-margin-top:20px}
+.sec-head{display:flex;align-items:center;gap:10px;margin-bottom:20px;padding-bottom:14px;border-bottom:1px solid var(--border)}
+.sec-num{font-family:var(--mono);font-size:10px;background:var(--accent-bg);color:var(--accent-text);border:1px solid var(--accent-border);padding:2px 8px;border-radius:4px;letter-spacing:.04em}
+.sec-head h2{font-size:22px;font-weight:600;color:var(--text)}
+h3{font-size:16px;font-weight:600;color:var(--text);margin:24px 0 10px}
+h4{font-size:14px;font-weight:600;color:var(--text);margin:14px 0 6px}
+p{color:var(--subtle);font-size:14px;margin-bottom:12px;line-height:1.7}
+ul,ol{padding-left:20px;margin-bottom:12px}
+li{font-size:14px;color:var(--subtle);margin-bottom:5px;line-height:1.6}
+strong{color:var(--text);font-weight:600}
+hr.sep{border:none;border-top:2px dashed var(--border);margin:44px 0}
+code{font-family:var(--mono);font-size:12px;background:var(--surface2);border:1px solid var(--border);padding:1px 5px;border-radius:4px;color:var(--blue-text)}
+
+/* ─── Skill command pill ─── */
+.cmd{display:inline-flex;align-items:center;gap:5px;font-family:var(--mono);font-size:12px;background:var(--accent-bg);color:var(--accent-text);border:1px solid var(--accent-border);padding:2px 9px;border-radius:20px;font-weight:600}
+
+/* ─── Grid ─── */
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:14px 0}
+.gcard{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px}
+.gcard h4{font-size:13px;font-weight:600;color:var(--text);margin:0 0 10px;display:flex;align-items:center;gap:6px}
+.gcard ul{padding-left:16px;margin:0}
+.gcard li{font-size:13px;margin-bottom:4px}
+
+/* ─── Code / terminal blocks ─── */
+.cb{background:var(--surface);border:1px solid var(--border);border-radius:12px;margin:14px 0;overflow:hidden}
+.cb-head{display:flex;align-items:center;justify-content:space-between;padding:9px 16px;border-bottom:1px solid var(--border);background:var(--surface2)}
+.cb-lang{font-family:var(--mono);font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;display:flex;align-items:center;gap:5px}
+.cb-lang.lp{color:var(--accent-text)}
+.cb-lang.lt{color:var(--blue-text)}
+.cb-copy{background:none;border:1px solid var(--border);color:var(--muted);font-size:11px;font-family:var(--mono);padding:3px 10px;border-radius:4px;cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:4px}
+.cb-copy:hover{background:var(--surface);color:var(--text);border-color:var(--border-strong)}
+.cb pre{padding:15px 18px;overflow-x:auto;font-family:var(--mono);font-size:12.5px;line-height:1.75;color:var(--subtle);max-height:440px;overflow-y:auto}
+
+/* Terminal header (macOS-style dots) */
+.term-head{display:flex;align-items:center;gap:10px;padding:9px 16px;border-bottom:1px solid var(--border);background:#261E45}
+.term-dots{display:flex;gap:5px}
+.td{width:11px;height:11px;border-radius:50%}
+.td-r{background:#FF5F57}.td-y{background:#FEBC2E}.td-g{background:#28C840}
+.term-label{font-family:var(--mono);font-size:11px;color:var(--muted);flex:1;text-align:center}
+
+/* ─── Collapsible examples ─── */
+.ex-wrap{margin:10px 0}
+.ex-btn{display:flex;align-items:center;gap:8px;padding:10px 16px;background:var(--blue-bg);border:1px solid var(--blue-border);border-radius:8px;cursor:pointer;font-size:13px;color:var(--blue-text);user-select:none;transition:background .15s}
+.ex-btn:hover{background:rgba(3,105,161,.12)}
+.ex-btn i.ch{margin-left:auto;transition:transform .2s}
+.ex-wrap.open .ex-btn i.ch{transform:rotate(180deg)}
+.ex-content{display:none}
+.ex-wrap.open .ex-content{display:block}
+
+/* ─── Step (Adim) sections ─── */
+.adim{margin-bottom:52px;scroll-margin-top:20px}
+.adim-head{display:flex;align-items:center;gap:16px;margin-bottom:16px;padding-bottom:16px;border-bottom:2px solid var(--accent-border)}
+.adim-num{width:52px;height:52px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:22px;font-weight:700;background:var(--accent-bg);color:var(--accent-text);border:2px solid var(--accent-border);flex-shrink:0}
+.adim-info h2{font-size:20px;font-weight:700;color:var(--text);margin-bottom:4px}
+.adim-skill-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.adim-when{font-size:12px;color:var(--muted);font-family:var(--mono)}
+.badge-z{font-size:10px;padding:2px 7px;border-radius:4px;font-family:var(--mono);font-weight:600;background:var(--green-bg);color:var(--green-text);border:1px solid var(--green-border)}
+.badge-o{font-size:10px;padding:2px 7px;border-radius:4px;font-family:var(--mono);font-weight:600;background:var(--amber-bg);color:var(--amber-text);border:1px solid var(--amber-border)}
+
+/* ─── Skill map tables ─── */
+.shtbl{width:100%;border-collapse:collapse;margin:12px 0;font-size:13px}
+.shtbl th{text-align:left;padding:8px 12px;font-size:11px;color:var(--muted);font-family:var(--mono);border-bottom:1px solid var(--border-strong);font-weight:500;text-transform:uppercase;letter-spacing:.05em}
+.shtbl td{padding:10px 12px;border-bottom:1px solid var(--border);vertical-align:top}
+.shtbl tr:last-child td{border-bottom:none}
+.shtbl tr:hover td{background:var(--surface2)}
+.shtbl .sira{font-family:var(--mono);font-size:11px;color:var(--muted);text-align:center;width:36px}
+.shtbl .scmd{white-space:nowrap}
+.shtbl .swhat{color:var(--subtle)}
+.shtbl .swhen{color:var(--muted);font-size:12px}
+.tbl-box{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:16px}
+.tbl-title{padding:12px 16px;font-size:13px;font-weight:600;color:var(--text);display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--border)}
+.tbl-title.green{background:var(--green-bg)}
+.tbl-title.amber{background:var(--amber-bg)}
+.tbl-title.green i{color:var(--green-text)}
+.tbl-title.amber i{color:var(--amber-text)}
+
+/* ─── ADR value callouts ─── */
+.value-row{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:16px 0}
+.vcard{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 16px;text-align:center}
+.vcard-num{font-family:var(--mono);font-size:24px;font-weight:700;color:var(--accent-text);line-height:1}
+.vcard-label{font-size:12px;color:var(--muted);margin-top:4px}
+
+/* ─── TDD principle cards ─── */
+.principle-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:14px 0}
+.pcard{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 16px;border-left:3px solid var(--accent-border)}
+.pcard h4{font-size:13px;font-weight:600;color:var(--accent-text);font-family:var(--mono);margin:0 0 6px}
+.pcard p{font-size:13px;color:var(--subtle);margin:0}
+
+/* ─── State machine ─── */
+.state-flow{display:flex;align-items:center;flex-wrap:wrap;gap:8px;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px 20px;margin:14px 0;font-family:var(--mono);font-size:12px}
+.state{padding:4px 10px;border-radius:4px;white-space:nowrap}
+.s-start{background:var(--surface2);color:var(--muted);border:1px solid var(--border)}
+.s-mid{background:var(--blue-bg);color:var(--blue-text);border:1px solid var(--blue-border)}
+.s-ok{background:var(--green-bg);color:var(--green-text);border:1px solid var(--green-border)}
+.s-hold{background:var(--amber-bg);color:var(--amber-text);border:1px solid var(--amber-border)}
+.s-end{background:var(--surface2);color:var(--muted);border:1px solid var(--border)}
+.sarr{color:var(--muted);font-size:14px}
+
+/* ─── Secondary skill cards ─── */
+.sec-skill-grid{display:grid;grid-template-columns:1fr;gap:16px}
+.ssc{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden}
+.ssc-head{display:flex;align-items:center;gap:12px;padding:14px 18px;border-bottom:1px solid var(--border);background:var(--surface2)}
+.ssc-icon{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;background:var(--accent-bg);color:var(--accent-text);border:1px solid var(--accent-border)}
+.ssc-meta h4{font-size:14px;font-weight:600;color:var(--text);margin:0 0 2px}
+.ssc-meta .when{font-size:12px;color:var(--muted)}
+.ssc-body{padding:16px 18px}
+.ssc-body p{font-size:14px}
+
+/* ─── Summary flow ─── */
+.flow-phase{background:var(--surface);border:1px solid var(--border);border-radius:12px;margin-bottom:12px;overflow:hidden}
+.fp-head{padding:12px 18px;display:flex;align-items:center;gap:10px;font-size:13px;font-weight:600;border-bottom:1px solid var(--border)}
+.fp-head.once{background:var(--blue-bg)}
+.fp-head.each{background:var(--green-bg)}
+.fp-head.when{background:var(--amber-bg)}
+.fp-head.once i,.fp-head.once span{color:var(--blue-text)}
+.fp-head.each i,.fp-head.each span{color:var(--green-text)}
+.fp-head.when i,.fp-head.when span{color:var(--amber-text)}
+.fp-body{padding:14px 18px;display:flex;flex-direction:column;gap:8px}
+.fp-step{display:flex;align-items:flex-start;gap:12px}
+.fp-arrow{font-family:var(--mono);font-size:12px;color:var(--muted);flex-shrink:0;padding-top:3px}
+.fp-content{font-size:13px}
+.fp-content strong{color:var(--text);display:block}
+.fp-content span{color:var(--muted);font-size:12px}
+.flow-connector{text-align:center;color:var(--muted);font-size:18px;margin:4px 0}
+
+/* ─── Callouts ─── */
+.callout{border-radius:10px;padding:13px 16px;margin:14px 0;display:flex;gap:10px;align-items:flex-start;line-height:1.55}
+.callout i{font-size:17px;flex-shrink:0;margin-top:1px}
+.callout p{margin:0;font-size:13px;color:var(--subtle)}
+.ci{background:var(--blue-bg);border:1px solid var(--blue-border)}
+.ci i{color:var(--blue-text)}
+.ct{background:var(--green-bg);border:1px solid var(--green-border)}
+.ct i{color:var(--green-text)}
+.cw{background:var(--amber-bg);border:1px solid var(--amber-border)}
+.cw i{color:var(--amber-text)}
+
+/* ─── Resources ─── */
+.res-list{list-style:none;padding:0;margin:0}
+.res-list li{display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);font-size:14px;color:var(--subtle)}
+.res-list li:last-child{border-bottom:none}
+.res-list i{color:var(--accent-text);font-size:16px;flex-shrink:0;margin-top:1px}
+
+/* ─── OS Tabs ─── */
+.os-tabs{border:1px solid var(--border);border-radius:12px;overflow:hidden}
+.os-tab-bar{display:flex;background:var(--surface2);border-bottom:1px solid var(--border)}
+.os-tab{background:none;border:none;padding:9px 16px;font-size:12px;color:var(--muted);cursor:pointer;display:flex;align-items:center;gap:6px;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .15s;font-family:inherit}
+.os-tab:hover{color:var(--text)}
+.os-tab.active{color:var(--accent-text);border-bottom-color:var(--accent);font-weight:600}
+.os-tab-panel{display:none}
+.os-tab-panel.active{display:block}
+.os-tab-panel .cb{border:none;border-radius:0;margin:0}
+.os-tab-panel .cb-head{border-radius:0}
+
+@media(max-width:620px){
+  .grid2,.principle-grid,.value-row{grid-template-columns:1fr}
+  .toc-list{columns:1}
+  .hero h1{font-size:22px}
+  .wrap{padding:0 16px 60px}
+  .adim-head{flex-wrap:wrap}
+  .state-flow{gap:4px;font-size:11px}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-eyebrow">Claude Code · Skill Series</div>
+  <h1>Building a Project from <em>Scratch</em> with Matt Pocock Skills</h1>
+  <p class="hero-desc">Pocock's open-source skill set is a collection of structured prompt templates added to Claude Code as slash commands. Their purpose isn't to speed up the agent — it's to <strong>impose discipline</strong>: forcing thought before code, building a test feedback loop, protecting architecture, and documenting decisions. In this piece, we walk through the complete flow step by step using a URL Shortener example.</p>
+  <div class="hero-author"><i class="ti ti-user-circle"></i><span><strong>Matt Pocock</strong> — TypeScript instructor, creator of Total TypeScript, former Vercel &amp; Stately engineer</span></div>
+  <div class="tags">
+    <span class="tag">claude-code</span><span class="tag">slash-commands</span>
+    <span class="tag">TDD</span><span class="tag">ADR</span><span class="tag">vertical-slice</span>
+    <span class="tag">url-shortener</span><span class="tag">TypeScript</span>
+  </div>
+</div>
+
+<!-- TOC -->
+<div class="toc">
+  <div class="toc-title"><i class="ti ti-list"></i> Table of Contents</div>
+  <ul class="toc-list">
+    <li><a href="#s1"><span class="toc-num">1</span>Prerequisites and Setup</a></li>
+    <li><a href="#s2"><span class="toc-num">2</span>Project Definition: URL Shortener</a></li>
+    <li><a href="#s3"><span class="toc-num">3</span>Skill Map</a></li>
+    <li><a href="#a0"><span class="toc-num">4</span>Step 0 — /setup-matt-pocock-skills</a></li>
+    <li><a href="#a1"><span class="toc-num">5</span>Step 1 — /grill-with-docs</a></li>
+    <li><a href="#a2"><span class="toc-num">6</span>Step 2 — /to-prd</a></li>
+    <li><a href="#a3"><span class="toc-num">7</span>Step 3 — /to-issues</a></li>
+    <li><a href="#a4"><span class="toc-num">8</span>Step 4 — /tdd</a></li>
+    <li><a href="#a5"><span class="toc-num">9</span>Step 5 — /triage</a></li>
+    <li><a href="#a6"><span class="toc-num">10</span>Step 6 — /improve-codebase-architecture</a></li>
+    <li><a href="#s11"><span class="toc-num">11</span>As Needed: /diagnose, /zoom-out, /prototype</a></li>
+    <li><a href="#s12"><span class="toc-num">12</span>Summary: The Complete Flow</a></li>
+  </ul>
+</div>
+
+<!-- S1 -->
+<div class="section" id="s1">
+  <div class="sec-head"><span class="sec-num">01</span><h2>Prerequisites and Setup</h2></div>
+  <div class="grid2">
+    <div class="gcard">
+      <h4><i class="ti ti-tool" style="color:var(--accent-text)"></i>Required tools</h4>
+      <ul>
+        <li><strong>Claude Code</strong> — <code>npm install -g @anthropic-ai/claude-code</code></li>
+        <li><strong>Node.js</strong> v18+ — for the skill installer and the example project</li>
+        <li><strong>Git + GitHub</strong> — skills integrate with GitHub Issues</li>
+        <li><strong>GitHub CLI (<code>gh</code>)</strong> — needed for writing to the issue tracker</li>
+      </ul>
+    </div>
+    <div class="gcard">
+      <h4><i class="ti ti-terminal" style="color:var(--blue-text)"></i>Installing the gh CLI</h4>
+      <div class="os-tabs">
+        <div class="os-tab-bar">
+          <button class="os-tab active" onclick="switchTab(this,'gh-linux')"><i class="ti ti-brand-ubuntu"></i> Linux / macOS</button>
+          <button class="os-tab" onclick="switchTab(this,'gh-windows')"><i class="ti ti-brand-windows"></i> Windows</button>
+        </div>
+        <div id="tab-gh-linux" class="os-tab-panel active">
+          <div class="cb" style="margin:0"><div class="cb-head"><span class="cb-lang">bash</span><button class="cb-copy" onclick="cp(this)"><i class="ti ti-copy"></i> Copy</button></div>
+<pre># macOS
+brew install gh
+
+# Linux
+sudo apt install gh
+
+# Authenticate
+gh auth login</pre></div>
+        </div>
+        <div id="tab-gh-windows" class="os-tab-panel">
+          <div class="cb" style="margin:0"><div class="cb-head"><span class="cb-lang">powershell</span><button class="cb-copy" onclick="cp(this)"><i class="ti ti-copy"></i> Copy</button></div>
+<pre># with winget
+winget install --id GitHub.cli
+
+# or with Scoop
+scoop install gh
+
+# Authenticate
+gh auth login</pre></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h3>Installing the Skills</h3>
+  <p>Pocock's skills install with a single command. It asks which skills you want and which agent (Claude Code, Cursor, etc.) to install them for:</p>
+  <div class="cb"><div class="cb-head"><span class="cb-lang">bash</span><button class="cb-copy" onclick="cp(this)"><i class="ti ti-copy"></i> Copy</button></div>
+<pre>npx skills@latest add mattpocock/skills</pre></div>
+  <div class="callout ci"><i class="ti ti-info-circle"></i><p>During installation, choose which skills to install. <strong>Be sure to select /setup-matt-pocock-skills</strong> — the other skills depend on its output. Choose Claude Code as the target agent. The skills are installed into your project's <code>.claude/</code> directory.</p></div>
+  <div class="cb"><div class="cb-head"><span class="cb-lang">bash — start the project</span><button class="cb-copy" onclick="cp(this)"><i class="ti ti-copy"></i> Copy</button></div>
+<pre>cd your-project
+claude
+# Commands like /grill-with-docs, /tdd, /to-prd are now active</pre></div>
+</div>
+
+<!-- S2 -->
+<div class="section" id="s2">
+  <div class="sec-head"><span class="sec-num">02</span><h2>Project Definition: URL Shortener</h2></div>
+  <p>Our example project is a simple URL shortening service. Small enough to finish in one piece, but deep enough (database, API, redirect logic, analytics) to be an ideal scenario for showcasing each skill.</p>
+  <div class="grid2">
+    <div class="gcard">
+      <h4><i class="ti ti-link" style="color:var(--accent-text)"></i>Features</h4>
+      <ul>
+        <li>The user provides a long URL; the system returns a short link</li>
+        <li>Visiting the short link redirects to the original URL</li>
+        <li>Every redirect is recorded (click, date)</li>
+        <li>A simple dashboard shows click statistics</li>
+      </ul>
+    </div>
+    <div class="gcard">
+      <h4><i class="ti ti-terminal-2" style="color:var(--green-text)"></i>Creating the repo</h4>
+      <div class="os-tabs">
+        <div class="os-tab-bar">
+          <button class="os-tab active" onclick="switchTab(this,'repo-linux')"><i class="ti ti-brand-ubuntu"></i> Linux / macOS</button>
+          <button class="os-tab" onclick="switchTab(this,'repo-windows')"><i class="ti ti-brand-windows"></i> Windows</button>
+        </div>
+        <div id="tab-repo-linux" class="os-tab-panel active">
+          <div class="cb" style="margin:0"><div class="cb-head"><span class="cb-lang">bash</span><button class="cb-copy" onclick="cp(this)"><i class="ti ti-copy"></i> Copy</button></div>
+<pre>mkdir url-shortener && cd url-shortener
+git init
+gh repo create url-shortener \
+  --public --source=. --push</pre></div>
+        </div>
+        <div id="tab-repo-windows" class="os-tab-panel">
+          <div class="cb" style="margin:0"><div class="cb-head"><span class="cb-lang">powershell</span><button class="cb-copy" onclick="cp(this)"><i class="ti ti-copy"></i> Copy</button></div>
+<pre>mkdir url-shortener; cd url-shortener
+git init
+gh repo create url-shortener `
+  --public --source=. --push</pre></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- S3 -->
+<div class="section" id="s3">
+  <div class="sec-head"><span class="sec-num">03</span><h2>Skill Map: Which One, When?</h2></div>
+
+  <div class="tbl-box">
+    <div class="tbl-title green"><i class="ti ti-route"></i><span>Mandatory flow — for every feature</span></div>
+    <table class="shtbl">
+      <thead><tr><th>#</th><th>Skill</th><th>What it does</th><th>When</th></tr></thead>
+      <tbody>
+        <tr><td class="sira">0</td><td class="scmd"><span class="cmd">/setup-matt-pocock-skills</span></td><td class="swhat">Configures the repo</td><td class="swhen">Once, at project start</td></tr>
+        <tr><td class="sira">1</td><td class="scmd"><span class="cmd">/grill-with-docs</span></td><td class="swhat">Interrogates the idea, creates CONTEXT.md and ADRs</td><td class="swhen">Before every new feature</td></tr>
+        <tr><td class="sira">2</td><td class="scmd"><span class="cmd">/to-prd</span></td><td class="swhat">Produces a PRD from the conversation context</td><td class="swhen">Once grilling is done</td></tr>
+        <tr><td class="sira">3</td><td class="scmd"><span class="cmd">/to-issues</span></td><td class="swhat">Splits the PRD into vertical slice issues</td><td class="swhen">Once the PRD is approved</td></tr>
+        <tr><td class="sira">4</td><td class="scmd"><span class="cmd">/tdd</span></td><td class="swhat">Implements with Red-Green-Refactor</td><td class="swhen">For every issue</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="tbl-box">
+    <div class="tbl-title amber"><i class="ti ti-tools"></i><span>Skills used as needed</span></div>
+    <table class="shtbl">
+      <thead><tr><th>Skill</th><th>What it does</th><th>When</th></tr></thead>
+      <tbody>
+        <tr><td class="scmd"><span class="cmd">/triage</span></td><td class="swhat">Manages issues via a state machine</td><td class="swhen">When issues pile up</td></tr>
+        <tr><td class="scmd"><span class="cmd">/improve-codebase-architecture</span></td><td class="swhat">Detects shallow modules, suggests deepening</td><td class="swhen">After a feature, or when architecture degrades</td></tr>
+        <tr><td class="scmd"><span class="cmd">/diagnose</span></td><td class="swhat">Runs a structured debugging loop</td><td class="swhen">For hard bugs</td></tr>
+        <tr><td class="scmd"><span class="cmd">/zoom-out</span></td><td class="swhat">Gives the agent a high-level overview</td><td class="swhen">When working in unfamiliar code</td></tr>
+        <tr><td class="scmd"><span class="cmd">/prototype</span></td><td class="swhat">Validates a design decision with a throwaway prototype</td><td class="swhen">When architecture is uncertain</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<hr class="sep">
+
+<!-- STEP 0 -->
+<div class="adim" id="a0">
+  <div class="adim-head">
+    <div class="adim-num">0</div>
+    <div class="adim-info">
+      <h2>Prepare the Repo for the Skills</h2>
+      <div class="adim-skill-row">
+        <span class="cmd"><i class="ti ti-terminal-2"></i>/setup-matt-pocock-skills</span>
+        <span class="adim-when">· Once, at project start</span>
+        <span class="badge-z">Mandatory</span>
+      </div>
+    </div>
+  </div>
+  <p>This skill configures the repo so the other skills can run. <strong>All other engineering skills depend on this step's output.</strong> Three decisions are made: where the issue tracker lives, the triage labels, and where the domain docs live.</p>
+
+  <div class="ex-wrap" id="ex0"><div class="ex-btn" onclick="toggleEx('ex0')"><i class="ti ti-terminal"></i><span>Terminal output — /setup-matt-pocock-skills</span><i class="ti ti-chevron-down ch"></i></div>
+  <div class="ex-content"><div class="cb"><div class="term-head"><div class="term-dots"><div class="td td-r"></div><div class="td td-y"></div><div class="td td-g"></div></div><div class="term-label">claude — url-shortener</div></div>
+<pre>&gt; /setup-matt-pocock-skills
+
+Claude: Inspecting the repo...
+- git remote: github.com/username/url-shortener ✓
+- CLAUDE.md: not present
+- CONTEXT.md: not present
+- docs/adr/: not present
+
+─── Section A: Issue Tracker ───
+
+Since this repo is on GitHub, I recommend GitHub Issues.
+Options: 1) GitHub Issues  2) Local markdown  3) Other
+
+You: 1
+
+─── Section B: Triage Labels ───
+
+Default labels:
+- needs-triage → awaiting assessment
+- needs-info → waiting on info from reporter
+- ready-for-agent → can be picked up by an AFK agent
+- ready-for-human → needs human implementation
+- wontfix → won't be done
+
+Should I use these labels?
+You: Defaults are fine.
+
+─── Section C: Domain Docs ───
+
+Recommended: CONTEXT.md → repo root, ADRs → docs/adr/
+You: OK.
+
+Claude: Files created:
+✓ CLAUDE.md (agent skills configuration added)
+✓ docs/agents/issue-tracker.md
+✓ docs/agents/triage-labels.md
+✓ docs/agents/domain-docs.md</pre></div></div></div>
+
+  <div class="callout ct"><i class="ti ti-lightbulb"></i><p>After this step, the other skills know how to write to the issue tracker, which labels to use, and where to find the domain docs. Without setup, the other skills don't work.</p></div>
+</div>
+
+<hr class="sep">
+
+<!-- STEP 1 -->
+<div class="adim" id="a1">
+  <div class="adim-head">
+    <div class="adim-num">1</div>
+    <div class="adim-info">
+      <h2>Interrogate the Idea and Establish Domain Language</h2>
+      <div class="adim-skill-row">
+        <span class="cmd"><i class="ti ti-terminal-2"></i>/grill-with-docs</span>
+        <span class="adim-when">· Before every new feature</span>
+        <span class="badge-z">Mandatory</span>
+      </div>
+    </div>
+  </div>
+  <p><span class="cmd">/grill-with-docs</span> relentlessly interviews you — but while doing so it does two extra things: <strong>(1)</strong> it builds/updates the project's domain language (<code>CONTEXT.md</code>), and <strong>(2)</strong> it documents architectural decisions as ADRs under <code>docs/adr/</code>.</p>
+
+  <div class="ex-wrap" id="ex1"><div class="ex-btn" onclick="toggleEx('ex1')"><i class="ti ti-terminal"></i><span>Terminal output — /grill-with-docs</span><i class="ti ti-chevron-down ch"></i></div>
+  <div class="ex-content"><div class="cb"><div class="term-head"><div class="term-dots"><div class="td td-r"></div><div class="td td-y"></div><div class="td td-g"></div></div><div class="term-label">claude — url-shortener</div></div>
+<pre>&gt; /grill-with-docs We're going to build a simple URL shortener.
+  User gives a URL, gets back a short link. Clicks are
+  counted and shown on a dashboard.
+
+Claude: I won't produce a plan right away — there are things I need
+to clarify first.
+
+Question 1/N: What format will the short URLs use?
+A random string (abc123), or a sequential number?
+My suggestion: 6-character random alphanumeric — low
+collision risk and readable URLs.
+
+You: Random 6 characters, alphanumeric.
+
+Claude: [Adding to CONTEXT.md]
+  slug — The 6-character random alphanumeric identifier
+  in the short URL. E.g.: abc123 → example.com/abc123
+
+Question 2/N: If the same URL is shortened a second time, what happens?
+Should a new slug be generated, or should the existing slug be returned?
+My suggestion: Generate a new slug every time — from an
+analytics standpoint, each campaign/share may want its own link.
+
+You: A new slug every time.
+
+Claude: [Creating docs/adr/0001-unique-slug-per-submission.md]
+  # New Slug for Every Submission of the Same URL
+  Decision: Every URL submission generates a new slug.
+  Why: To track clicks from different sources separately.
+  Alternative: Idempotent — rejected because it loses
+  analytics granularity.
+
+Question 3/N: What information will be stored per click?
+My suggestion: Each click as a separate record
+(timestamp, referrer, user-agent).
+
+You: Each click as a separate record.
+
+Claude: [Adding to CONTEXT.md]
+  click — A single HTTP request to a slug.
+  Timestamp, referrer, and user-agent are recorded.
+
+(... 8-10 more questions: auth, rate limiting, can a slug be
+deleted, dashboard content, API-only or not, tech stack ...)
+
+Claude: Files created/updated:
+
+CONTEXT.md:
+  slug, click, link, click count, dashboard terms
+  Relationships between terms (link has many clicks)
+
+docs/adr/:
+  0001-unique-slug-per-submission.md
+  0002-individual-click-records.md
+  0003-no-auth-for-v1.md
+  0004-api-first-no-ui-for-v1.md</pre></div></div></div>
+
+  <h3>The Value of This Step</h3>
+  <div class="value-row">
+    <div class="vcard"><div class="vcard-num"><i class="ti ti-handshake" style="font-size:28px;color:var(--accent-text)"></i></div><div class="vcard-label"><strong>Shared Understanding</strong><br>You and the agent understand the same thing using the same words</div></div>
+    <div class="vcard"><div class="vcard-num"><i class="ti ti-book" style="font-size:28px;color:var(--green-text)"></i></div><div class="vcard-label"><strong>CONTEXT.md</strong><br>Variable and function names will follow the domain language</div></div>
+    <div class="vcard"><div class="vcard-num"><i class="ti ti-git-branch" style="font-size:28px;color:var(--blue-text)"></i></div><div class="vcard-label"><strong>ADRs</strong><br>Decisions are documented; the same questions won't be asked in a new session</div></div>
+  </div>
+</div>
+
+<hr class="sep">
+
+<!-- STEP 2 -->
+<div class="adim" id="a2">
+  <div class="adim-head">
+    <div class="adim-num">2</div>
+    <div class="adim-info">
+      <h2>Produce a PRD</h2>
+      <div class="adim-skill-row">
+        <span class="cmd"><i class="ti ti-terminal-2"></i>/to-prd</span>
+        <span class="adim-when">· Once grilling is done</span>
+        <span class="badge-z">Mandatory</span>
+      </div>
+    </div>
+  </div>
+  <p><span class="cmd">/to-prd</span> doesn't interview you again. It synthesizes everything in the conversation context (grilling decisions, CONTEXT.md, ADRs) into a PRD and <strong>publishes it directly to GitHub Issues</strong>.</p>
+
+  <div class="ex-wrap" id="ex2"><div class="ex-btn" onclick="toggleEx('ex2')"><i class="ti ti-terminal"></i><span>Terminal output — /to-prd</span><i class="ti ti-chevron-down ch"></i></div>
+  <div class="ex-content"><div class="cb"><div class="term-head"><div class="term-dots"><div class="td td-r"></div><div class="td td-y"></div><div class="td td-g"></div></div><div class="term-label">claude — url-shortener</div></div>
+<pre>&gt; /to-prd
+
+Claude: Synthesizing the conversation context and domain docs...
+
+Inspecting the repo — current seams:
+  - No code yet, starting from scratch.
+  - Suggested test seams:
+    1. LinkService (slug generation + persistence)
+    2. RedirectHandler (slug → URL resolution + click recording)
+    3. AnalyticsService (click count calculation)
+
+Are these seams correct?
+You: Correct, go ahead.
+
+Claude: Publishing the PRD to GitHub Issues...
+
+✓ Issue #1 created: "PRD: URL Shortener v1"
+  Label: ready-for-agent
+
+PRD content:
+  ## Problem Statement
+  Users need to be able to turn long URLs into shareable
+  short links and see click statistics.
+
+  ## User Stories
+  1. I want to give a long URL and get a short link.
+  2. As a short-link visitor, I want to be redirected.
+  3. I want to see the total click count.
+  4. I want to see click history (date, referrer).
+
+  ## Implementation Decisions
+  - Slug: 6-character random alphanumeric (ADR-0001)
+  - Every submission generates a new slug (ADR-0001)
+  - Click records are individual (ADR-0002)
+  - No auth in v1 (ADR-0003)
+  - API-only, no UI (ADR-0004)
+  - Stack: Node.js + TypeScript + SQLite
+
+  ## Testing Decisions
+  - Seam 1: LinkService — unit test
+  - Seam 2: RedirectHandler — integration test
+  - Seam 3: AnalyticsService — unit test
+  - E2E: create link → visit → check analytics
+
+  ## Definition of Done
+  Tests ✓ | Typecheck ✓ | Build ✓</pre></div></div></div>
+
+  <div class="callout ci"><i class="ti ti-info-circle"></i><p><strong>What's distinctive about /to-prd:</strong> the "Testing Decisions" section doesn't just say "unit tests will be written" — it explicitly defines test boundaries (<strong>seams</strong>). This is what lets the agent know where to put tests and what to test during the /tdd step.</p></div>
+</div>
+
+<hr class="sep">
+
+<!-- STEP 3 -->
+<div class="adim" id="a3">
+  <div class="adim-head">
+    <div class="adim-num">3</div>
+    <div class="adim-info">
+      <h2>Split the PRD into Issues</h2>
+      <div class="adim-skill-row">
+        <span class="cmd"><i class="ti ti-terminal-2"></i>/to-issues</span>
+        <span class="adim-when">· Once the PRD is approved</span>
+        <span class="badge-z">Mandatory</span>
+      </div>
+    </div>
+  </div>
+  <p><span class="cmd">/to-issues</span> splits the PRD into <strong>vertical slice</strong> (tracer bullet) issues. Every issue cuts through all layers vertically. It doesn't do horizontal splitting (all the database first, then all the API).</p>
+
+  <div class="ex-wrap" id="ex3"><div class="ex-btn" onclick="toggleEx('ex3')"><i class="ti ti-terminal"></i><span>Terminal output — /to-issues</span><i class="ti ti-chevron-down ch"></i></div>
+  <div class="ex-content"><div class="cb"><div class="term-head"><div class="term-dots"><div class="td td-r"></div><div class="td td-y"></div><div class="td td-g"></div></div><div class="term-label">claude — url-shortener</div></div>
+<pre>&gt; /to-issues #1
+
+Claude: Reading PRD #1... Loading domain language from CONTEXT.md...
+
+Suggested vertical slice breakdown:
+
+1. "Create short link and return slug"
+   Type: AFK | Blocked by: none | User stories: #1
+
+2. "Redirect slug to original URL and record click"
+   Type: AFK | Blocked by: #1 | User stories: #2
+
+3. "Get click count for a link"
+   Type: AFK | Blocked by: #2 | User stories: #3
+
+4. "Get click history with timestamps and referrers"
+   Type: AFK | Blocked by: #2 | User stories: #4
+
+5. "Handle edge cases: expired slug, invalid slug, collision"
+   Type: AFK | Blocked by: #1, #2
+
+Is the granularity appropriate? Are the dependencies correct?
+You: Looks good, create them.
+
+Claude: Publishing the issues to GitHub...
+✓ Issue #2: Create short link and return slug
+  Label: ready-for-agent
+✓ Issue #3: Redirect slug to original URL and record click
+  Label: ready-for-agent | Blocked by: #2
+✓ Issue #4: Get click count for a link
+  Label: ready-for-agent | Blocked by: #3
+✓ Issue #5: Get click history with timestamps and referrers
+  Label: ready-for-agent | Blocked by: #3
+✓ Issue #6: Handle edge cases
+  Label: ready-for-agent | Blocked by: #2, #3</pre></div></div></div>
+
+  <div class="callout ci"><i class="ti ti-info-circle"></i><p><strong>HITL vs. AFK split:</strong> every issue is labeled "HITL" (Human-in-the-Loop) or "AFK." AFK issues are well-defined work the agent can complete on its own. HITL issues require an architectural decision or human intervention. In this project all issues are AFK — because the decisions were made during grilling and documented in the PRD.</p></div>
+</div>
+
+<hr class="sep">
+
+<!-- STEP 4 -->
+<div class="adim" id="a4">
+  <div class="adim-head">
+    <div class="adim-num">4</div>
+    <div class="adim-info">
+      <h2>Implementation with TDD</h2>
+      <div class="adim-skill-row">
+        <span class="cmd"><i class="ti ti-terminal-2"></i>/tdd</span>
+        <span class="adim-when">· For every issue</span>
+        <span class="badge-z">Mandatory</span>
+      </div>
+    </div>
+  </div>
+  <p><span class="cmd">/tdd</span> works through the Red-Green-Refactor loop. <strong>It doesn't do horizontal slicing</strong> — it never says "write all the tests first, then all the code." Instead it's vertical slice: write one test → make it pass → next test. The agent learns from the previous loop in each cycle.</p>
+
+  <div class="ex-wrap" id="ex4"><div class="ex-btn" onclick="toggleEx('ex4')"><i class="ti ti-terminal"></i><span>Terminal output — /tdd #2</span><i class="ti ti-chevron-down ch"></i></div>
+  <div class="ex-content"><div class="cb"><div class="term-head"><div class="term-dots"><div class="td td-r"></div><div class="td td-y"></div><div class="td td-g"></div></div><div class="term-label">claude — url-shortener</div></div>
+<pre>&gt; /tdd #2
+
+Claude: Issue #2: "Create short link and return slug"
+
+Acceptance criteria:
+  POST /links body: { url } → response: { slug, url, createdAt }
+  Slug must be 6 alphanumeric characters
+  Link must be saved to the database
+
+Domain language from CONTEXT.md:
+  slug: a 6-character random alphanumeric identifier
+  link: a URL + slug pair
+
+─── RED: First test ───
+
+Creating tests/link-service.test.ts:
+
+  describe("LinkService", () => {
+    it("should create a link with a 6-char alphanumeric slug", () => {
+      const link = createLink("https://example.com");
+      expect(link.slug).toMatch(/^[a-z0-9]{6}$/);
+      expect(link.url).toBe("https://example.com");
+    });
+  });
+
+npm test → FAIL ✗ (createLink doesn't exist yet)
+
+─── GREEN: Minimal implementation ───
+
+Creating src/link-service.ts:
+
+  export function createLink(url: string) {
+    const slug = generateSlug();
+    // ... persist + return
+  }
+
+npm test → PASS ✓
+
+─── RED: Next test ───
+
+  it("should create unique slugs for the same URL", () => {
+    const link1 = createLink("https://example.com");
+    const link2 = createLink("https://example.com");
+    expect(link1.slug).not.toBe(link2.slug);
+  });
+
+npm test → PASS ✓
+
+(... the RED-GREEN loop continues: API endpoint test,
+validation test, one test → one implementation each time)
+
+─── REFACTOR ───
+
+generateSlug() and persistence logic live in the same function.
+Per the deep module principle, I'm restructuring LinkService.
+npm test → PASS ✓ (all tests still pass)
+npm run typecheck → PASS ✓
+npm run build → PASS ✓
+
+Implementation Summary:
+- src/link-service.ts (new)
+- src/routes/links.ts (new)
+- tests/link-service.test.ts (3 tests)
+- tests/links-api.test.ts (2 tests)</pre></div></div></div>
+
+  <h3>The Core Principles of /tdd</h3>
+  <div class="principle-grid">
+    <div class="pcard"><h4>1 · No horizontal slicing</h4><p>It never does "write 5 tests first, then 5 implementations." Every test-implementation pair is a vertical slice.</p></div>
+    <div class="pcard"><h4>2 · Integration-style tests</h4><p>Tests are written against the public interface rather than internal mocks. Not "checkout calls paymentService," but "user can checkout."</p></div>
+    <div class="pcard"><h4>3 · Targets deep modules</h4><p>Small interface, rich implementation. Test boundary = module boundary. This is checked during the refactor stage.</p></div>
+    <div class="pcard"><h4>4 · Mocking only at system boundaries</h4><p>Don't mock your own modules. Only mock external dependencies (database, API, filesystem).</p></div>
+  </div>
+</div>
+
+<hr class="sep">
+
+<!-- STEP 5 -->
+<div class="adim" id="a5">
+  <div class="adim-head">
+    <div class="adim-num">5</div>
+    <div class="adim-info">
+      <h2>Issue Management</h2>
+      <div class="adim-skill-row">
+        <span class="cmd"><i class="ti ti-terminal-2"></i>/triage</span>
+        <span class="adim-when">· When issues pile up</span>
+        <span class="badge-o">Optional</span>
+      </div>
+    </div>
+  </div>
+  <p><span class="cmd">/triage</span> manages issues with a state machine. You can skip it on small projects or solo work. Every issue is in one of these states:</p>
+
+  <div class="state-flow">
+    <span class="state s-start">unlabeled</span>
+    <span class="sarr">→</span>
+    <span class="state s-mid">needs-triage</span>
+    <span class="sarr">→</span>
+    <span class="state s-ok">ready-for-agent</span>
+    <span class="sarr">/</span>
+    <span class="state s-ok">ready-for-human</span>
+    <span class="sarr">/</span>
+    <span class="state s-hold">needs-info</span>
+    <span class="sarr">→</span>
+    <span class="state s-mid">needs-triage</span>
+    <span class="sarr">/</span>
+    <span class="state s-end">wontfix</span>
+  </div>
+
+  <div class="ex-wrap" id="ex5"><div class="ex-btn" onclick="toggleEx('ex5')"><i class="ti ti-terminal"></i><span>Terminal output — /triage</span><i class="ti ti-chevron-down ch"></i></div>
+  <div class="ex-content"><div class="cb"><div class="term-head"><div class="term-dots"><div class="td td-r"></div><div class="td td-y"></div><div class="td td-g"></div></div><div class="term-label">claude — url-shortener</div></div>
+<pre>&gt; /triage Show me the issues that need attention
+
+Claude: Scanning the issue tracker...
+
+ready-for-agent (can be picked up):
+  #3 Redirect slug to original URL — blocked by #2
+  #4 Get click count — blocked by #3
+  #5 Get click history — blocked by #3
+  #6 Handle edge cases — blocked by #2, #3
+
+needs-triage: (none)
+
+Suggested action: Since issue #2 is done, #3 is no
+longer blocked. You can proceed with #3.
+
+You: Pick up #3 and implement it with /tdd.</pre></div></div></div>
+</div>
+
+<hr class="sep">
+
+<!-- STEP 6 -->
+<div class="adim" id="a6">
+  <div class="adim-head">
+    <div class="adim-num">6</div>
+    <div class="adim-info">
+      <h2>Improve the Architecture</h2>
+      <div class="adim-skill-row">
+        <span class="cmd"><i class="ti ti-terminal-2"></i>/improve-codebase-architecture</span>
+        <span class="adim-when">· Every 3-5 issues</span>
+        <span class="badge-o">Optional but recommended</span>
+      </div>
+    </div>
+  </div>
+  <p>This skill analyzes the codebase using the domain language in CONTEXT.md and the ADRs. It detects shallow modules and offers <strong>deepening suggestions</strong>. What sets it apart is that it analyzes the code not just structurally, but <strong>in the context of the domain language</strong>.</p>
+
+  <div class="ex-wrap" id="ex6"><div class="ex-btn" onclick="toggleEx('ex6')"><i class="ti ti-terminal"></i><span>Terminal output — /improve-codebase-architecture</span><i class="ti ti-chevron-down ch"></i></div>
+  <div class="ex-content"><div class="cb"><div class="term-head"><div class="term-dots"><div class="td td-r"></div><div class="td td-y"></div><div class="td td-g"></div></div><div class="term-label">claude — url-shortener</div></div>
+<pre>&gt; /improve-codebase-architecture
+
+Claude: From CONTEXT.md: slug, link, click, click count
+From ADRs: unique slug per submission, individual click records
+
+Detected deepening opportunities:
+
+1. [Strong] ClickRecorder + ClickCounter could be merged
+   → into a single deep module, AnalyticsService
+
+   Problem: Two separate modules access the same click table.
+   Their interfaces together cover nearly all click logic.
+
+   Deletion test: if ClickCounter were deleted, the same
+   logic would spread across AnalyticsService's callers.
+
+   Before: ClickRecorder + ClickCounter (2 modules, 2 interfaces)
+   After:  AnalyticsService (1 module, 2 public methods)
+
+2. [Worth exploring] Should SlugGenerator be its own module?
+   Problem: Currently inside LinkService, but it's just one function.
+   Deletion test: if removed, complexity disappears, doesn't spread.
+   Recommendation: Leave it inside LinkService for now.
+
+Select which suggestions you'd like to apply.</pre></div></div></div>
+</div>
+
+<hr class="sep">
+
+<!-- S11 -->
+<div class="section" id="s11">
+  <div class="sec-head"><span class="sec-num">11</span><h2>As Needed: Helper Skills</h2></div>
+
+  <div class="sec-skill-grid">
+    <div class="ssc">
+      <div class="ssc-head">
+        <div class="ssc-icon"><i class="ti ti-bug"></i></div>
+        <div class="ssc-meta">
+          <h4><span class="cmd">/diagnose</span> — Structured Debugging</h4>
+          <div class="when">For hard bugs — when neither the agent nor you can solve it</div>
+        </div>
+      </div>
+      <div class="ssc-body">
+        <p><strong>Loop order:</strong> build a feedback loop → reproduce → minimize → form a hypothesis → instrument → fix → write a regression test. The most critical step is the first one: the agent doesn't proceed until it has a deterministic, fast, automatically runnable feedback loop.</p>
+        <div class="ex-wrap" id="ex11a"><div class="ex-btn" onclick="toggleEx('ex11a')"><i class="ti ti-terminal"></i><span>Example output</span><i class="ti ti-chevron-down ch"></i></div>
+        <div class="ex-content"><div class="cb"><div class="term-head"><div class="term-dots"><div class="td td-r"></div><div class="td td-y"></div><div class="td td-g"></div></div><div class="term-label">claude — /diagnose</div></div>
+<pre>&gt; /diagnose The redirect endpoint sometimes returns 404
+  even though the slug exists in the database.
+
+Claude: Phase 1 — Building a feedback loop...
+Writing a test that reliably reproduces the bug...
+
+[failing test → bug reproduced → minimized → hypothesis
+→ fixed → regression test added]</pre></div></div></div>
+      </div>
+    </div>
+
+    <div class="ssc">
+      <div class="ssc-head">
+        <div class="ssc-icon"><i class="ti ti-zoom-out"></i></div>
+        <div class="ssc-meta">
+          <h4><span class="cmd">/zoom-out</span> — High-Level Overview</h4>
+          <div class="when">When you step into a part of the codebase you don't know</div>
+        </div>
+      </div>
+      <div class="ssc-body">
+        <p>Gives the agent a high-level overview of a specific directory or module, using the <strong>domain language in CONTEXT.md</strong>: which modules are dependent, who calls what, what seams exist.</p>
+        <div class="cb"><div class="term-head"><div class="term-dots"><div class="td td-r"></div><div class="td td-y"></div><div class="td td-g"></div></div><div class="term-label">claude — /zoom-out</div></div>
+<pre>&gt; /zoom-out src/analytics/
+
+Claude: The Analytics module is the service layer that
+queries click records.
+
+  LinkService → (creates a link)
+  RedirectHandler → (records a click) → ClickRepository
+  AnalyticsService → (reads clicks) ← ClickRepository
+                   → (reads link metadata) ← LinkRepository
+
+Callers: the GET /links/:slug/stats endpoint</pre></div>
+      </div>
+    </div>
+
+    <div class="ssc">
+      <div class="ssc-head">
+        <div class="ssc-icon"><i class="ti ti-flask"></i></div>
+        <div class="ssc-meta">
+          <h4><span class="cmd">/prototype</span> — Design Decision Validation</h4>
+          <div class="when">When you're unsure about an architecture choice — to make questions like "is this strategy correct?" concrete</div>
+        </div>
+      </div>
+      <div class="ssc-body">
+        <p>Validates a design decision with data using a throwaway prototype (a terminal script, minimal UI, or log analysis). It can document the result as an ADR.</p>
+        <div class="cb"><div class="term-head"><div class="term-dots"><div class="td td-r"></div><div class="td td-y"></div><div class="td td-g"></div></div><div class="term-label">claude — /prototype</div></div>
+<pre>&gt; /prototype I want to test our slug collision handling
+  strategy — retry, or sequential fallback?
+
+Claude: This is a logic question — I'm building a terminal script.
+
+[generates 10,000 slugs, measures the collision rate,
+compares retry vs. sequential strategies]
+
+Result: with 6-character alphanumeric slugs, the collision
+rate at 1M slugs is 0.001%. The retry strategy is enough;
+a sequential fallback is unnecessary complexity.
+
+Should we document this result as an ADR?</pre></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr class="sep">
+
+<!-- S12 -->
+<div class="section" id="s12">
+  <div class="sec-head"><span class="sec-num">12</span><h2>Summary: The Complete Flow</h2></div>
+  <p>The power of these skills isn't in any one of them — it's in <strong>how they work together.</strong> <span class="cmd">/grill-with-docs</span> builds CONTEXT.md → <span class="cmd">/to-prd</span> uses that language in the PRD → <span class="cmd">/to-issues</span> writes issues in the same language → <span class="cmd">/tdd</span> follows that language in tests → <span class="cmd">/improve-codebase-architecture</span> does architectural analysis using the domain language. Result: every artifact speaks the same language and rests on the same decisions.</p>
+
+  <div class="flow-phase">
+    <div class="fp-head once"><i class="ti ti-repeat-once"></i><span>Once — at project start</span></div>
+    <div class="fp-body">
+      <div class="fp-step"><span class="fp-arrow">▸</span><div class="fp-content"><strong><span class="cmd">/setup-matt-pocock-skills</span></strong><span>Issue tracker, triage labels, domain docs structure</span></div></div>
+    </div>
+  </div>
+
+  <div class="flow-connector"><i class="ti ti-arrow-down"></i></div>
+
+  <div class="flow-phase">
+    <div class="fp-head each"><i class="ti ti-refresh"></i><span>For every feature — the recurring loop</span></div>
+    <div class="fp-body">
+      <div class="fp-step"><span class="fp-arrow">1</span><div class="fp-content"><strong><span class="cmd">/grill-with-docs</span></strong><span>CONTEXT.md is updated, ADRs are written</span></div></div>
+      <div class="fp-step"><span class="fp-arrow">2</span><div class="fp-content"><strong><span class="cmd">/to-prd</span></strong><span>The PRD is published to the issue tracker</span></div></div>
+      <div class="fp-step"><span class="fp-arrow">3</span><div class="fp-content"><strong><span class="cmd">/to-issues</span></strong><span>Vertical slice issues are created</span></div></div>
+      <div class="fp-step"><span class="fp-arrow">4</span><div class="fp-content"><strong><span class="cmd">/tdd</span> (for every issue)</strong><span>Red-Green-Refactor, deep module, vertical slice</span></div></div>
+    </div>
+  </div>
+
+  <div class="flow-connector"><i class="ti ti-arrow-down"></i></div>
+
+  <div class="flow-phase">
+    <div class="fp-head when"><i class="ti ti-tools"></i><span>As needed</span></div>
+    <div class="fp-body">
+      <div class="fp-step"><span class="fp-arrow">▸</span><div class="fp-content"><strong><span class="cmd">/triage</span></strong><span>Issue state management</span></div></div>
+      <div class="fp-step"><span class="fp-arrow">▸</span><div class="fp-content"><strong><span class="cmd">/improve-codebase-architecture</span></strong><span>Architecture analysis + deepening suggestions</span></div></div>
+      <div class="fp-step"><span class="fp-arrow">▸</span><div class="fp-content"><strong><span class="cmd">/diagnose</span></strong><span>Structured debugging</span></div></div>
+      <div class="fp-step"><span class="fp-arrow">▸</span><div class="fp-content"><strong><span class="cmd">/zoom-out</span></strong><span>High-level overview</span></div></div>
+      <div class="fp-step"><span class="fp-arrow">▸</span><div class="fp-content"><strong><span class="cmd">/prototype</span></strong><span>Design decision validation</span></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- RESOURCES -->
+<div class="section" id="resources">
+  <div class="sec-head"><h2>Resources</h2></div>
+  <ul class="res-list">
+    <li><i class="ti ti-brand-github"></i><div><strong><a href="https://github.com/mattpocock/skills" target="_blank">github.com/mattpocock/skills</a></strong><br><span style="font-size:12px;color:var(--muted)">Source code and documentation for the skills</span></div></li>
+    <li><i class="ti ti-book"></i><div><strong>A Philosophy of Software Design</strong> — John Ousterhout<br><span style="font-size:12px;color:var(--muted)">Deep modules, interface design</span></div></li>
+    <li><i class="ti ti-book"></i><div><strong>Domain-Driven Design</strong> — Eric Evans<br><span style="font-size:12px;color:var(--muted)">Ubiquitous language, the theoretical basis for CONTEXT.md</span></div></li>
+    <li><i class="ti ti-book"></i><div><strong>The Pragmatic Programmer</strong> — David Thomas &amp; Andrew Hunt<br><span style="font-size:12px;color:var(--muted)">Tracer bullets, small steps</span></div></li>
+  </ul>
+</div>
+
+</div>
+<script>
+function cp(btn){
+  const pre=btn.closest('.cb').querySelector('pre');
+  navigator.clipboard.writeText(pre.textContent.trim()).then(()=>{
+    const o=btn.innerHTML;btn.innerHTML='<i class="ti ti-check"></i> Copied';
+    setTimeout(()=>{btn.innerHTML=o},2000);
+  });
+}
+function toggleEx(id){
+  document.getElementById(id).classList.toggle('open');
+}
+function switchTab(btn,id){
+  const root=btn.closest('.os-tabs');
+  root.querySelectorAll('.os-tab').forEach(t=>t.classList.remove('active'));
+  root.querySelectorAll('.os-tab-panel').forEach(p=>p.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');
+  btn.classList.add('active');
+}
+</script>
+</body>
+</html>

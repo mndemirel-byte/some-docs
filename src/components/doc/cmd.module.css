@@ -1,0 +1,13 @@
+.cmd {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  background: var(--accent-bg);
+  color: var(--accent-text);
+  border: 1px solid var(--accent-border);
+  padding: 2px 9px;
+  border-radius: 20px;
+  font-weight: 600;
+}

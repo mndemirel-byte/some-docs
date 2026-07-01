@@ -1,0 +1,15 @@
+.quote {
+  background: var(--accent-bg);
+  border-left: 4px solid var(--accent);
+  border-radius: 0 10px 10px 0;
+  padding: 16px 20px;
+  margin: 20px 0;
+}
+
+.quote p {
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--text);
+  margin: 0;
+  line-height: 1.6;
+}

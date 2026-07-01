@@ -1,0 +1,766 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Coding — Part 2: Best Practices, Skill Map, and Team Model</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
+<style>
+:root{
+  --bg:#F7F4EC;--surface:#FFF;--surface2:#F0EBDF;
+  --border:#E4DECF;--border-strong:#D2C9B4;
+  --accent:#C2613F;--accent-bg:rgba(194,97,63,.07);--accent-border:rgba(194,97,63,.22);--accent-text:#A8502F;
+  --blue:#3D5A73;--blue-bg:rgba(61,90,115,.07);--blue-border:rgba(61,90,115,.22);--blue-text:#2F4759;
+  --green:#5F7A41;--green-bg:rgba(95,122,65,.07);--green-border:rgba(95,122,65,.22);--green-text:#4C6234;
+  --red:#A8412F;--red-bg:rgba(168,65,47,.07);--red-border:rgba(168,65,47,.22);--red-text:#8E3526;
+  --amber:#9C6B1F;--amber-bg:rgba(156,107,31,.07);--amber-border:rgba(156,107,31,.22);--amber-text:#7F5614;
+  --text:#211D17;--muted:#8A8270;--subtle:#5C5648;
+  --mono:'JetBrains Mono','Fira Code',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);line-height:1.7;font-size:15px}
+a{color:var(--accent-text);text-decoration:none}a:hover{text-decoration:underline}
+.wrap{max-width:860px;margin:0 auto;padding:0 24px 80px}
+
+/* Hero */
+.hero{padding:48px 0 36px;border-bottom:1px solid var(--border);margin-bottom:40px}
+.hero-eyebrow{font-family:var(--mono);font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:12px}
+.hero h1{font-size:28px;font-weight:700;line-height:1.2;color:var(--text);margin-bottom:12px}
+.hero h1 em{font-style:normal;color:var(--accent-text)}
+.hero-desc{font-size:15px;color:var(--subtle);max-width:680px;line-height:1.65}
+.prereq-note{display:flex;align-items:center;gap:10px;background:var(--amber-bg);border:1px solid var(--amber-border);border-radius:8px;padding:10px 14px;margin-top:18px;font-size:13px;color:var(--amber-text)}
+.prereq-note i{flex-shrink:0}
+.tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:16px}
+.tag{font-family:var(--mono);font-size:11px;padding:3px 9px;border-radius:4px;background:var(--surface2);border:1px solid var(--border);color:var(--muted)}
+
+/* Key quote */
+.keyquote{background:var(--accent-bg);border-left:4px solid var(--accent);border-radius:0 10px 10px 0;padding:16px 20px;margin:20px 0}
+.keyquote p{font-size:15px;font-weight:500;color:var(--text);margin:0;line-height:1.6}
+
+/* TOC */
+.toc{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px 24px;margin-bottom:48px}
+.toc-title{font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:14px;display:flex;align-items:center;gap:6px}
+.toc-list{list-style:none;padding:0}
+.toc-list li{margin-bottom:2px}
+.toc-list a{display:flex;align-items:center;gap:8px;padding:5px 8px;font-size:13px;color:var(--subtle);border-radius:6px;transition:all .15s}
+.toc-list a:hover{color:var(--accent-text);background:var(--accent-bg);text-decoration:none}
+.toc-num{font-family:var(--mono);font-size:10px;color:var(--accent-text);min-width:24px}
+.toc-sub{list-style:none;padding:2px 0 2px 30px}
+.toc-sub a{font-size:12px;padding:3px 8px;color:var(--muted)}
+
+/* Sections */
+.section{margin-bottom:56px;scroll-margin-top:20px}
+.sec-head{display:flex;align-items:center;gap:10px;margin-bottom:20px;padding-bottom:14px;border-bottom:1px solid var(--border)}
+.sec-num{font-family:var(--mono);font-size:10px;background:var(--accent-bg);color:var(--accent-text);border:1px solid var(--accent-border);padding:2px 8px;border-radius:4px;letter-spacing:.04em}
+.sec-head h2{font-size:22px;font-weight:600;color:var(--text)}
+h3{font-size:16px;font-weight:600;color:var(--text);margin:24px 0 10px}
+h4{font-size:14px;font-weight:600;color:var(--text);margin:14px 0 6px}
+p{color:var(--subtle);font-size:14px;margin-bottom:12px;line-height:1.7}
+ul,ol{padding-left:20px;margin-bottom:12px}
+li{font-size:14px;color:var(--subtle);margin-bottom:5px;line-height:1.6}
+strong{color:var(--text);font-weight:600}
+hr{border:none;border-top:1px solid var(--border);margin:36px 0}
+code{font-family:var(--mono);font-size:12px;background:var(--surface2);border:1px solid var(--border);padding:1px 5px;border-radius:4px;color:var(--blue-text)}
+
+/* Do / Don't item cards */
+.do-grid,.dont-grid{display:flex;flex-direction:column;gap:10px;margin-top:4px}
+.do-card,.dont-card{background:var(--surface);border-radius:10px;padding:16px 18px;display:flex;gap:14px;align-items:flex-start}
+.do-card{border:1px solid var(--green-border)}
+.dont-card{border:1px solid var(--red-border)}
+.do-icon,.dont-icon{width:28px;height:28px;border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:14px;margin-top:1px}
+.do-icon{background:var(--green-bg);color:var(--green-text)}
+.dont-icon{background:var(--red-bg);color:var(--red-text)}
+.do-num,.dont-num{font-family:var(--mono);font-size:11px;font-weight:700;flex-shrink:0;width:20px;margin-top:3px}
+.do-num{color:var(--green-text)}
+.dont-num{color:var(--red-text)}
+.item-body h4{font-size:14px;font-weight:600;color:var(--text);margin:0 0 5px}
+.item-body p{font-size:13px;color:var(--subtle);margin:0;line-height:1.55}
+.item-body .cb{margin-top:10px}
+
+/* Code blocks */
+.cb{background:var(--surface);border:1px solid var(--border);border-radius:12px;margin:14px 0;overflow:hidden}
+.cb-head{display:flex;align-items:center;justify-content:space-between;padding:9px 16px;border-bottom:1px solid var(--border);background:var(--surface2)}
+.cb-lang{font-family:var(--mono);font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;display:flex;align-items:center;gap:5px}
+.cb-lang.lp{color:var(--accent-text)}
+.cb-lang.le{color:var(--blue-text)}
+.cb-copy{background:none;border:1px solid var(--border);color:var(--muted);font-size:11px;font-family:var(--mono);padding:3px 10px;border-radius:4px;cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:4px}
+.cb-copy:hover{background:var(--surface);color:var(--text);border-color:var(--border-strong)}
+.cb pre{padding:15px 18px;overflow-x:auto;font-family:var(--mono);font-size:12.5px;line-height:1.75;color:var(--subtle);max-height:460px;overflow-y:auto}
+
+/* Playbook steps */
+.playbook{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:16px}
+.playbook-title{padding:14px 20px;border-bottom:1px solid var(--border);background:var(--surface2);font-size:14px;font-weight:600;color:var(--text);display:flex;align-items:center;gap:8px}
+.playbook-steps{padding:16px 20px;list-style:none}
+.playbook-steps li{display:flex;gap:12px;padding:7px 0;border-bottom:1px solid var(--border);align-items:flex-start}
+.playbook-steps li:last-child{border-bottom:none}
+.pstep-n{font-family:var(--mono);font-size:11px;font-weight:700;color:var(--accent-text);background:var(--accent-bg);border:1px solid var(--accent-border);padding:1px 6px;border-radius:4px;flex-shrink:0;margin-top:2px}
+.pstep-t{font-size:13px;color:var(--subtle);line-height:1.5}
+.pstep-t strong{color:var(--text)}
+
+/* Skill dimension cards */
+.skill-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;margin-bottom:10px;overflow:hidden}
+.skill-head{display:flex;align-items:center;gap:12px;padding:15px 18px;cursor:pointer;transition:background .15s;user-select:none}
+.skill-head:hover{background:var(--surface2)}
+.skill-letter{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:16px;font-weight:700;flex-shrink:0}
+.la{background:rgba(194,97,63,.12);color:#A8502F;border:1px solid rgba(194,97,63,.25)}
+.lb{background:rgba(61,90,115,.12);color:#2F4759;border:1px solid rgba(61,90,115,.25)}
+.lc{background:rgba(95,122,65,.12);color:#4C6234;border:1px solid rgba(95,122,65,.25)}
+.ld{background:rgba(156,107,31,.12);color:#7F5614;border:1px solid rgba(156,107,31,.25)}
+.le{background:rgba(168,65,47,.12);color:#8E3526;border:1px solid rgba(168,65,47,.25)}
+.skill-meta{flex:1}
+.skill-name{font-size:15px;font-weight:600;color:var(--text);margin-bottom:2px}
+.skill-goal{font-size:12px;color:var(--muted)}
+.skill-prereq{font-family:var(--mono);font-size:11px;padding:2px 8px;border-radius:4px;background:var(--surface2);border:1px solid var(--border);color:var(--muted)}
+.skill-tog{color:var(--muted);font-size:16px;transition:transform .2s}
+.skill-card.open .skill-tog{transform:rotate(180deg)}
+.skill-body{display:none;padding:0 18px 18px;border-top:1px solid var(--border)}
+.skill-card.open .skill-body{display:block;padding-top:16px}
+.skill-body p,.skill-body li{font-size:14px}
+.skill-cols{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:10px 0}
+.skill-col h4{font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;font-family:var(--mono);margin:0 0 8px}
+.skill-col ul{padding-left:16px;margin:0}
+.skill-col li{font-size:13px;color:var(--subtle);margin-bottom:3px}
+.for-badge{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-family:var(--mono);padding:2px 8px;border-radius:4px;background:var(--accent-bg);color:var(--accent-text);border:1px solid var(--accent-border);margin-right:4px;margin-top:8px}
+
+/* Routing table */
+.rtbl{width:100%;border-collapse:collapse;margin:16px 0}
+.rtbl th{text-align:left;padding:8px 12px;font-size:11px;color:var(--muted);font-family:var(--mono);border-bottom:1px solid var(--border-strong);font-weight:500;text-transform:uppercase;letter-spacing:.05em}
+.rtbl td{padding:10px 12px;border-bottom:1px solid var(--border);font-size:13px;vertical-align:top}
+.rtbl tr:last-child td{border-bottom:none}
+.rtbl tr:hover td{background:var(--surface2)}
+.rtbl .profile{font-weight:600;color:var(--text)}
+.rtbl .start{color:var(--accent-text);font-family:var(--mono);font-size:12px}
+.rtbl .next{color:var(--muted);font-family:var(--mono);font-size:12px}
+
+/* Responsibility table */
+.resp-tbl{width:100%;border-collapse:collapse;margin:12px 0}
+.resp-tbl th{text-align:left;padding:8px 12px;font-size:11px;color:var(--muted);font-family:var(--mono);border-bottom:1px solid var(--border-strong);font-weight:500;text-transform:uppercase;letter-spacing:.05em}
+.resp-tbl td{padding:10px 12px;border-bottom:1px solid var(--border);font-size:13px;vertical-align:top;color:var(--subtle)}
+.resp-tbl tr:last-child td{border-bottom:none}
+.resp-tbl tr:hover td{background:var(--surface2)}
+.resp-tbl .area{font-weight:600;color:var(--text);font-size:13px}
+
+/* Small team examples */
+.team-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:16px 0}
+.team-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px}
+.team-card h4{font-size:13px;font-weight:600;color:var(--accent-text);font-family:var(--mono);margin-bottom:8px}
+.team-card p{font-size:13px;color:var(--subtle);margin:0;line-height:1.6}
+
+/* Session example */
+.session{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden}
+.session-turn{padding:14px 20px;border-bottom:1px solid var(--border)}
+.session-turn:last-child{border-bottom:none}
+.session-label{font-family:var(--mono);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px;display:flex;align-items:center;gap:5px}
+.sl-dev{color:var(--blue-text)}
+.sl-ai{color:var(--accent-text)}
+.session-turn p{font-size:13px;color:var(--subtle);margin:0;line-height:1.6}
+.session-turn ul{padding-left:16px;margin:4px 0 0}
+.session-turn ul li{font-size:13px;color:var(--subtle);margin-bottom:2px}
+
+/* Best practices numbered list */
+.bp-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+.bp-item{display:flex;gap:10px;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:13px 15px;align-items:flex-start}
+.bp-n{font-family:var(--mono);font-size:12px;font-weight:700;color:var(--accent-text);background:var(--accent-bg);border:1px solid var(--accent-border);padding:1px 6px;border-radius:4px;flex-shrink:0;margin-top:1px}
+.bp-t{font-size:13px;color:var(--subtle);line-height:1.5}
+.bp-t strong{color:var(--text)}
+
+/* Formula pipeline */
+.formula{display:flex;align-items:center;flex-wrap:wrap;gap:0;margin:24px 0}
+.f-node{display:flex;flex-direction:column;align-items:center;gap:6px}
+.f-dot{min-width:48px;height:48px;padding:0 10px;border-radius:10px;background:var(--accent-bg);border:1.5px solid var(--accent-border);display:flex;align-items:center;justify-content:center;font-size:10px;font-family:var(--mono);font-weight:600;color:var(--accent-text);text-align:center;line-height:1.3}
+.f-arr{color:var(--muted);font-size:16px;margin:0 4px;margin-bottom:0px;flex-shrink:0;align-self:center}
+
+/* Callouts */
+.callout{border-radius:10px;padding:13px 16px;margin:14px 0;font-size:14px;display:flex;gap:10px;align-items:flex-start;line-height:1.55}
+.callout i{font-size:17px;flex-shrink:0;margin-top:1px}
+.callout p{margin:0;font-size:13px}
+.ci{background:var(--blue-bg);border:1px solid var(--blue-border)}
+.ci i{color:var(--blue-text)}
+.ct{background:var(--green-bg);border:1px solid var(--green-border)}
+.ct i{color:var(--green-text)}
+
+@media(max-width:620px){
+  .skill-cols,.team-grid,.bp-grid{grid-template-columns:1fr}
+  .hero h1{font-size:22px}
+  .wrap{padding:0 16px 60px}
+  .formula{gap:2px}
+  .f-dot{font-size:9px;min-width:40px}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-eyebrow">AI Coding Series · Part 2</div>
+  <h1>Best Practices, <em>Skill Map</em>, and Team Model</h1>
+  <p class="hero-desc">Things to always do and never do, practical playbooks, a five-dimension skill map, and a team responsibility model. This is the continuation of Part 1.</p>
+  <div class="prereq-note"><i class="ti ti-book-2"></i><span><strong>Prerequisite:</strong> Before reading this part, it's recommended you read <strong>Part 1</strong> (workflow, stages, PRD and issue structure).</span></div>
+  <div class="tags">
+    <span class="tag">best-practices</span><span class="tag">skill-map</span>
+    <span class="tag">team-model</span><span class="tag">playbook</span><span class="tag">AFK</span>
+  </div>
+</div>
+
+<!-- TOC -->
+<div class="toc">
+  <div class="toc-title"><i class="ti ti-list"></i> Table of Contents</div>
+  <ul class="toc-list">
+    <li><a href="#s4"><span class="toc-num">04</span>Things You Must Always Do</a></li>
+    <li><a href="#s5"><span class="toc-num">05</span>Things You Must Never Do</a></li>
+    <li><a href="#s6"><span class="toc-num">06</span>The Recommended AI Coding Playbook</a></li>
+    <li>
+      <a href="#s7"><span class="toc-num">07</span>The AI Coding Skill Map</a>
+      <ul class="toc-sub">
+        <li><a href="#da"><span class="toc-num">A</span>Pair Programming with AI</a></li>
+        <li><a href="#db"><span class="toc-num">B</span>Structured Prompting</a></li>
+        <li><a href="#dc"><span class="toc-num">C</span>PRD- and Issue-Based Work</a></li>
+        <li><a href="#dd"><span class="toc-num">D</span>Agentic Coding with TDD</a></li>
+        <li><a href="#de"><span class="toc-num">E</span>Agent Workflow and AFK Coding</a></li>
+        <li><a href="#routing"><span class="toc-num">—</span>Which Dimension Should I Start With?</a></li>
+      </ul>
+    </li>
+    <li><a href="#s8"><span class="toc-num">08</span>Areas of Responsibility for Teams</a></li>
+    <li><a href="#s9"><span class="toc-num">09</span>An Example AI Coding Session Flow</a></li>
+    <li><a href="#s10"><span class="toc-num">10</span>The Most Important Best Practices</a></li>
+    <li><a href="#s11"><span class="toc-num">11</span>Short Summary</a></li>
+    <li><a href="#resources"><span class="toc-num">—</span>Resources</a></li>
+  </ul>
+</div>
+
+<!-- S4: DO'S -->
+<div class="section" id="s4">
+  <div class="sec-head"><span class="sec-num">04</span><h2>Things You Must Always Do</h2></div>
+  <div class="do-grid">
+
+    <div class="do-card">
+      <div class="do-icon"><i class="ti ti-check"></i></div>
+      <div class="item-body">
+        <h4>1. Break every job into small pieces</h4>
+        <p>Instead of telling AI "rewrite this whole module," tell it to "complete this small vertical slice with these acceptance criteria."</p>
+      </div>
+    </div>
+
+    <div class="do-card">
+      <div class="do-icon"><i class="ti ti-check"></i></div>
+      <div class="item-body">
+        <h4>2. Watch token and context usage</h4>
+        <p>The model's performance drops over long sessions. Signs of declining quality: repeated mistakes, forgetting decisions it made earlier, producing irrelevant code. When you see these signs, clear the session and continue with fresh context. If the tool supports it, make token usage visible.</p>
+      </div>
+    </div>
+
+    <div class="do-card">
+      <div class="do-icon"><i class="ti ti-check"></i></div>
+      <div class="item-body">
+        <h4>3. Make the codebase readable for AI</h4>
+        <p>Well-named modules, clean interfaces, clear test boundaries, an up-to-date README, and local development commands directly increase agent success.</p>
+      </div>
+    </div>
+
+    <div class="do-card">
+      <div class="do-icon"><i class="ti ti-check"></i></div>
+      <div class="item-body">
+        <h4>4. Keep PRD and issue artifacts as files</h4>
+        <p>Decisions left in conversation with AI get lost. Decisions should be made permanent in the repository as Markdown issues, PRDs, ADRs, or test plans.</p>
+      </div>
+    </div>
+
+    <div class="do-card">
+      <div class="do-icon"><i class="ti ti-check"></i></div>
+      <div class="item-body">
+        <h4>5. Give AI the test commands explicitly</h4>
+        <div class="cb"><div class="cb-head"><span class="cb-lang">text — TypeScript/JS</span><button class="cb-copy" onclick="cp(this)"><i class="ti ti-copy"></i> Copy</button></div>
+<pre>After implementation, run:
+- npm test
+- npm run typecheck
+- npm run lint
+- npm run build</pre></div>
+        <div class="cb"><div class="cb-head"><span class="cb-lang">text — Python</span><button class="cb-copy" onclick="cp(this)"><i class="ti ti-copy"></i> Copy</button></div>
+<pre>After implementation, run:
+- pytest
+- ruff check .
+- mypy .</pre></div>
+      </div>
+    </div>
+
+    <div class="do-card">
+      <div class="do-icon"><i class="ti ti-check"></i></div>
+      <div class="item-body">
+        <h4>6. Never skip review</h4>
+        <p>As AI produces more code, the review burden grows. Human review and QA preserve quality and the engineering instinct we call "taste" — evaluating not just whether the code works, but whether it was designed correctly, is maintainable, and meets team standards.</p>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- S5: DON'TS -->
+<div class="section" id="s5">
+  <div class="sec-head"><span class="sec-num">05</span><h2>Things You Must Never Do</h2></div>
+  <div class="dont-grid">
+
+    <div class="dont-card">
+      <div class="dont-icon"><i class="ti ti-x"></i></div>
+      <div class="item-body">
+        <h4>1. Don't try to build "an entire feature in one prompt"</h4>
+        <p>It bloats context, grows scope, and makes the model harder to control.</p>
+      </div>
+    </div>
+
+    <div class="dont-card">
+      <div class="dont-icon"><i class="ti ti-x"></i></div>
+      <div class="item-body">
+        <h4>2. Don't just fix the spec and move on without reading the code</h4>
+        <p>This approach disconnects the developer from the code. <strong>Code is still the primary reality.</strong> Spec-first is correct in areas like API contracts and migration plans — but after writing the spec, you still need to read and understand the resulting code.</p>
+      </div>
+    </div>
+
+    <div class="dont-card">
+      <div class="dont-icon"><i class="ti ti-x"></i></div>
+      <div class="item-body">
+        <h4>3. Don't merge untested AI code</h4>
+        <p>Code AI produces may compile but might not behave correctly. It's not trustworthy without tests, typecheck, and a build.</p>
+      </div>
+    </div>
+
+    <div class="dont-card">
+      <div class="dont-icon"><i class="ti ti-x"></i></div>
+      <div class="item-body">
+        <h4>4. Don't blindly follow a horizontal phase plan</h4>
+        <p>A plan that goes database only → then API → then frontend delays feedback. Vertical slices should be preferred.</p>
+      </div>
+    </div>
+
+    <div class="dont-card">
+      <div class="dont-icon"><i class="ti ti-x"></i></div>
+      <div class="item-body">
+        <h4>5. Don't create huge CLAUDE.md / system prompt files</h4>
+        <p>Files like <code>CLAUDE.md</code> and <code>.cursorrules</code> should be kept small. If the starting context is too large, the model starts burning through its effective attention capacity before it even begins work.</p>
+      </div>
+    </div>
+
+    <div class="dont-card">
+      <div class="dont-icon"><i class="ti ti-x"></i></div>
+      <div class="item-body">
+        <h4>6. Don't leave stale documents lying around the repo</h4>
+        <p>Old PRDs or closed decision documents can mislead AI. PRDs should be closed and archived after implementation.</p>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- S6: PLAYBOOK -->
+<div class="section" id="s6">
+  <div class="sec-head"><span class="sec-num">06</span><h2>The Recommended AI Coding Playbook</h2></div>
+
+  <div class="playbook">
+    <div class="playbook-title"><i class="ti ti-zap" style="color:var(--green-text)"></i> For a simple feature</div>
+    <ul class="playbook-steps">
+      <li><span class="pstep-n">1</span><span class="pstep-t"><strong>Read the brief.</strong></span></li>
+      <li><span class="pstep-n">2</span><span class="pstep-t"><strong>Interrogate me,</strong> extract the missing decisions.</span></li>
+      <li><span class="pstep-n">3</span><span class="pstep-t"><strong>Produce a PRD.</strong></span></li>
+      <li><span class="pstep-n">4</span><span class="pstep-t">Split the PRD into <strong>vertical slice issues.</strong></span></li>
+      <li><span class="pstep-n">5</span><span class="pstep-t">Implement the first issue <strong>using TDD.</strong></span></li>
+      <li><span class="pstep-n">6</span><span class="pstep-t">Run <strong>test / typecheck / build.</strong></span></li>
+      <li><span class="pstep-n">7</span><span class="pstep-t">Write a <strong>summary.</strong></span></li>
+      <li><span class="pstep-n">8</span><span class="pstep-t">I will <strong>review</strong> it.</span></li>
+    </ul>
+  </div>
+
+  <div class="playbook">
+    <div class="playbook-title"><i class="ti ti-building" style="color:var(--accent-text)"></i> For a larger feature</div>
+    <ul class="playbook-steps">
+      <li><span class="pstep-n">1</span><span class="pstep-t">A grilling session with <strong>domain expert + developer + AI.</strong></span></li>
+      <li><span class="pstep-n">2</span><span class="pstep-t">Produce a <strong>PRD.</strong></span></li>
+      <li><span class="pstep-n">3</span><span class="pstep-t">Build a <strong>prototype</strong> if a technical spike is needed.</span></li>
+      <li><span class="pstep-n">4</span><span class="pstep-t">Split the PRD into <strong>Kanban issues.</strong></span></li>
+      <li><span class="pstep-n">5</span><span class="pstep-t">Order the issues as a <strong>dependency graph.</strong></span></li>
+      <li><span class="pstep-n">6</span><span class="pstep-t">Hand <strong>independent issues to parallel</strong> agents.</span></li>
+      <li><span class="pstep-n">7</span><span class="pstep-t">Each agent works in its own <strong>branch / worktree / sandbox.</strong></span></li>
+      <li><span class="pstep-n">8</span><span class="pstep-t">Make <strong>test and build</strong> signals mandatory.</span></li>
+      <li><span class="pstep-n">9</span><span class="pstep-t"><strong>Human review</strong> before merge.</span></li>
+      <li><span class="pstep-n">10</span><span class="pstep-t">Close the PRD / issue, <strong>archive the document.</strong></span></li>
+    </ul>
+  </div>
+</div>
+
+<!-- S7: SKILL MAP -->
+<div class="section" id="s7">
+  <div class="sec-head"><span class="sec-num">07</span><h2>The AI Coding Skill Map</h2></div>
+  <p>The skill areas below aren't a linear sequence — they are <strong>dimensions you can develop independently.</strong> A senior developer can start directly with dimension D or E. You should set your own priority based on your experience and needs.</p>
+
+  <!-- A -->
+  <div class="skill-card" id="da">
+    <div class="skill-head" onclick="tog('da')">
+      <div class="skill-letter la">A</div>
+      <div class="skill-meta">
+        <div class="skill-name">Pair Programming with AI</div>
+        <div class="skill-goal">Using AI as a thinking partner, not autocomplete</div>
+      </div>
+      <span class="skill-prereq">Basic programming</span>
+      <i class="ti ti-chevron-down skill-tog"></i>
+    </div>
+    <div class="skill-body">
+      <div class="skill-cols">
+        <div class="skill-col">
+          <h4>Topics to work on</h4>
+          <ul>
+            <li>Writing prompts</li>
+            <li>Having it do small refactors</li>
+            <li>Having it write unit tests</li>
+            <li>Having it analyze error messages</li>
+            <li>Having it explain code</li>
+            <li>Comparing alternative solutions</li>
+          </ul>
+        </div>
+        <div class="skill-col">
+          <h4>Practice task</h4>
+          <div class="cb"><div class="cb-head"><span class="cb-lang lp"><i class="ti ti-prompt"></i> task</span><button class="cb-copy" onclick="cp(this)"><i class="ti ti-copy"></i> Copy</button></div>
+<pre>Pick a small existing function.
+Ask AI to write a test for it first.
+Then have it refactor the function.
+Then have it add edge case tests.</pre></div>
+        </div>
+      </div>
+      <div><span class="for-badge"><i class="ti ti-users"></i>Who it's for</span><span style="font-size:13px;color:var(--subtle)"> Everyone; the entry point into AI coding.</span></div>
+    </div>
+  </div>
+
+  <!-- B -->
+  <div class="skill-card" id="db">
+    <div class="skill-head" onclick="tog('db')">
+      <div class="skill-letter lb">B</div>
+      <div class="skill-meta">
+        <div class="skill-name">Structured Prompting</div>
+        <div class="skill-goal">Giving AI a formatted task instead of free-form code requests</div>
+      </div>
+      <span class="skill-prereq">Basic AI experience</span>
+      <i class="ti ti-chevron-down skill-tog"></i>
+    </div>
+    <div class="skill-body">
+      <div class="skill-cols">
+        <div class="skill-col">
+          <h4>Patterns to learn</h4>
+          <ul>
+            <li>Role</li>
+            <li>Context</li>
+            <li>Goal</li>
+            <li>Constraints</li>
+            <li>Acceptance Criteria</li>
+            <li>Test Plan</li>
+            <li>Output Format</li>
+          </ul>
+        </div>
+        <div class="skill-col">
+          <h4>Example structure</h4>
+          <div class="cb"><div class="cb-head"><span class="cb-lang lp"><i class="ti ti-prompt"></i> example</span><button class="cb-copy" onclick="cp(this)"><i class="ti ti-copy"></i> Copy</button></div>
+<pre>Role: Senior backend developer
+Context: FastAPI + PostgreSQL project
+Goal: Add user activity logging
+Constraints:
+- Do not change public API
+- Keep changes minimal
+- Add tests
+Acceptance Criteria:
+- Login event is logged
+- Failed login is logged
+- Tests pass
+Output:
+- Changed files
+- Test results
+- Summary</pre></div>
+        </div>
+      </div>
+      <div><span class="for-badge"><i class="ti ti-users"></i>Who it's for</span><span style="font-size:13px;color:var(--subtle)"> Everyone, especially those who want to improve prompt quality.</span></div>
+    </div>
+  </div>
+
+  <!-- C -->
+  <div class="skill-card" id="dc">
+    <div class="skill-head" onclick="tog('dc')">
+      <div class="skill-letter lc">C</div>
+      <div class="skill-meta">
+        <div class="skill-name">PRD- and Issue-Based Work</div>
+        <div class="skill-goal">Turning conversation with AI into permanent development artifacts</div>
+      </div>
+      <span class="skill-prereq">Basic product development</span>
+      <i class="ti ti-chevron-down skill-tog"></i>
+    </div>
+    <div class="skill-body">
+      <div class="skill-cols">
+        <div class="skill-col">
+          <h4>Things to learn</h4>
+          <ul>
+            <li>Having it write a PRD</li>
+            <li>Creating user stories</li>
+            <li>Writing acceptance criteria</li>
+            <li>Separating scope / non-scope</li>
+            <li>Producing Markdown issues</li>
+            <li>Identifying dependencies</li>
+          </ul>
+        </div>
+        <div class="skill-col">
+          <h4>Practice task</h4>
+          <div class="cb"><div class="cb-head"><span class="cb-lang lp"><i class="ti ti-prompt"></i> task</span><button class="cb-copy" onclick="cp(this)"><i class="ti ti-copy"></i> Copy</button></div>
+<pre>Pick a small feature idea.
+Have AI ask you 20 questions first.
+Then have it write a PRD.
+Then have it split the PRD into
+3 vertical slice issues.</pre></div>
+        </div>
+      </div>
+      <div><span class="for-badge"><i class="ti ti-users"></i>Who it's for</span><span style="font-size:13px;color:var(--subtle)"> Developers, product managers, technical leads.</span></div>
+    </div>
+  </div>
+
+  <!-- D -->
+  <div class="skill-card" id="dd">
+    <div class="skill-head" onclick="tog('dd')">
+      <div class="skill-letter ld">D</div>
+      <div class="skill-meta">
+        <div class="skill-name">Agentic Coding with TDD</div>
+        <div class="skill-goal">Tying AI's code generation to a test feedback loop</div>
+      </div>
+      <span class="skill-prereq">Test framework knowledge</span>
+      <i class="ti ti-chevron-down skill-tog"></i>
+    </div>
+    <div class="skill-body">
+      <div class="skill-cols">
+        <div class="skill-col">
+          <h4>Things to learn</h4>
+          <ul>
+            <li>Red-Green-Refactor</li>
+            <li>Unit tests</li>
+            <li>Integration tests</li>
+            <li>Typecheck</li>
+            <li>Lint</li>
+            <li>Build validation</li>
+            <li>Regression tests</li>
+          </ul>
+        </div>
+        <div class="skill-col">
+          <h4>Practice task</h4>
+          <div class="cb"><div class="cb-head"><span class="cb-lang lp"><i class="ti ti-prompt"></i> task</span><button class="cb-copy" onclick="cp(this)"><i class="ti ti-copy"></i> Copy</button></div>
+<pre>Give AI an issue.
+Require it to write the test
+before the code.
+Confirm the test fails.
+Then have it implement.
+Finally ask for the
+test/typecheck/build output.</pre></div>
+        </div>
+      </div>
+      <div><span class="for-badge"><i class="ti ti-users"></i>Who it's for</span><span style="font-size:13px;color:var(--subtle)"> Developers who have TDD experience or want to learn it.</span></div>
+    </div>
+  </div>
+
+  <!-- E -->
+  <div class="skill-card" id="de">
+    <div class="skill-head" onclick="tog('de')">
+      <div class="skill-letter le">E</div>
+      <div class="skill-meta">
+        <div class="skill-name">Agent Workflow and AFK Coding</div>
+        <div class="skill-goal">Letting the agent finish small issues on its own</div>
+      </div>
+      <span class="skill-prereq">Git workflow + test infrastructure</span>
+      <i class="ti ti-chevron-down skill-tog"></i>
+    </div>
+    <div class="skill-body">
+      <div class="skill-cols">
+        <div class="skill-col">
+          <h4>Things to learn</h4>
+          <ul>
+            <li>Local issue files</li>
+            <li>Worktree / branch isolation</li>
+            <li>Commit discipline</li>
+            <li>Agent summary</li>
+            <li>Human review</li>
+            <li>Parallel agent execution</li>
+            <li>Merge conflict management</li>
+            <li>AFK safety conditions</li>
+          </ul>
+        </div>
+        <div class="skill-col">
+          <h4>Practice task</h4>
+          <div class="cb"><div class="cb-head"><span class="cb-lang lp"><i class="ti ti-prompt"></i> task</span><button class="cb-copy" onclick="cp(this)"><i class="ti ti-copy"></i> Copy</button></div>
+<pre>Create 3 independent issues.
+Open a separate branch/worktree
+for each issue.
+Have the agent implement each
+issue separately.
+Review the results and merge.</pre></div>
+        </div>
+      </div>
+      <div><span class="for-badge"><i class="ti ti-users"></i>Who it's for</span><span style="font-size:13px;color:var(--subtle)"> Experienced developers looking to move into agentic coding.</span></div>
+    </div>
+  </div>
+
+  <!-- ROUTING TABLE -->
+  <h3 id="routing">Which Dimension Should I Start With?</h3>
+  <table class="rtbl">
+    <thead><tr><th>Profile</th><th>Recommended start</th><th>Next step</th></tr></thead>
+    <tbody>
+      <tr><td class="profile">Junior developer</td><td class="start">A · B</td><td class="next">C</td></tr>
+      <tr><td class="profile">Mid-level developer</td><td class="start">B · D</td><td class="next">C · E</td></tr>
+      <tr><td class="profile">Senior developer</td><td class="start">C · D</td><td class="next">E</td></tr>
+      <tr><td class="profile">Tech lead / Architect</td><td class="start">C · E</td><td class="next">D (TDD discipline)</td></tr>
+      <tr><td class="profile">Product manager</td><td class="start">A · C</td><td class="next">B</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- S8: TEAM RESPONSIBILITIES -->
+<div class="section" id="s8">
+  <div class="sec-head"><span class="sec-num">08</span><h2>Areas of Responsibility for Teams</h2></div>
+  <p>The areas of responsibility below don't need to be separate roles. On a small team, one person can own multiple areas. What matters is that every area is <strong>consciously owned by someone.</strong></p>
+
+  <table class="resp-tbl">
+    <thead><tr><th>Area of Responsibility</th><th>Scope</th><th>Who can own it?</th></tr></thead>
+    <tbody>
+      <tr><td class="area">Requirements and domain knowledge</td><td>Edge cases, user behavior, business rules</td><td>Product manager, domain expert, senior developer</td></tr>
+      <tr><td class="area">Code quality and implementation</td><td>Module design, writing code, tests</td><td>Developer</td></tr>
+      <tr><td class="area">Architecture decisions</td><td>Module boundaries, dependency management, deep module design</td><td>Senior developer, architect</td></tr>
+      <tr><td class="area">AI agent management</td><td>Issue-based task distribution, agent configuration, AFK conditions</td><td>Developer, tech lead</td></tr>
+      <tr><td class="area">Review</td><td>Code quality, security, maintainability</td><td>Another developer, senior developer</td></tr>
+      <tr><td class="area">QA and test strategy</td><td>Test scenarios, regression, e2e verification</td><td>Developer, QA engineer</td></tr>
+      <tr><td class="area">Orchestration</td><td>Issue order, dependency graph, parallel agent coordination</td><td>Tech lead, senior developer</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Small Team Examples</h3>
+  <div class="team-grid">
+    <div class="team-card">
+      <h4><i class="ti ti-users"></i> A team of 2</h4>
+      <p>Developer A: requirement clarification, implementation, agent management, and QA.<br>Developer B: review, architecture decisions, and orchestration.<br>Roles can rotate.</p>
+    </div>
+    <div class="team-card">
+      <h4><i class="ti ti-user"></i> Solo developer</h4>
+      <p>All areas fall on one person. In this case it's useful to use the AI agent as a "second pair of eyes" — having it review its own code in a different session, asking it to suggest missing tests, and so on.</p>
+    </div>
+  </div>
+</div>
+
+<!-- S9: EXAMPLE SESSION -->
+<div class="section" id="s9">
+  <div class="sec-head"><span class="sec-num">09</span><h2>An Example AI Coding Session Flow</h2></div>
+  <p>An example showing how all the stages turn into a real conversation in practice. Scenario: adding a simple points system to an education platform.</p>
+
+  <div class="session">
+    <div class="session-turn">
+      <div class="session-label sl-dev"><i class="ti ti-user"></i>Developer</div>
+      <p>Read this feature brief. Don't write code. Interrogate me first.</p>
+    </div>
+    <div class="session-turn">
+      <div class="session-label sl-ai"><i class="ti ti-robot"></i>AI</div>
+      <ul>
+        <li>Which user segment is this feature for?</li>
+        <li>What's the success metric?</li>
+        <li>Will existing data be processed retroactively?</li>
+        <li>Where will the UI appear?</li>
+        <li>What are the edge cases?</li>
+      </ul>
+    </div>
+    <div class="session-turn">
+      <div class="session-label sl-dev"><i class="ti ti-user"></i>Developer</div>
+      <p>Gives the answers.</p>
+    </div>
+    <div class="session-turn">
+      <div class="session-label sl-ai"><i class="ti ti-robot"></i>AI</div>
+      <p>Produces a PRD → <code>docs/prd/gamification-points.md</code></p>
+    </div>
+    <div class="session-turn">
+      <div class="session-label sl-dev"><i class="ti ti-user"></i>Developer</div>
+      <p>Split the PRD into vertical slice issues.</p>
+    </div>
+    <div class="session-turn">
+      <div class="session-label sl-ai"><i class="ti ti-robot"></i>AI</div>
+      <ul>
+        <li>Issue 01: Minimal end-to-end flow</li>
+        <li>Issue 02: Edge case handling</li>
+        <li>Issue 03: Admin visibility</li>
+        <li>Issue 04: Migration / backfill</li>
+        <li>Issue 05: Tests and cleanup</li>
+      </ul>
+    </div>
+    <div class="session-turn">
+      <div class="session-label sl-dev"><i class="ti ti-user"></i>Developer</div>
+      <p>Implement Issue 01 using TDD. Don't go outside scope.</p>
+    </div>
+    <div class="session-turn">
+      <div class="session-label sl-ai"><i class="ti ti-robot"></i>AI</div>
+      <p>Writes tests → implements → runs the tests → gives a summary.</p>
+    </div>
+    <div class="session-turn">
+      <div class="session-label sl-dev"><i class="ti ti-user"></i>Developer</div>
+      <p>Reviews, asks for changes, or merges.</p>
+    </div>
+  </div>
+</div>
+
+<!-- S10: MOST IMPORTANT BEST PRACTICES -->
+<div class="section" id="s10">
+  <div class="sec-head"><span class="sec-num">10</span><h2>The Most Important Best Practices</h2></div>
+  <div class="bp-grid">
+    <div class="bp-item"><span class="bp-n">1</span><span class="bp-t"><strong>Don't have AI write code directly;</strong> ask it to interrogate you first.</span></div>
+    <div class="bp-item"><span class="bp-n">2</span><span class="bp-t">Aim for <strong>shared understanding, not a plan.</strong></span></div>
+    <div class="bp-item"><span class="bp-n">3</span><span class="bp-t"><strong>Produce a PRD, but don't treat it as living truth;</strong> the code is the truth.</span></div>
+    <div class="bp-item"><span class="bp-n">4</span><span class="bp-t">Split issues as <strong>vertical slices.</strong></span></div>
+    <div class="bp-item"><span class="bp-n">5</span><span class="bp-t">Give the agent <strong>small, independent, testable</strong> work.</span></div>
+    <div class="bp-item"><span class="bp-n">6</span><span class="bp-t"><strong>Use TDD;</strong> have AI write tests first.</span></div>
+    <div class="bp-item"><span class="bp-n">7</span><span class="bp-t"><strong>Keep context small;</strong> don't rely on long sessions.</span></div>
+    <div class="bp-item"><span class="bp-n">8</span><span class="bp-t">When using sub-agents, <strong>keep the parent context clean.</strong></span></div>
+    <div class="bp-item"><span class="bp-n">9</span><span class="bp-t"><strong>Build a deep module architecture;</strong> avoid the shallow dependency soup.</span></div>
+    <div class="bp-item"><span class="bp-n">10</span><span class="bp-t">Make <strong>human review and QA</strong> a mandatory part of the process.</span></div>
+    <div class="bp-item" style="grid-column:1/-1"><span class="bp-n">11</span><span class="bp-t"><strong>AFK coding is not unconditionally safe;</strong> branch isolation, an iteration limit, and diff review are mandatory.</span></div>
+  </div>
+</div>
+
+<!-- S11: SHORT SUMMARY -->
+<div class="section" id="s11">
+  <div class="sec-head"><span class="sec-num">11</span><h2>Short Summary</h2></div>
+  <p>The essence of AI coding isn't "knowing how to write a prompt." The real issue is this:</p>
+  <div class="keyquote"><p>Getting AI to do the right work, at the right size, with the right context, inside the right feedback loop.</p></div>
+  <p>That's why a successful AI coding process can be reduced to this formula:</p>
+
+  <div class="formula">
+    <div class="f-node"><div class="f-dot">Align&shy;ment</div></div>
+    <div class="f-arr">→</div>
+    <div class="f-node"><div class="f-dot">PRD</div></div>
+    <div class="f-arr">→</div>
+    <div class="f-node"><div class="f-dot">Vertical Slice Issues</div></div>
+    <div class="f-arr">→</div>
+    <div class="f-node"><div class="f-dot">TDD Impl.</div></div>
+    <div class="f-arr">→</div>
+    <div class="f-node"><div class="f-dot">Auto Checks</div></div>
+    <div class="f-arr">→</div>
+    <div class="f-node"><div class="f-dot">Human Review</div></div>
+    <div class="f-arr">→</div>
+    <div class="f-node"><div class="f-dot">Merge</div></div>
+  </div>
+
+  <p>AI coding doesn't automatically turn an undisciplined developer into a good one. On the contrary, <strong>it amplifies the lack of discipline.</strong> But combined with good software engineering practices, it becomes a powerful production model that ships well-planned, testable, small, independent pieces of work very quickly.</p>
+  <div class="callout ct"><i class="ti ti-sparkles"></i><p>Taken together with Part 1, this framework forms the foundation for building an agentic software delivery workflow regardless of which language or tool you choose.</p></div>
+</div>
+
+<!-- RESOURCES -->
+<div class="section" id="resources">
+  <div class="sec-head"><h2>Resources</h2></div>
+  <p>The core framework and examples in this document were compiled from the video presentation below, then restructured into a standalone tutorial.</p>
+  <div class="callout ci"><i class="ti ti-video"></i><p><strong>Video:</strong> <em>Disciplined Software Development with AI Coding Agents</em> — covers the Smart Zone / Dumb Zone, the Grill Me technique, vertical slice / tracer bullet, deep vs. shallow modules, TDD with agentic coding, and AFK task management.</p></div>
+</div>
+
+</div>
+<script>
+function tog(id){const c=document.getElementById(id);c.classList.toggle('open')}
+function cp(btn){
+  const pre=btn.closest('.cb').querySelector('pre');
+  navigator.clipboard.writeText(pre.textContent.trim()).then(()=>{
+    const o=btn.innerHTML;btn.innerHTML='<i class="ti ti-check"></i> Copied';
+    setTimeout(()=>{btn.innerHTML=o},2000);
+  });
+}
+</script>
+</body>
+</html>

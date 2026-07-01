@@ -1,0 +1,61 @@
+.tree,
+.tree ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.tree {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 20px 24px;
+}
+
+.tree ul {
+  padding-left: 20px;
+  border-left: 2px solid var(--border);
+  margin: 3px 0 3px 10px;
+}
+
+.tree li {
+  padding: 3px 0;
+}
+
+.row {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+}
+
+.icon {
+  font-size: 15px;
+}
+
+.folderIcon {
+  color: var(--filetree-icon);
+}
+
+.fileIcon {
+  color: var(--muted);
+}
+
+.specialIcon {
+  color: var(--accent-text);
+}
+
+.dirName {
+  color: var(--blue-text);
+  font-weight: 500;
+}
+
+.fileName {
+  color: var(--subtle);
+}
+
+.specialName {
+  color: var(--accent-text);
+  font-weight: 600;
+}

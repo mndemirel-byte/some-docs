@@ -1,0 +1,718 @@
+import {
+  IconBrandUbuntu,
+  IconBrandWindows,
+  IconFileDescription,
+  IconTools,
+  IconRobot,
+  IconNotebook,
+  IconLayoutList,
+  IconChecklist,
+  IconGitBranch,
+  IconSitemap,
+  IconNotes,
+  IconAlertCircle,
+  IconFolderCog,
+  IconHome,
+  IconBulb,
+  IconFileText,
+  IconTestPipe,
+  IconEye,
+  IconBooks,
+  IconSparkles,
+} from "@tabler/icons-react";
+import { Hero, Accent } from "@/components/doc/hero";
+import { Toc } from "@/components/doc/toc";
+import { Section } from "@/components/doc/section";
+import { FileTree, Dir, File, Special } from "@/components/doc/file-tree";
+import { ResponsiveCardGrid, ResponsiveCard } from "@/components/doc/responsive-card-grid";
+import { OsTabs } from "@/components/doc/os-tabs";
+import { CodeBlock } from "@/components/doc/code-block";
+import { CollapsibleCard } from "@/components/doc/collapsible-card";
+import { SkillTable } from "@/components/doc/skill-table";
+import { WorkflowStep } from "@/components/doc/workflow-step";
+import { Callout } from "@/components/doc/callout";
+import { PrinciplesGrid, PrincipleCard } from "@/components/doc/principles-grid";
+import { AntiPatternRow } from "@/components/doc/anti-pattern-row";
+import { Pipeline } from "@/components/doc/pipeline";
+
+<Hero
+  badge="agentic-ai-dev · orta seviye"
+  title={<>Claude Code <Accent>Agentic</Accent> Project Setup</>}
+  description="Herhangi bir yazılım projesine kopyalanabilecek Claude Code uyumlu agentic development setup şablonu — skill'ler, sub-agent'lar, CLAUDE.md ve standart klasör yapısı tek dokümanda."
+  tags={["claude-code", "skills", "sub-agents", "CLAUDE.md", "ADR", "agentic workflow", "mattpocock/skills"]}
+/>
+
+<Toc
+  title="İçindekiler"
+  entries={[
+    { id: "s1", num: "01", label: "Hedef Klasör Yapısı" },
+    { id: "s2", num: "02", label: "Klasör Sorumlulukları" },
+    { id: "s3", num: "03", label: "Setup Komutları" },
+    { id: "s4", num: "04", label: "CLAUDE.md Şablonu" },
+    { id: "s5", num: "05", label: "Skill Set" },
+    { id: "s6", num: "06", label: "Skill Dosyaları" },
+    { id: "s7", num: "07", label: "Agent Tanımları" },
+    { id: "s8", num: "08", label: "Docs README Şablonları" },
+    { id: "s9", num: "09", label: "Çalışma Akışı" },
+    { id: "s10", num: "10", label: "Kullanım Prensipleri" },
+    { id: "s11", num: "11", label: "Anti-pattern'ler" },
+    { id: "s12", num: "12", label: "Özet" },
+  ]}
+/>
+
+<Section id="s1" num="01" title="Hedef Klasör Yapısı">
+
+Her yeni projede aşağıdaki yapı oluşturulur:
+
+<FileTree>
+  <Dir name="your-project/" root>
+    <Special name="CLAUDE.md" />
+    <Dir name=".claude/">
+      <Dir name="skills/">
+        <File kind="code" name={<>grill-with-docs/<strong>SKILL.md</strong></>} />
+        <File kind="code" name={<>to-prd/<strong>SKILL.md</strong></>} />
+        <File kind="code" name={<>to-issues/<strong>SKILL.md</strong></>} />
+        <File kind="code" name={<>tdd/<strong>SKILL.md</strong></>} />
+        <File kind="code" name={<>codebase-design/<strong>SKILL.md</strong></>} />
+        <File kind="code" name={<>diagnosing-bugs/<strong>SKILL.md</strong></>} />
+        <File kind="code" name={<>improve-codebase-architecture/<strong>SKILL.md</strong></>} />
+      </Dir>
+      <Dir name="agents/">
+        <File name="planner-agent.md" />
+        <File name="implementation-agent.md" />
+        <File name="debugging-agent.md" />
+        <File name="architecture-review-agent.md" />
+        <File name="documentation-agent.md" />
+      </Dir>
+    </Dir>
+    <Dir name="docs/">
+      <Special name="CONTEXT.md" />
+      <Dir name="prd/" />
+      <Dir name="issues/" />
+      <Dir name="adr/" />
+      <Dir name="architecture/" />
+      <Dir name="decisions/" />
+    </Dir>
+    <Dir name="src/" />
+    <Dir name="tests/" />
+    <File name="README.md" />
+  </Dir>
+</FileTree>
+
+</Section>
+
+<Section id="s2" num="02" title="Klasörlerin Sorumlulukları">
+
+<ResponsiveCardGrid>
+  <ResponsiveCard icon={IconFileDescription} name="CLAUDE.md">
+    Ana agent manifest. Proje amacı, mimari kurallar, test komutları, skill ve agent workflow'u, agent sınırları. Uzun prosedürler <code>skills/*/SKILL.md</code>'ye gider.
+  </ResponsiveCard>
+  <ResponsiveCard icon={IconTools} name=".claude/skills/">
+    Tekrar kullanılabilir çalışma disiplinleri. Skill bir "rol" değil, agent'ın uygulayacağı <strong>prosedür</strong>dür.
+  </ResponsiveCard>
+  <ResponsiveCard icon={IconRobot} name=".claude/agents/">
+    Uzman agent rolleri. Her agent belirli bir işi üstlenir ve birden fazla skill kullanabilir.
+  </ResponsiveCard>
+  <ResponsiveCard icon={IconNotebook} name="docs/CONTEXT.md">
+    Yaşayan bağlam dosyası. Domain dili, önemli kavramlar, sistem sınırları, modül sorumlulukları ve mimari kabuller.
+  </ResponsiveCard>
+  <ResponsiveCard icon={IconLayoutList} name="docs/prd/">
+    Ürün gereksinim dokümanları. Ör: <code>001-initial-product-requirements.md</code>
+  </ResponsiveCard>
+  <ResponsiveCard icon={IconChecklist} name="docs/issues/">
+    Agent'lara verilecek iş parçaları. Her issue <strong>vertical slice</strong> olmalı — yatay katman görevi olmamalı.
+  </ResponsiveCard>
+  <ResponsiveCard icon={IconGitBranch} name="docs/adr/">
+    Architecture Decision Records. Ör: <code>0001-use-config-file-for-pricing.md</code>
+  </ResponsiveCard>
+  <ResponsiveCard icon={IconSitemap} name="docs/architecture/">
+    Sistem mimarisi, modül haritası, veri akışı, sequence diagram ve high-level design dokümanları.
+  </ResponsiveCard>
+  <ResponsiveCard icon={IconNotes} name="docs/decisions/">
+    ADR seviyesinde olmayan ama takip edilmesi gereken küçük ürün, teknik veya süreç kararları.
+  </ResponsiveCard>
+</ResponsiveCardGrid>
+
+</Section>
+
+<Section id="s3" num="03" title="Setup Komutları">
+
+Yeni bir projede aşağıdaki komutlar çalıştırılabilir:
+
+<OsTabs
+  tabs={[
+    { id: "linux", label: <><IconBrandUbuntu size={16} /> Linux / macOS</> },
+    { id: "windows", label: <><IconBrandWindows size={16} /> Windows (PowerShell)</> },
+  ]}
+>
+
+<CodeBlock lang="bash" copyLabel="Kopyala" copiedLabel="Kopyalandı">
+{`mkdir -p .claude/skills/{grill-with-docs,to-prd,to-issues,tdd,codebase-design,diagnosing-bugs,improve-codebase-architecture}
+mkdir -p .claude/agents
+mkdir -p docs/{prd,issues,adr,architecture,decisions}
+mkdir -p src tests
+
+touch CLAUDE.md
+touch docs/CONTEXT.md
+touch docs/prd/README.md
+touch docs/issues/README.md
+touch docs/adr/README.md
+touch docs/architecture/README.md
+touch docs/decisions/README.md
+
+touch .claude/skills/grill-with-docs/SKILL.md
+touch .claude/skills/to-prd/SKILL.md
+touch .claude/skills/to-issues/SKILL.md
+touch .claude/skills/tdd/SKILL.md
+touch .claude/skills/codebase-design/SKILL.md
+touch .claude/skills/diagnosing-bugs/SKILL.md
+touch .claude/skills/improve-codebase-architecture/SKILL.md
+
+touch .claude/agents/planner-agent.md
+touch .claude/agents/implementation-agent.md
+touch .claude/agents/debugging-agent.md
+touch .claude/agents/architecture-review-agent.md
+touch .claude/agents/documentation-agent.md`}
+</CodeBlock>
+
+<CodeBlock lang="powershell" copyLabel="Kopyala" copiedLabel="Kopyalandı">
+{`# Klasörleri oluştur
+@(
+  ".claude\\skills\\grill-with-docs",
+  ".claude\\skills\\to-prd",
+  ".claude\\skills\\to-issues",
+  ".claude\\skills\\tdd",
+  ".claude\\skills\\codebase-design",
+  ".claude\\skills\\diagnosing-bugs",
+  ".claude\\skills\\improve-codebase-architecture",
+  ".claude\\agents",
+  "docs\\prd",
+  "docs\\issues",
+  "docs\\adr",
+  "docs\\architecture",
+  "docs\\decisions",
+  "src",
+  "tests"
+) | ForEach-Object { New-Item -ItemType Directory -Force $_ | Out-Null }
+
+# Dosyaları oluştur
+@(
+  "CLAUDE.md",
+  "docs\\CONTEXT.md",
+  "docs\\prd\\README.md",
+  "docs\\issues\\README.md",
+  "docs\\adr\\README.md",
+  "docs\\architecture\\README.md",
+  "docs\\decisions\\README.md",
+  ".claude\\skills\\grill-with-docs\\SKILL.md",
+  ".claude\\skills\\to-prd\\SKILL.md",
+  ".claude\\skills\\to-issues\\SKILL.md",
+  ".claude\\skills\\tdd\\SKILL.md",
+  ".claude\\skills\\codebase-design\\SKILL.md",
+  ".claude\\skills\\diagnosing-bugs\\SKILL.md",
+  ".claude\\skills\\improve-codebase-architecture\\SKILL.md",
+  ".claude\\agents\\planner-agent.md",
+  ".claude\\agents\\implementation-agent.md",
+  ".claude\\agents\\debugging-agent.md",
+  ".claude\\agents\\architecture-review-agent.md",
+  ".claude\\agents\\documentation-agent.md"
+) | ForEach-Object { New-Item -ItemType File -Force $_ | Out-Null }`}
+</CodeBlock>
+
+</OsTabs>
+
+</Section>
+
+<Section id="s4" num="04" title="CLAUDE.md Şablonu">
+
+Aşağıdaki içeriği proje kökündeki <code>CLAUDE.md</code> dosyasına koy.
+
+<CollapsibleCard
+  badge={<><IconFileDescription size={12} /> CLAUDE.md</>}
+  badgeKind="docs"
+  name="Project Instructions for Claude Code"
+  description="Tam şablonu görmek için genişlet"
+>
+
+<CodeBlock lang="markdown" copyLabel="Kopyala" copiedLabel="Kopyalandı">
+{`# Project Instructions for Claude Code
+
+## Project Goal
+This repository uses an agentic development workflow.
+Claude should not work as a single monolithic coding assistant. Instead, Claude should:
+1. Understand the project context.
+2. Clarify requirements.
+3. Produce PRDs when needed.
+4. Break work into vertical slice issues.
+5. Implement one issue at a time.
+6. Use TDD for deterministic behavior.
+7. Keep architecture decisions documented.
+8. Review architecture before finalizing milestones.
+
+## Repository Structure
+Important folders:
+- \`docs/CONTEXT.md\`: living project context and domain language
+- \`docs/prd/\`: product requirements documents
+- \`docs/issues/\`: agent-ready vertical slice implementation issues
+- \`docs/adr/\`: architecture decision records
+- \`docs/architecture/\`: high-level design and architecture notes
+- \`docs/decisions/\`: smaller non-ADR decisions
+- \`.claude/skills/\`: reusable workflows and engineering disciplines
+- \`.claude/agents/\`: specialized project agents
+
+## Default Workflow
+For new features:
+1. Use \`/grill-with-docs\` if the requirement is unclear.
+2. Use \`/to-prd\` for medium or large features.
+3. Use \`/to-issues\` to split PRD into vertical slice issues.
+4. Use \`implementation-agent\` for implementation.
+5. Implementation must follow \`/tdd\`.
+6. Use \`/codebase-design\` when changing module boundaries.
+7. Use \`debugging-agent\` with \`/diagnosing-bugs\` when tests fail unexpectedly.
+8. Use \`/improve-codebase-architecture\` before milestone completion.
+
+## Architecture Rules
+- Prefer vertical slices over horizontal layer work.
+- Keep business logic separate from presentation layers.
+- Keep public interfaces small.
+- Prefer deep modules over shallow modules.
+- Avoid unnecessary abstraction.
+- Avoid large rewrites unless explicitly requested.
+- Do not duplicate business logic across UI, API, CLI, or worker layers.
+- Document meaningful architecture decisions in \`docs/adr/\`.
+
+## Testing Rules
+- Use TDD for deterministic business logic.
+- Write one failing test before implementation.
+- Prefer behavior-focused tests.
+- Do not couple tests to private implementation details unless necessary.
+- Run relevant tests after each change.
+- Run the full test suite before marking an issue complete.
+
+## Documentation Rules
+- Keep \`docs/CONTEXT.md\` updated when domain language or module boundaries change.
+- Write PRDs under \`docs/prd/\`.
+- Write implementation issues under \`docs/issues/\`.
+- Write ADRs under \`docs/adr/\`.
+- Keep README accurate for setup and usage.
+
+## Issue Rules
+Issues under \`docs/issues/\` must include:
+- Title, User story, Acceptance criteria, Test expectations,
+  Dependencies, Suggested agent, Required skills, Out of scope
+
+Issues should be vertical slices. Avoid: "Create database layer", "Write pricing.py".
+Prefer: "User can run the first CLI tracer bullet and see a cost estimate".
+
+## Commands
+\`\`\`bash
+# Run tests
+pytest
+
+# Run app
+# TODO: add project-specific run command
+\`\`\`
+
+## Safety and Scope
+- Do not delete files without explicit instruction.
+- Do not introduce new dependencies without explaining why.
+- Do not change public behavior outside the active issue.
+- Do not perform unrelated refactors.
+- If a task is too broad, create or update an issue instead of coding immediately.`}
+</CodeBlock>
+
+</CollapsibleCard>
+
+</Section>
+
+<Section id="s5" num="05" title="Skill Set">
+
+Bu setup içinde seçilen temel skill set. Skill = çalışma disiplini / prosedür.
+
+<SkillTable
+  skillHeader="Skill"
+  purposeHeader="Amaç"
+  rows={[
+    { skill: "grill-with-docs", purpose: "Belirsiz gereksinimi netleştirmek, domain dili ve bağlam oluşturmak" },
+    { skill: "to-prd", purpose: "Konuşmayı veya feature fikrini PRD'ye çevirmek" },
+    { skill: "to-issues", purpose: "PRD'yi vertical slice issue'lara bölmek" },
+    { skill: "tdd", purpose: "Test-first implementation disiplini" },
+    { skill: "codebase-design", purpose: "Modül sınırlarını, deep module prensibini ve temiz tasarımı korumak" },
+    { skill: "diagnosing-bugs", purpose: "Test veya runtime hatalarını sistematik teşhis etmek" },
+    { skill: "improve-codebase-architecture", purpose: "Kod tabanını milestone sonunda mimari olarak gözden geçirmek" },
+  ]}
+/>
+
+</Section>
+
+<Section id="s6" num="06" title="Skill Dosyaları">
+
+Aşağıdaki dosyalar <code>.claude/skills/&lt;skill-name&gt;/SKILL.md</code> altında tutulur. Detaylar için genişlet.
+
+<CollapsibleCard badge="skill" badgeKind="skill" name="grill-with-docs" description="Belirsiz gereksinimi netleştir, domain dili oluştur">
+
+<p><strong>Amaç:</strong> PRD oluşturmadan önce proje niyetini netleştirmek.</p>
+<p><strong>Ne zaman kullanılır:</strong></p>
+<ul>
+  <li>Gereksinim geniş veya belirsizse</li>
+  <li>Proje sınırları net değilse</li>
+  <li>Agent varsayım yapmak üzereyse</li>
+  <li>Paylaşılan domain dili eksikse</li>
+  <li>Kullanıcı plan istedi ama önemli detaylar eksik</li>
+</ul>
+<p><strong>Çıktılar:</strong> <code>docs/CONTEXT.md</code>, <code>docs/decisions/</code>, opsiyonel <code>docs/adr/</code> taslakları</p>
+<p><strong>Talimatlar:</strong></p>
+<ol>
+  <li>Varsa mevcut dokümanları oku: <code>docs/CONTEXT.md</code>, <code>docs/prd/</code>, <code>docs/adr/</code>, <code>README.md</code></li>
+  <li>Belirle: proje hedefi, hedef kullanıcılar, core workflow'lar, domain vocabulary, kısıtlamalar, varsayımlar, açık sorular</li>
+  <li>Yalnızca en önemli netleştirici soruları sor</li>
+  <li>Yeterli bağlam varsa <code>docs/CONTEXT.md</code>'yi güncelle</li>
+</ol>
+<p><strong>Kurallar:</strong> Kod implemente etme. Issue oluşturma (talep edilmediğinde). Uzun yazılar yerine özlü bağlam tercih et. Gerçekleri, varsayımları ve açık soruları birbirinden ayır.</p>
+
+</CollapsibleCard>
+
+<CollapsibleCard badge="skill" badgeKind="skill" name="to-prd" description="Feature fikrini PRD'ye çevir">
+
+<p><strong>Amaç:</strong> Mevcut proje bağlamından PRD oluşturmak.</p>
+<p><strong>Girdiler:</strong> <code>docs/CONTEXT.md</code>, <code>docs/decisions/</code>, <code>docs/adr/</code>, <code>README.md</code>, mevcut konuşmadaki kullanıcı isteği</p>
+<p><strong>Output konum:</strong> <code>docs/prd/NNN-feature-name.md</code></p>
+<p><strong>PRD yapısı (zorunlu alanlar):</strong></p>
+<ul>
+  <li>Title, Problem statement, Goals, Non-goals</li>
+  <li>Target users, User stories</li>
+  <li>Functional requirements, Non-functional requirements</li>
+  <li>UX/interface expectations, Data/config requirements</li>
+  <li>Acceptance criteria, Out of scope, Open questions</li>
+</ul>
+<p><strong>Kurallar:</strong> Kod implemente etme. Dosya bazlı implementation planı yapma. Teknik detayı modül sınırı seviyesinde tut. Bağlam yetersizse <code>grill-with-docs</code> çalıştır.</p>
+
+</CollapsibleCard>
+
+<CollapsibleCard badge="skill" badgeKind="skill" name="to-issues" description="PRD'yi vertical slice issue'lara böl">
+
+<p><strong>Girdiler:</strong> <code>docs/prd/</code>, <code>docs/CONTEXT.md</code>, ilgili ADR'lar</p>
+<p><strong>Output:</strong> <code>docs/issues/NNN-short-title.md</code></p>
+<p><strong>Issue yapısı:</strong> Title, User story, Background, Acceptance criteria, Test expectations, Dependencies, Suggested agent, Required skills, Out of scope, Done checklist</p>
+<Callout icon={IconAlertCircle}>Issue'lar vertical slice olmalıdır. "Create database layer" veya "Write pricing.py" DEĞIL; "User can load model pricing from config and get a cost estimate" gibi davranış odaklı issue'lar tercih edilir.</Callout>
+
+</CollapsibleCard>
+
+<CollapsibleCard badge="skill" badgeKind="skill" name="tdd" description="Red-green-refactor döngüsü ile implementation">
+
+<p><strong>Amaç:</strong> Implementation'ı red-green-refactor döngüsü ile yönlendirmek.</p>
+<p><strong>Adımlar:</strong></p>
+<ol>
+  <li>Issue acceptance criteria'yı oku</li>
+  <li>Bir davranış seç</li>
+  <li>Bir failing test yaz</li>
+  <li>İlgili test komutunu çalıştır</li>
+  <li>Testin beklenen nedenle başarısız olduğunu doğrula</li>
+  <li>Testi geçirmek için en küçük değişikliği implement et</li>
+  <li>Testi tekrar çalıştır</li>
+  <li>Test geçtikten sonra refactor yap</li>
+  <li>Acceptance criteria tümüyle kapsanana kadar tekrarla</li>
+  <li>Bitirmeden önce tam test suite'ini çalıştır</li>
+</ol>
+<p><strong>Test kuralları:</strong> Davranış testleri tercih et. Private implementation detaylarını test etme. Brittle test yazma. Değişken değerlere assert etme. Fixture kullan. Testleri okunabilir tut.</p>
+<p><strong>Implementation kuralları:</strong> Testlerden önce büyük üretim kodu yazma. İlgisiz feature ekleme. İlgisiz refactor yapma. Aktif issue'ya odaklı kal.</p>
+
+</CollapsibleCard>
+
+<CollapsibleCard badge="skill" badgeKind="skill" name="codebase-design" description="Modül sınırlarını ve temiz tasarımı koru">
+
+<p><strong>Tasarım prensipleri:</strong></p>
+<ul>
+  <li>Küçük public interface'li derin modülleri tercih et</li>
+  <li>Business logic'i delivery mechanism'lardan (UI, CLI, API, DB) ayır</li>
+  <li>Adapter'ları ince tut</li>
+  <li>Business logic'i tekrar etme</li>
+  <li>Gereksiz soyutlamadan kaçın</li>
+  <li>Domain dilinden açık isimler kullan</li>
+  <li>Hem insanların hem agent'ların kolayca navigate edebildiği kod yaz</li>
+</ul>
+<p><strong>ADR tetikleyicileri:</strong> Framework seçimi, persistence stratejisi, modül sınırı tanımı/değişimi, public interface stabilizasyonu, gelecek agent'ların anlaması gereken tradeoff.</p>
+
+</CollapsibleCard>
+
+<CollapsibleCard badge="skill" badgeKind="skill" name="diagnosing-bugs" description="Hataları sistematik olarak teşhis et">
+
+<p><strong>Bug teşhis adımları:</strong></p>
+<ol>
+  <li>Hatayı yeniden oluştur</li>
+  <li>Tam hata mesajını yakala</li>
+  <li>En küçük başarısız komut veya testi belirle</li>
+  <li>Son değişiklikleri incele</li>
+  <li>Hipotez oluştur</li>
+  <li>Hipotezi doğrulayan / çürüten en küçük değişikliği yap</li>
+  <li>Başarısız testi tekrar çalıştır</li>
+  <li>Ancak sonra fix uygula</li>
+  <li>Yakın testleri çalıştır, tam suite ile bitir</li>
+</ol>
+<p><strong>Kurallar:</strong> Büyük bölümleri tahmin edip yeniden yazma. Birden fazla ilgisiz bug'ı aynı anda düzeltme. Hatayı anlamadan bastırma. Fix'ten önce regression test eklemeyi tercih et. Şaşırtıcı root cause'ları <code>docs/decisions/</code>'a kaydet.</p>
+
+</CollapsibleCard>
+
+<CollapsibleCard badge="skill" badgeKind="skill" name="improve-codebase-architecture" description="Milestone öncesi mimari gözden geçirme">
+
+<p><strong>Review alanları:</strong> Modül sınırları, duplicate business logic, shallow modules, framework leakage into core logic, missing tests, confusing names, missing ADRs, inaccurate README, overengineering, under-documented decisions.</p>
+<p><strong>Çıktı formatı:</strong></p>
+<ol>
+  <li>Bulgular — severity bazlı: <strong>critical</strong> / <strong>important</strong> / <strong>minor</strong></li>
+  <li>Önerilen düzeltmeler</li>
+  <li>Kullanıcı onaylamadan yalnızca low-risk fix'leri uygula</li>
+  <li>Mimari değiştiyse doc'ları güncelle</li>
+  <li>Değişiklikler sonrası testleri çalıştır</li>
+</ol>
+<p><strong>Kurallar:</strong> Açık onay olmadan büyük yeniden yazma yapma. Bug düzeltmesi dışında public davranışı değiştirme. Küçük, geri alınabilir refactor'ları tercih et. Mevcut testleri koru.</p>
+
+</CollapsibleCard>
+
+</Section>
+
+<Section id="s7" num="07" title="Agent Tanımları">
+
+Aşağıdaki dosyalar <code>.claude/agents/*.md</code> altında tutulur. Agent = rol / uzman worker.
+
+<CollapsibleCard badge="agent" badgeKind="agent" name="planner-agent" description="Gereksinim netleştirme, PRD ve issue — kod yazmaz">
+
+<p><strong>Model:</strong> sonnet &nbsp;·&nbsp; <strong>Effort:</strong> high &nbsp;·&nbsp; <strong>Tools:</strong> Read, Write, Edit, Glob, Grep</p>
+<p><strong>Skills:</strong> grill-with-docs, to-prd, to-issues, codebase-design</p>
+<p><strong>Sorumluluklar:</strong></p>
+<ul>
+  <li>Belirsiz gereksinimleri netleştir</li>
+  <li><code>docs/CONTEXT.md</code>'yi güncelle</li>
+  <li><code>docs/prd/</code> altına PRD yaz</li>
+  <li>PRD'yi vertical slice issue'lara böl → <code>docs/issues/</code></li>
+  <li>Mimari kararlar için <code>docs/adr/</code> altında ADR taslağı oluştur</li>
+</ul>
+<p><strong>Kurallar:</strong> Talep edilmediğinde production kodu yazma. Yatay katman issue'ları oluşturma. Tracer bullet issue'ları tercih et. Her issue acceptance criteria ve test expectations içermeli.</p>
+
+</CollapsibleCard>
+
+<CollapsibleCard badge="agent" badgeKind="agent" name="implementation-agent" description="TDD ile tek scoped issue implement eder">
+
+<p><strong>Model:</strong> sonnet &nbsp;·&nbsp; <strong>Effort:</strong> high &nbsp;·&nbsp; <strong>Tools:</strong> Read, Write, Edit, Bash, Glob, Grep</p>
+<p><strong>Skills:</strong> tdd, codebase-design</p>
+<p><strong>Sorumluluklar:</strong></p>
+<ul>
+  <li>Bir seferde tek issue implement et</li>
+  <li>Kodlamadan önce issue dosyasını oku</li>
+  <li>Acceptance criteria'yı tam olarak uygula</li>
+  <li>TDD kullan, her değişiklik sonrası ilgili testleri çalıştır</li>
+  <li>Davranış, komutlar veya mimari değiştiğinde doc'ları güncelle</li>
+</ul>
+<p><strong>Kurallar:</strong> İlgisiz refactor başlatma. Business logic'i tekrar etme. İlgisiz issue'ları karıştırma. Neden açıklamadan dependency ekleme. Bitirmeden önce tam test suite'ini çalıştır.</p>
+
+</CollapsibleCard>
+
+<CollapsibleCard badge="agent" badgeKind="agent" name="debugging-agent" description="Test hataları ve beklenmedik davranışları teşhis eder">
+
+<p><strong>Model:</strong> sonnet &nbsp;·&nbsp; <strong>Effort:</strong> high &nbsp;·&nbsp; <strong>Tools:</strong> Read, Write, Edit, Bash, Glob, Grep</p>
+<p><strong>Skills:</strong> diagnosing-bugs, tdd, codebase-design</p>
+<p><strong>Sorumluluklar:</strong> Bug'ı yeniden oluştur → En küçük failing test'i bul → Kod değiştirmeden önce teşhis et → Uygunsa regression test ekle → En küçük güvenli fix'i uygula → Yakın + tam testleri çalıştır</p>
+<p><strong>Kurallar:</strong> Büyük bölümleri yeniden yazma. Kodu anlamadan hataları bastırma. İlgisiz sorunları düzeltme. Şaşırtıcı bulguları issue notlarına veya <code>docs/decisions/</code>'a kaydet.</p>
+
+</CollapsibleCard>
+
+<CollapsibleCard badge="agent" badgeKind="agent" name="architecture-review-agent" description="Milestone öncesi final mimari gözden geçirme">
+
+<p><strong>Model:</strong> sonnet &nbsp;·&nbsp; <strong>Effort:</strong> high &nbsp;·&nbsp; <strong>Tools:</strong> Read, Write, Edit, Bash, Glob, Grep</p>
+<p><strong>Skills:</strong> improve-codebase-architecture, codebase-design</p>
+<p><strong>Sorumluluklar:</strong></p>
+<ul>
+  <li>Mimariyi, modül sınırlarını, testleri, doc'ları ve ADR'ları gözden geçir</li>
+  <li>Duplication, coupling ve overengineering'i tespit et</li>
+  <li>Sadece low-risk fix'leri uygula</li>
+</ul>
+<p><strong>Kurallar:</strong> Onaysız büyük yeniden yazma yapma. Bug düzeltmesi dışında public davranışı değiştirme. Bulguları severity bazlı grupla. Değişikliklerden sonra testleri çalıştır.</p>
+
+</CollapsibleCard>
+
+<CollapsibleCard badge="agent" badgeKind="agent" name="documentation-agent" description="README, ADR ve proje dokümantasyonunu günceller">
+
+<p><strong>Model:</strong> sonnet &nbsp;·&nbsp; <strong>Effort:</strong> medium &nbsp;·&nbsp; <strong>Tools:</strong> Read, Write, Edit, Glob, Grep</p>
+<p><strong>Skills:</strong> codebase-design</p>
+<p><strong>Sorumluluklar:</strong></p>
+<ul>
+  <li>README'yi güncel tut, kullanım komutlarını güncelle</li>
+  <li><code>docs/CONTEXT.md</code>'yi güncelle</li>
+  <li>ADR'ları oluştur veya cilala</li>
+  <li>Doc'ları gelecek agent'lar için özlü ve yararlı tut</li>
+  <li>İlgili PRD, ADR ve issue'ları birbirine bağla</li>
+</ul>
+<p><strong>Kurallar:</strong> Var olmayan davranışı icat etme. Mümkünse komutları codebase'e karşı doğrula. Özlü dokümantasyonu tercih et. İlgili PRD, ADR ve issue'ları linkle.</p>
+
+</CollapsibleCard>
+
+</Section>
+
+<Section id="s8" num="08" title="Docs README Şablonları">
+
+<CollapsibleCard badge="docs" badgeKind="docs" name="docs/prd/README.md" description="PRD klasörü rehberi">
+
+<p>Naming: <code>NNN-short-feature-name.md</code> — ör. <code>001-token-cost-calculator.md</code></p>
+<p>Her PRD: goals, non-goals, user stories, requirements, acceptance criteria ve open questions içermeli.</p>
+
+</CollapsibleCard>
+
+<CollapsibleCard badge="docs" badgeKind="docs" name="docs/issues/README.md" description="Issue klasörü rehberi">
+
+<p>Her issue vertical slice olmalı. Davranış odaklı örnekler:</p>
+<ul>
+  <li>"User can submit a form and see a result"</li>
+  <li>"User can run a CLI command and get JSON output"</li>
+  <li>"System rejects invalid config with a useful error"</li>
+</ul>
+<p>Her issue: Title, User story, Acceptance criteria, Test expectations, Dependencies, Suggested agent, Required skills, Done checklist içermeli.</p>
+
+</CollapsibleCard>
+
+<CollapsibleCard badge="docs" badgeKind="docs" name="docs/adr/README.md" description="Architecture Decision Records rehberi">
+
+<p><strong>ADR oluşturma zamanı:</strong> Framework seçimi, persistence stratejisi seçimi, modül sınırı tanımı, public interface stabilizasyonu, gelecek agent'ların anlaması gereken tradeoff.</p>
+<p>Naming: <code>NNNN-short-title.md</code> — ör. <code>0001-use-fastapi-for-api-layer.md</code></p>
+
+</CollapsibleCard>
+
+<CollapsibleCard badge="docs" badgeKind="docs" name="docs/architecture/README.md" description="High-level architecture notları">
+
+<p>Bu klasör şunları içerir: module map, data flow, sequence diagrams, integration boundaries, deployment notes.</p>
+
+</CollapsibleCard>
+
+<CollapsibleCard badge="docs" badgeKind="docs" name="docs/decisions/README.md" description="Lightweight karar notları">
+
+<p>Tam ADR gerektirmeyen kararlar için. Kullanım alanları:</p>
+<ul>
+  <li>Küçük ürün kararları</li>
+  <li>Naming kararları</li>
+  <li>Geçici kısıtlamalar</li>
+  <li>Bilinen tradeoff'lar</li>
+</ul>
+
+</CollapsibleCard>
+
+</Section>
+
+<Section id="s9" num="09" title="Önerilen Çalışma Akışı">
+
+### Yeni proje başlatırken
+
+<WorkflowStep num={1} title="/grill-with-docs">
+  Projeyi netleştir, domain dilini çıkar, <code>docs/CONTEXT.md</code> oluştur, açık soruları listele
+</WorkflowStep>
+<WorkflowStep num={2} title="/to-prd">
+  İlk PRD'yi <code>docs/prd/</code> altına yaz
+</WorkflowStep>
+<WorkflowStep num={3} title="/to-issues">
+  PRD'yi agent-ready vertical slice issue'lara böl → <code>docs/issues/</code>
+</WorkflowStep>
+
+### Bir issue implement ederken
+
+<CodeBlock lang="text — Claude Code" copyLabel="Kopyala" copiedLabel="Kopyalandı">
+{`Use implementation-agent.
+
+Implement docs/issues/001-example-feature.md.
+
+Follow the tdd and codebase-design skills.
+Keep changes scoped to this issue.
+Run tests before finishing.`}
+</CodeBlock>
+
+### Test kırıldığında
+
+<CodeBlock lang="text — Claude Code" copyLabel="Kopyala" copiedLabel="Kopyalandı">
+{`Use debugging-agent.
+
+Diagnose the failing test using the diagnosing-bugs skill.
+Do not rewrite large sections.
+Add a regression test if appropriate.`}
+</CodeBlock>
+
+### Milestone sonunda
+
+<CodeBlock lang="text — Claude Code" copyLabel="Kopyala" copiedLabel="Kopyalandı">
+{`Use architecture-review-agent.
+
+Run improve-codebase-architecture.
+Review module boundaries, tests, docs and ADRs.
+Apply only low-risk fixes.`}
+</CodeBlock>
+
+</Section>
+
+<Section id="s10" num="10" title="Kullanım Prensipleri">
+
+<PrinciplesGrid>
+  <PrincipleCard icon={IconTools} title="Skill nedir?">
+    Çalışma disiplini veya prosedürdür. <code>tdd</code> bir skill'dir. <code>codebase-design</code> bir skill'dir.
+  </PrincipleCard>
+  <PrincipleCard icon={IconRobot} title="Agent nedir?">
+    Rol veya uzman worker'dır. <code>implementation-agent</code> bir agent'tır. <code>tdd</code> ve <code>codebase-design</code> skill'lerini kullanır.
+  </PrincipleCard>
+  <PrincipleCard icon={IconFolderCog} title="Project-level setup">
+    Her repo içinde <code>.claude/skills/</code>, <code>.claude/agents/</code>, <code>CLAUDE.md</code> ve <code>docs/</code> tutulur. Proje kendi agentic workflow'unu taşır.
+  </PrincipleCard>
+  <PrincipleCard icon={IconHome} title="Personal-level setup">
+    Aynı tanımları tüm projelerde global kullanmak için <code>~/.claude/skills/</code> ve <code>~/.claude/agents/</code>. Ancak ekip projelerinde project-level daha güvenlidir.
+  </PrincipleCard>
+</PrinciplesGrid>
+
+</Section>
+
+<Section id="s11" num="11" title="Anti-pattern'ler">
+
+<AntiPatternRow
+  avoidLabel="Kaçın"
+  preferLabel="Tercih et"
+  avoid="Bana tüm uygulamayı yap."
+  prefer="Use planner-agent to create vertical slice issues from the PRD."
+/>
+<AntiPatternRow
+  avoidLabel="Kaçın"
+  preferLabel="Tercih et"
+  avoid="pricing.py yaz."
+  prefer="Implement the issue: user can load model pricing from config and get a cost estimate."
+/>
+<AntiPatternRow
+  avoidLabel="Kaçın"
+  preferLabel="Tercih et"
+  avoid="Testler kırıldı, düzelt."
+  prefer="Use debugging-agent and diagnosing-bugs. Reproduce the failure, identify the root cause, add a regression test if needed, then fix."
+/>
+
+</Section>
+
+<Section id="s12" num="12" title="Özet">
+
+Bu setup'ın hedefi — her adım bir sonrakini besleyen bir agentic delivery pipeline:
+
+<Pipeline
+  nodes={[
+    { icon: IconBulb, label: "Intent" },
+    { icon: IconNotebook, label: "Context" },
+    { icon: IconFileText, label: "PRD" },
+    { icon: IconChecklist, label: "Issues" },
+    { icon: IconRobot, label: "Agents" },
+    { icon: IconTestPipe, label: "TDD" },
+    { icon: IconEye, label: "Review" },
+    { icon: IconBooks, label: "Docs" },
+  ]}
+/>
+
+Bu yapı sayesinde Claude Code:
+
+- Neyi nereye yazacağını bilir
+- PRD ve issue üretirken standart klasörleri kullanır
+- ADR kararlarını doğru yerde tutar
+- Implementation sırasında TDD uygular
+- Modül sınırlarını korur
+- Milestone sonunda mimari review yapar
+
+<Callout icon={IconSparkles}>
+  Bu, "tek agent'a büyük prompt verme" yaklaşımından çıkıp gerçek bir <strong>agentic software delivery workflow</strong> kurmanın temelidir.
+</Callout>
+
+</Section>

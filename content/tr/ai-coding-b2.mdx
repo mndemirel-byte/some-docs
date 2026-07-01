@@ -1,0 +1,448 @@
+import {
+  IconBook2,
+  IconBolt,
+  IconBuilding,
+  IconUsers,
+  IconUser,
+  IconRobot,
+  IconPrompt,
+  IconSparkles,
+  IconVideo,
+} from "@tabler/icons-react";
+import { Hero, Accent } from "@/components/doc/hero";
+import { KeyQuote } from "@/components/doc/key-quote";
+import { Toc } from "@/components/doc/toc";
+import { Section } from "@/components/doc/section";
+import { Callout } from "@/components/doc/callout";
+import { DoDontList, DoItem, DontItem } from "@/components/doc/do-dont-list";
+import { Playbook } from "@/components/doc/playbook";
+import { SkillCard, SkillCols, SkillCol } from "@/components/doc/skill-card";
+import { CodeBlock } from "@/components/doc/code-block";
+import { DataTable } from "@/components/doc/data-table";
+import { TeamGrid, TeamCard } from "@/components/doc/team-grid";
+import { Session, DevTurn, AiTurn } from "@/components/doc/session";
+import { NumberedGrid, NumberedItem } from "@/components/doc/numbered-grid";
+import { Formula } from "@/components/doc/formula";
+
+<Hero
+  badge="AI Coding Serisi · Bölüm 2"
+  variant="eyebrow"
+  title={<>Best Practice'ler, <Accent>Beceri Haritası</Accent> ve Takım Modeli</>}
+  description="Yapılması ve yapılmaması gerekenler, pratik playbook'lar, beş boyutlu beceri haritası ve ekip sorumluluk modeli. Birinci bölümün devamıdır."
+  tags={["best-practices", "beceri-haritası", "takım-modeli", "playbook", "AFK"]}
+/>
+
+<Callout icon={IconBook2} kind="warning">
+  <strong>Ön koşul:</strong> Bu bölümü okumadan önce <strong>Bölüm 1</strong>&apos;i (workflow, aşamalar, PRD ve issue yapısı) okumanız önerilir.
+</Callout>
+
+<Toc
+  title="İçindekiler"
+  entries={[
+    { id: "s4", num: "04", label: "Kesinlikle Yapılması Gerekenler" },
+    { id: "s5", num: "05", label: "Kesinlikle Yapılmaması Gerekenler" },
+    { id: "s6", num: "06", label: "Önerilen AI Coding Playbook" },
+    {
+      id: "s7",
+      num: "07",
+      label: "AI Coding Beceri Haritası",
+      subEntries: [
+        { id: "da", num: "A", label: "AI ile Pair Programming" },
+        { id: "db", num: "B", label: "Structured Prompting" },
+        { id: "dc", num: "C", label: "PRD ve Issue Tabanlı Çalışma" },
+        { id: "dd", num: "D", label: "TDD ile Agentic Coding" },
+        { id: "de", num: "E", label: "Agent Workflow ve AFK Coding" },
+        { id: "routing", num: "—", label: "Hangi Boyuttan Başlamalıyım?" },
+      ],
+    },
+    { id: "s8", num: "08", label: "Takımlar İçin Sorumluluk Alanları" },
+    { id: "s9", num: "09", label: "Örnek AI Coding Session Akışı" },
+    { id: "s10", num: "10", label: "En Önemli Best Practice'ler" },
+    { id: "s11", num: "11", label: "Kısa Özet" },
+    { id: "resources", num: "—", label: "Kaynaklar" },
+  ]}
+  layout="list"
+/>
+
+<Section id="s4" num="04" title="Kesinlikle Yapılması Gerekenler">
+
+<DoDontList>
+  <DoItem title="1. Her işi küçük parçalara böl">
+    <p>AI&apos;a "bu modülü komple yeniden yaz" demek yerine "şu acceptance criteria&apos;ya sahip küçük vertical slice&apos;ı tamamla" demek gerekir.</p>
+  </DoItem>
+  <DoItem title="2. Token ve context kullanımını gözlemle">
+    <p>Uzun session'larda modelin performansı düşer. Kalite düşüşü belirtileri: tekrarlayan hatalar, daha önce verdiği kararları unutması, alakasız kod üretmesi. Bu belirtiler görüldüğünde session'ı temizleyip yeni context ile devam et. Araç destekliyorsa token kullanımını görünür kıl.</p>
+  </DoItem>
+  <DoItem title="3. Kod tabanını AI için okunabilir hâle getir">
+    <p>İyi isimlendirilmiş modüller, sade interface'ler, net test sınırları, güncel README ve local development komutları agent başarısını doğrudan artırır.</p>
+  </DoItem>
+  <DoItem title="4. PRD ve issue artefact'larını dosya olarak tut">
+    <p>AI ile konuşmada kalmış kararlar kaybolur. Kararlar Markdown issue, PRD, ADR veya test planı olarak repository içinde kalıcılaşmalıdır.</p>
+  </DoItem>
+  <DoItem title="5. AI'a test komutlarını açıkça ver">
+    <CodeBlock lang="text — TypeScript/JS" copyLabel="Kopyala" copiedLabel="Kopyalandı">
+{`After implementation, run:
+- npm test
+- npm run typecheck
+- npm run lint
+- npm run build`}
+    </CodeBlock>
+    <CodeBlock lang="text — Python" copyLabel="Kopyala" copiedLabel="Kopyalandı">
+{`After implementation, run:
+- pytest
+- ruff check .
+- mypy .`}
+    </CodeBlock>
+  </DoItem>
+  <DoItem title="6. Review'u asla atlama">
+    <p>AI daha çok kod ürettikçe review yükü artar. İnsan review ve QA, kaliteyi ve "taste" dediğimiz mühendislik sezgisini korur — kodun sadece çalışıp çalışmadığını değil, doğru tasarlanıp tasarlanmadığını, sürdürülebilir olup olmadığını ve ekip standartlarına uyup uymadığını değerlendirir.</p>
+  </DoItem>
+</DoDontList>
+
+</Section>
+
+<Section id="s5" num="05" title="Kesinlikle Yapılmaması Gerekenler">
+
+<DoDontList>
+  <DontItem title='1. "Tek prompt ile komple feature" yaptırma'>
+    <p>Context'i şişirir, scope'u büyütür ve modelin kontrolünü zorlaştırır.</p>
+  </DontItem>
+  <DontItem title="2. Sadece spec'i düzeltip kodu okumadan ilerleme">
+    <p>Bu yaklaşım developer'ı koddan koparır. <strong>Kod hâlâ ana gerçekliktir.</strong> Spec-first, API contract ve migration planı gibi alanlarda doğrudur; ama spec yazdıktan sonra üretilen kodu da okumak ve anlamak gerekir.</p>
+  </DontItem>
+  <DontItem title="3. Testsiz AI kodunu merge etme">
+    <p>AI'ın ürettiği kod derleniyor olabilir ama doğru davranıyor olmayabilir. Test, typecheck ve build olmadan güvenilmez.</p>
+  </DontItem>
+  <DontItem title="4. Horizontal phase plan'a körü körüne uyma">
+    <p>Sadece database → sonra API → sonra frontend giden plan feedback'i geciktirir. Vertical slice tercih edilmelidir.</p>
+  </DontItem>
+  <DontItem title="5. Büyük CLAUDE.md / system prompt dosyaları oluşturma">
+    <p><code>CLAUDE.md</code>, <code>.cursorrules</code> gibi dosyalar küçük tutulmalıdır. Başlangıç context'i çok büyükse model daha işe başlamadan effective attention kapasitesini tüketmeye başlar.</p>
+  </DontItem>
+  <DontItem title="6. Stale dokümanları repo'da başıboş bırakma">
+    <p>Eski PRD'ler veya kapanmış karar dokümanları AI'ı yanıltabilir. PRD'ler implementation sonrası kapatılıp arşivlenmelidir.</p>
+  </DontItem>
+</DoDontList>
+
+</Section>
+
+<Section id="s6" num="06" title="Önerilen AI Coding Playbook">
+
+<Playbook
+  icon={IconBolt}
+  iconColor="var(--green-text)"
+  title="Basit feature için"
+  steps={[
+    <><strong>Brief'i oku.</strong></>,
+    <><strong>Beni sorgula,</strong> eksik kararları çıkar.</>,
+    <><strong>PRD üret.</strong></>,
+    <>PRD'yi <strong>vertical slice issue'larına</strong> böl.</>,
+    <>İlk issue'yu <strong>TDD ile</strong> uygula.</>,
+    <><strong>Test / typecheck / build</strong> çalıştır.</>,
+    <><strong>Summary</strong> yaz.</>,
+    <>Ben <strong>review</strong> edeceğim.</>,
+  ]}
+/>
+
+<Playbook
+  icon={IconBuilding}
+  iconColor="var(--accent-text)"
+  title="Daha büyük feature için"
+  steps={[
+    <><strong>Domain expert + developer + AI</strong> ile grilling session.</>,
+    <><strong>PRD</strong> oluştur.</>,
+    <>Teknik spike gerekiyorsa <strong>prototype</strong> yap.</>,
+    <>PRD'yi <strong>Kanban issue'larına</strong> böl.</>,
+    <>Issue'ları <strong>dependency graph</strong> olarak sırala.</>,
+    <><strong>Bağımsız issue'ları paralel</strong> agent'lara ver.</>,
+    <>Her agent kendi <strong>branch / worktree / sandbox</strong> içinde çalışsın.</>,
+    <><strong>Test ve build</strong> sinyalleri zorunlu olsun.</>,
+    <>Merge öncesi <strong>human review.</strong></>,
+    <>PRD / issue kapat, <strong>dokümanı arşivle.</strong></>,
+  ]}
+/>
+
+</Section>
+
+<Section id="s7" num="07" title="AI Coding Beceri Haritası">
+
+Aşağıdaki beceri alanları lineer bir sıralama değil, **bağımsız geliştirilebilecek boyutlardır.** Bir senior developer doğrudan D veya E boyutundan başlayabilir. Kendi deneyim ve ihtiyacına göre öncelik belirlemelisin.
+
+<SkillCard id="da" letter="A" name="AI ile Pair Programming" goal="AI'ı autocomplete değil, düşünce partneri olarak kullanmak" prereq="Temel programlama" forWho="Herkes; AI coding'e giriş noktası.">
+  <SkillCols>
+    <SkillCol title="Çalışılacak konular">
+      <ul>
+        <li>Prompt yazma</li>
+        <li>Küçük refactor yaptırma</li>
+        <li>Unit test yazdırma</li>
+        <li>Hata mesajı analiz ettirme</li>
+        <li>Kod açıklatma</li>
+        <li>Alternatif çözüm karşılaştırma</li>
+      </ul>
+    </SkillCol>
+    <SkillCol title="Pratik görev">
+      <CodeBlock lang={<><IconPrompt size={12} /> görev</>} kind="prompt" copyLabel="Kopyala" copiedLabel="Kopyalandı">
+{`Var olan küçük bir fonksiyonu seç.
+AI'dan önce test yazmasını iste.
+Sonra fonksiyonu refactor ettir.
+Sonra edge case testleri eklet.`}
+      </CodeBlock>
+    </SkillCol>
+  </SkillCols>
+</SkillCard>
+
+<SkillCard id="db" letter="B" name="Structured Prompting" goal="AI'a serbest kod yazdırmak yerine formatlı görev vermek" prereq="Temel AI deneyimi" forWho="Herkes; özellikle prompt kalitesini artırmak isteyenler.">
+  <SkillCols>
+    <SkillCol title="Öğrenilecek kalıplar">
+      <ul>
+        <li>Role</li>
+        <li>Context</li>
+        <li>Goal</li>
+        <li>Constraints</li>
+        <li>Acceptance Criteria</li>
+        <li>Test Plan</li>
+        <li>Output Format</li>
+      </ul>
+    </SkillCol>
+    <SkillCol title="Örnek yapı">
+      <CodeBlock lang={<><IconPrompt size={12} /> örnek</>} kind="prompt" copyLabel="Kopyala" copiedLabel="Kopyalandı">
+{`Role: Senior backend developer
+Context: FastAPI + PostgreSQL project
+Goal: Add user activity logging
+Constraints:
+- Do not change public API
+- Keep changes minimal
+- Add tests
+Acceptance Criteria:
+- Login event is logged
+- Failed login is logged
+- Tests pass
+Output:
+- Changed files
+- Test results
+- Summary`}
+      </CodeBlock>
+    </SkillCol>
+  </SkillCols>
+</SkillCard>
+
+<SkillCard id="dc" letter="C" name="PRD ve Issue Tabanlı Çalışma" goal="AI ile konuşmayı kalıcı geliştirme artefact'larına dönüştürmek" prereq="Temel ürün geliştirme" forWho="Developer'lar, product manager'lar, teknik liderler.">
+  <SkillCols>
+    <SkillCol title="Öğrenilecekler">
+      <ul>
+        <li>PRD yazdırma</li>
+        <li>User story oluşturma</li>
+        <li>Acceptance criteria yazma</li>
+        <li>Scope / non-scope ayırma</li>
+        <li>Markdown issue üretme</li>
+        <li>Dependency belirleme</li>
+      </ul>
+    </SkillCol>
+    <SkillCol title="Pratik görev">
+      <CodeBlock lang={<><IconPrompt size={12} /> görev</>} kind="prompt" copyLabel="Kopyala" copiedLabel="Kopyalandı">
+{`Küçük bir feature fikri seç.
+AI'a önce 20 soru sordur.
+Sonra PRD yazdır.
+Sonra PRD'yi 3 vertical slice
+issue'ya böldür.`}
+      </CodeBlock>
+    </SkillCol>
+  </SkillCols>
+</SkillCard>
+
+<SkillCard id="dd" letter="D" name="TDD ile Agentic Coding" goal="AI'ın kod üretimini test feedback loop'una bağlamak" prereq="Test framework bilgisi" forWho="TDD deneyimi olan veya öğrenmek isteyen developer'lar.">
+  <SkillCols>
+    <SkillCol title="Öğrenilecekler">
+      <ul>
+        <li>Red-Green-Refactor</li>
+        <li>Unit test</li>
+        <li>Integration test</li>
+        <li>Typecheck</li>
+        <li>Lint</li>
+        <li>Build validation</li>
+        <li>Regression test</li>
+      </ul>
+    </SkillCol>
+    <SkillCol title="Pratik görev">
+      <CodeBlock lang={<><IconPrompt size={12} /> görev</>} kind="prompt" copyLabel="Kopyala" copiedLabel="Kopyalandı">
+{`AI'a bir issue ver.
+Koddan önce test yazmasını
+zorunlu tut.
+Testin fail ettiğini doğrulat.
+Sonra implementation yaptır.
+Son olarak test/typecheck/build
+çıktısını iste.`}
+      </CodeBlock>
+    </SkillCol>
+  </SkillCols>
+</SkillCard>
+
+<SkillCard id="de" letter="E" name="Agent Workflow ve AFK Coding" goal="Agent'ın küçük issue'ları kendi başına tamamlamasını sağlamak" prereq="Git workflow + test altyapısı" forWho="Agentic coding'e geçmek isteyen deneyimli developer'lar.">
+  <SkillCols>
+    <SkillCol title="Öğrenilecekler">
+      <ul>
+        <li>Local issue files</li>
+        <li>Worktree / branch isolation</li>
+        <li>Commit discipline</li>
+        <li>Agent summary</li>
+        <li>Human review</li>
+        <li>Parallel agent execution</li>
+        <li>Merge conflict yönetimi</li>
+        <li>AFK güvenlik koşulları</li>
+      </ul>
+    </SkillCol>
+    <SkillCol title="Pratik görev">
+      <CodeBlock lang={<><IconPrompt size={12} /> görev</>} kind="prompt" copyLabel="Kopyala" copiedLabel="Kopyalandı">
+{`3 bağımsız issue oluştur.
+Her issue için ayrı branch/
+worktree aç.
+Agent'a her issue'yu ayrı
+uygulat.
+Sonuçları review edip merge et.`}
+      </CodeBlock>
+    </SkillCol>
+  </SkillCols>
+</SkillCard>
+
+### Hangi Boyuttan Başlamalıyım?
+
+<DataTable
+  headers={["Profil", "Önerilen başlangıç", "Sonraki adım"]}
+  rows={[
+    ["Junior developer", "A · B", "C"],
+    ["Mid-level developer", "B · D", "C · E"],
+    ["Senior developer", "C · D", "E"],
+    ["Tech lead / Architect", "C · E", "D (TDD disiplini)"],
+    ["Product manager", "A · C", "B"],
+  ]}
+/>
+
+</Section>
+
+<Section id="s8" num="08" title="Takımlar İçin Sorumluluk Alanları">
+
+Aşağıdaki sorumluluk alanları ayrı roller olmak zorunda değildir. Küçük ekiplerde bir kişi birden fazla alanı üstlenebilir. Önemli olan her alanın **bilinçli biçimde sahiplenilmesidir.**
+
+<DataTable
+  headers={["Sorumluluk Alanı", "Kapsam", "Kim üstlenebilir?"]}
+  rows={[
+    ["Gereksinim ve domain bilgisi", "Edge case, kullanıcı davranışı, iş kuralları", "Product manager, domain expert, senior developer"],
+    ["Kod kalitesi ve implementation", "Modül tasarımı, kod yazma, test", "Developer"],
+    ["Mimari kararlar", "Modül sınırları, dependency yönetimi, deep module tasarımı", "Senior developer, architect"],
+    ["AI agent yönetimi", "Issue bazlı task dağıtımı, agent konfigürasyonu, AFK koşulları", "Developer, tech lead"],
+    ["Review", "Kod kalitesi, güvenlik, maintainability", "Başka bir developer, senior developer"],
+    ["QA ve test stratejisi", "Test senaryoları, regression, e2e doğrulama", "Developer, QA engineer"],
+    ["Orchestration", "Issue sırası, dependency graph, paralel agent koordinasyonu", "Tech lead, senior developer"],
+  ]}
+/>
+
+### Küçük Ekip Örnekleri
+
+<TeamGrid>
+  <TeamCard icon={IconUsers} title="2 kişilik ekip">
+    Developer A: gereksinim netleştirme, implementation, agent yönetimi ve QA.<br />Developer B: review, mimari karar ve orchestration.<br />Roller dönüşümlü olabilir.
+  </TeamCard>
+  <TeamCard icon={IconUser} title="Solo developer">
+    Tüm alanlar tek kişide toplanır. Bu durumda AI agent&apos;ı "ikinci göz" olarak kullanmak faydalıdır: agent&apos;a kendi kodunu farklı bir session&apos;da review ettirmek, eksik test önerisi istemek gibi.
+  </TeamCard>
+</TeamGrid>
+
+</Section>
+
+<Section id="s9" num="09" title="Örnek AI Coding Session Akışı">
+
+Tüm aşamaların pratikte nasıl bir konuşma akışına dönüştüğünü gösteren bir örnek. Senaryo: bir eğitim platformuna basit bir puan sistemi eklenmesi.
+
+<Session>
+  <DevTurn label="Developer">
+    <p>Bu feature brief&apos;ini oku. Kod yazma. Önce beni sorgula.</p>
+  </DevTurn>
+  <AiTurn label="AI">
+    <ul>
+      <li>Bu feature hangi kullanıcı segmenti için?</li>
+      <li>Başarı metriği nedir?</li>
+      <li>Existing data geriye dönük işlenecek mi?</li>
+      <li>UI nerede görünecek?</li>
+      <li>Edge case'ler neler?</li>
+    </ul>
+  </AiTurn>
+  <DevTurn label="Developer">
+    <p>Cevapları verir.</p>
+  </DevTurn>
+  <AiTurn label="AI">
+    <p>PRD üretir → <code>docs/prd/gamification-points.md</code></p>
+  </AiTurn>
+  <DevTurn label="Developer">
+    <p>PRD'yi vertical slice issue'larına böl.</p>
+  </DevTurn>
+  <AiTurn label="AI">
+    <ul>
+      <li>Issue 01: Minimal end-to-end flow</li>
+      <li>Issue 02: Edge case handling</li>
+      <li>Issue 03: Admin visibility</li>
+      <li>Issue 04: Migration / backfill</li>
+      <li>Issue 05: Tests and cleanup</li>
+    </ul>
+  </AiTurn>
+  <DevTurn label="Developer">
+    <p>Issue 01&apos;i TDD ile uygula. Scope dışına çıkma.</p>
+  </DevTurn>
+  <AiTurn label="AI">
+    <p>Test yazar → implementation yapar → testleri çalıştırır → summary verir.</p>
+  </AiTurn>
+  <DevTurn label="Developer">
+    <p>Review eder, düzeltme ister veya merge eder.</p>
+  </DevTurn>
+</Session>
+
+</Section>
+
+<Section id="s10" num="10" title="En Önemli Best Practice'ler">
+
+<NumberedGrid>
+  <NumberedItem num={1}><strong>AI&apos;a doğrudan kod yazdırma;</strong> önce seni sorgulamasını iste.</NumberedItem>
+  <NumberedItem num={2}><strong>Plan değil, shared understanding</strong> hedefle.</NumberedItem>
+  <NumberedItem num={3}><strong>PRD üret ama PRD&apos;yi yaşayan gerçeklik sanma;</strong> gerçeklik koddur.</NumberedItem>
+  <NumberedItem num={4}>Issue'ları <strong>vertical slice</strong> olarak böl.</NumberedItem>
+  <NumberedItem num={5}>Agent'a <strong>küçük, bağımsız, test edilebilir</strong> işler ver.</NumberedItem>
+  <NumberedItem num={6}><strong>TDD kullan;</strong> AI'a önce test yazdır.</NumberedItem>
+  <NumberedItem num={7}><strong>Context'i küçük tut;</strong> uzun session'lara güvenme.</NumberedItem>
+  <NumberedItem num={8}>Sub-agent kullanırken <strong>parent context'i temiz tut.</strong></NumberedItem>
+  <NumberedItem num={9}><strong>Deep module mimarisi kur;</strong> shallow dependency çorbasından kaçın.</NumberedItem>
+  <NumberedItem num={10}><strong>Human review ve QA'yı</strong> sürecin zorunlu parçası yap.</NumberedItem>
+  <NumberedItem num={11} wide><strong>AFK coding koşulsuz güvenli değildir;</strong> branch izolasyonu, iteration limiti ve diff review zorunludur.</NumberedItem>
+</NumberedGrid>
+
+</Section>
+
+<Section id="s11" num="11" title="Kısa Özet">
+
+AI coding'in özü "prompt yazmayı bilmek" değildir. Asıl mesele şudur:
+
+<KeyQuote>
+  AI'a doğru işi, doğru boyutta, doğru bağlamla, doğru feedback loop içinde yaptırmak.
+</KeyQuote>
+
+Bu yüzden başarılı AI coding süreci şu formüle indirgenebilir:
+
+<Formula
+  nodes={["Alignment", "PRD", "Vertical Slice Issues", "TDD Impl.", "Auto Checks", "Human Review", "Merge"]}
+/>
+
+AI coding, disiplinsiz geliştiriciyi otomatik olarak iyi geliştirici yapmaz. Tam tersine, **disiplinsizliği büyütür.** Ama iyi yazılım mühendisliği pratikleriyle birleştiğinde; doğru planlanmış, test edilebilir, küçük ve bağımsız iş parçalarını çok hızlı hayata geçiren güçlü bir üretim modeline dönüşür.
+
+<Callout icon={IconSparkles} kind="tip">
+  Bölüm 1 ile birlikte değerlendirildiğinde bu çerçeve, herhangi bir dil veya araç seçimine bağlı kalmaksızın agentic software delivery workflow'u kurmanın temelini oluşturur.
+</Callout>
+
+</Section>
+
+<Section id="resources" title="Kaynaklar">
+
+Bu dokümanın temel çerçevesi ve örnekleri aşağıdaki video sunumundan derlenmiş, bağımsız bir tutorial olarak yeniden yapılandırılmıştır.
+
+<Callout icon={IconVideo} kind="info">
+  <strong>Video:</strong> <em>AI Coding Agent'larla Disiplinli Yazılım Geliştirme</em> — Smart Zone / Dumb Zone, Grill Me tekniği, vertical slice / tracer bullet, deep vs shallow module, TDD ile agentic coding ve AFK task yönetimi konularını kapsar.
+</Callout>
+
+</Section>

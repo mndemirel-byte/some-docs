@@ -1,0 +1,895 @@
+import {
+  IconInfoCircle,
+  IconCircleCheck,
+  IconCirclePlus,
+  IconAlertTriangle,
+  IconBulb,
+  IconMessageDots,
+  IconArrowUpCircle,
+  IconRefresh,
+  IconVideo,
+  IconUserCheck,
+  IconRobot,
+  IconShieldCheck,
+  IconAlertCircle,
+  IconScissors,
+  IconUser,
+  IconFileAlert,
+  IconEdit,
+  IconPlus,
+  IconLayersSubtract,
+  IconLayersIntersect,
+  IconPrompt,
+  IconEye,
+  IconGitBranch,
+  IconFileText,
+  IconX,
+  IconCheck,
+} from "@tabler/icons-react";
+import { Hero, Accent } from "@/components/doc/hero";
+import { KeyQuote } from "@/components/doc/key-quote";
+import { Toc } from "@/components/doc/toc";
+import { Section } from "@/components/doc/section";
+import { Callout } from "@/components/doc/callout";
+import { TwoColGrid, GridCard } from "@/components/doc/two-col-grid";
+import { SkillTable } from "@/components/doc/skill-table";
+import { ChallengeCard } from "@/components/doc/challenge-card";
+import { TwoBoxGrid, Box } from "@/components/doc/two-box-grid";
+import { Phase } from "@/components/doc/phase-header";
+import { CodeBlock } from "@/components/doc/code-block";
+import { ExpandableExample } from "@/components/doc/expandable-example";
+import { FlowSteps, FlowStep } from "@/components/doc/flow-steps";
+
+<Hero
+  badge="AI Coding Series · Part 1"
+  variant="eyebrow"
+  title={<>Disciplined Software Development with <Accent>AI Coding</Accent> Agents</>}
+  description="AI coding may look like a new paradigm, but the foundation of using it successfully is still classic software engineering discipline. This document offers a practical roadmap: from idea to PRD, from PRD to vertical slices, and from there to test-backed AFK agent implementation."
+  tags={["TDD", "vertical-slice", "AFK-agent", "PRD", "deep-module", "claude-code"]}
+/>
+
+<KeyQuote>
+  Instead of force-feeding the model a huge task, break the work into pieces small enough for the model to stay sharp.
+</KeyQuote>
+
+<Toc
+  title="Table of Contents"
+  layout="list"
+  entries={[
+    { id: "intro", num: "—", label: "Who This Document Is For & Prerequisites" },
+    { id: "terms", num: "—", label: "Abbreviations and Terms" },
+    { id: "s1", num: "01", label: "The Core Problem: AI Is Smart, But Not Unlimited" },
+    {
+      id: "s2",
+      num: "02",
+      label: "Challenges Encountered During AI Coding",
+      subEntries: [
+        { id: "c1", num: "2.1", label: "Misunderstood Requirements" },
+        { id: "c2", num: "2.2", label: "The Limits of Spec-Driven Development" },
+        { id: "c3", num: "2.3", label: "Context Bloat" },
+        { id: "c4", num: "2.4", label: "The Tendency Toward Horizontal Implementation" },
+        { id: "c5", num: "2.5", label: "Lack of Tests" },
+        { id: "c6", num: "2.6", label: "Bad Architecture: Shallow Modules" },
+      ],
+    },
+    {
+      id: "s3",
+      num: "03",
+      label: "The Recommended AI Coding Workflow",
+      subEntries: [
+        { id: "p0", num: "A.0", label: "Break the Idea into Features (Optional)" },
+        { id: "p1", num: "A.1", label: "Interrogate the Feature Brief" },
+        { id: "p2", num: "A.2", label: "Produce a PRD / Destination Document" },
+        { id: "p3", num: "A.3", label: "Split the PRD into Issues" },
+        { id: "p4", num: "A.4", label: "Have the Agent Write Code with TDD" },
+        { id: "p5", num: "A.5", label: "Human-in-the-Loop vs. AFK Split" },
+        { id: "p6", num: "A.6", label: "Improve the Codebase" },
+      ],
+    },
+    { id: "resources", num: "—", label: "Resources" },
+  ]}
+/>
+
+<Section id="intro" title="Who Is This Document For?">
+
+This is aimed at software professionals who want to integrate AI coding tools into their daily workflow. The primary audience is **software developers** at every level, from junior to senior. The sections on clarifying requirements, producing a PRD, breaking down work, and reviewing are also directly applicable to **technical leads, architects, and product managers**.
+
+<Callout icon={IconInfoCircle} kind="info">
+  This document is not tied to a specific language or tool. Examples are drawn mostly from the TypeScript/Python ecosystems, but the principles (vertical slices, TDD, deep modules, context management) are language- and tool-agnostic.
+</Callout>
+
+<TwoColGrid>
+  <GridCard icon={IconCircleCheck} iconColor="var(--red-text)" title="Required prerequisites">
+    <ul>
+      <li>Basic competency in at least one language</li>
+      <li>Basic Git knowledge (commit, branch, merge)</li>
+      <li>Familiarity with any AI coding tool</li>
+    </ul>
+  </GridCard>
+  <GridCard icon={IconCirclePlus} iconColor="var(--green-text)" title="Helpful but not required">
+    <ul>
+      <li>Experience writing tests (unit, integration)</li>
+      <li>Command line: build, test, lint</li>
+      <li>Basic product development understanding</li>
+      <li>Knowledge of CI/CD pipelines</li>
+    </ul>
+  </GridCard>
+</TwoColGrid>
+
+</Section>
+
+<Section id="terms" title="Abbreviations and Terms">
+
+<SkillTable
+  skillHeader="Term"
+  purposeHeader="Description"
+  rows={[
+    { skill: "PRD", purpose: "Product Requirements Document — a requirements document defining what a feature will do, why, its scope, and success criteria." },
+    { skill: "AFK", purpose: "Away From Keyboard — the mode in which an agent works on its own without active developer intervention." },
+    { skill: "TDD", purpose: "Test-Driven Development — write a test first, watch it fail, write the code, then refactor. The Red-Green-Refactor loop." },
+    { skill: "ADR", purpose: "Architecture Decision Record — a document recording what an architectural decision was, why it was made, and its alternatives." },
+    { skill: "LLM", purpose: "Large Language Model — large language models like GPT, Claude. The foundation of AI coding agents." },
+    { skill: "Context window", purpose: "The amount of text (in tokens) a model can process at once. Code, conversation history, the system prompt, and files all share this window." },
+    { skill: "Compacting", purpose: "A technique for shrinking the context window by summarizing long conversation history." },
+    { skill: "Vertical slice", purpose: "An end-to-end slice that spans all of a feature's layers, from database to UI, while keeping scope narrow." },
+    { skill: "Horizontal slice", purpose: "A work item that covers only a single layer of a feature (e.g. only the database, only the API)." },
+    { skill: "Deep module", purpose: "A module with a small, simple public interface that does a meaningful amount of work internally. Its test boundary is clear." },
+    { skill: "Shallow module", purpose: "A module that does very little work but exposes broad dependencies outward. Creates a tangled dependency web." },
+    { skill: "Tracer bullet", purpose: "The metaphor of firing a lit round in the dark to see if it reaches the target. Describes getting early feedback with a minimal schema + service + API + UI." },
+    { skill: "E2E / CI / QA", purpose: "End-to-End test · Continuous Integration (automatic build/test per commit) · Quality Assurance." },
+  ]}
+/>
+
+</Section>
+
+<Section id="s1" num="01" title="The Core Problem: AI Is Smart, But Not Unlimited">
+
+The biggest misconception with LLM-based coding agents is: **"If the context window is big, I can give it everything."** In practice, however, there's a dynamic you could call the **Smart Zone / Dumb Zone**. The model performs better at the start of a conversation; as context grows, attention relationships become more complex and the model gradually starts making worse decisions.
+
+<Callout icon={IconAlertTriangle} kind="warning">
+  A model's context window might be 200K tokens — but when you load 150K tokens of code plus conversation history, the model makes far more mistakes and produces inconsistent code compared to a 20K-token session. <strong>Nominal capacity ≠ effective attention capacity.</strong>
+</Callout>
+
+This decline happens at different rates depending on the model and task type. The practical rule: the smaller you keep the context, the more reliably the model works. Rather than memorizing a fixed token threshold, it's healthier to actively observe response quality throughout the session and clear the context to start fresh once you feel quality dropping.
+
+<KeyQuote>
+  Instead of force-feeding the model a huge task, break the work into pieces small enough for the model to stay sharp.
+</KeyQuote>
+
+</Section>
+
+<Section id="s2" num="02" title="Challenges Encountered During AI Coding">
+
+Click any heading to expand its description, problem, and solution.
+
+<ChallengeCard num={1} title="Misunderstood Requirements">
+
+AI very often produces a plan far too early. You say "I want a feature like this," and the agent immediately suggests architecture, a file list, and code. But the underlying assumptions haven't been clarified yet.
+
+**Example — Gamification:** When you say "add a points system," the AI produces a plan right away — but these questions go unanswered: Which actions earn points? Are already-completed lessons scored retroactively? What does the level curve look like? Where in the UI is the score shown?
+
+<TwoBoxGrid>
+  <Box tone="red" label={<><IconX size={12} /> Problem</>}>
+    AI is ready to write code, but product decisions, domain decisions, and edge-case decisions are still missing.
+  </Box>
+  <Box tone="green" label={<><IconCheck size={12} /> Solution</>}>
+    Alignment must happen before code. Use the AI as a <strong>"Grill Me" interrogation partner</strong>: the AI asks questions, surfaces assumptions, and builds a shared design understanding.
+  </Box>
+</TwoBoxGrid>
+
+</ChallengeCard>
+
+<ChallengeCard num={2} title="The Limits of Spec-Driven Development">
+
+A common approach: "Write a spec, let the AI turn it into code; if the code is wrong, fix the spec and regenerate." This alone isn't enough, because the developer becomes disconnected from the code. **Code is still the battlefield.**
+
+**Where spec-first is strong:** API contract design (OpenAPI/Swagger), database migration planning, protocol/interface definitions, system integration points.
+
+<TwoBoxGrid>
+  <Box tone="red" label={<><IconX size={12} /> Problem</>}>
+    The developer gets reduced to editing specs only; code quality and architectural control are lost.
+  </Box>
+  <Box tone="green" label={<><IconCheck size={12} /> Solution</>}>
+    <strong>If you're writing a spec, read the code too; if you're writing code, update the spec too.</strong> The developer must understand modules, define test boundaries, and actively manage architectural quality.
+  </Box>
+</TwoBoxGrid>
+
+</ChallengeCard>
+
+<ChallengeCard num={3} title="Context Bloat and Over-Reliance on Compacting">
+
+As a session grows, the model's performance drops. Compacting summarizes history but is a limited solution. Details can be lost during summarization, and the remnants of old, no-longer-valid decisions (**sediment**) can mislead the agent.
+
+<TwoBoxGrid>
+  <Box tone="red" label={<><IconX size={12} /> Problem</>}>
+    In a long conversation, the agent can confuse past decisions, file changes, and intent.
+  </Box>
+  <Box tone="green" label={<><IconCheck size={12} /> Solution</>}>
+    Keep sessions small; clear context when needed. Write important decisions into permanent artifacts: PRDs, issues, ADRs, test plans.
+  </Box>
+</TwoBoxGrid>
+
+</ChallengeCard>
+
+<ChallengeCard num={4} title="The Tendency Toward Horizontal Implementation">
+
+AI naturally tends to split work into horizontal layers: database first, then API, then frontend. It looks classic, but feedback arrives very late. Something that actually works end-to-end only emerges in the third phase.
+
+**Vertical slice / Tracer bullet:** You fire a lit round in the dark to see whether it reaches the target. A minimal schema + service + API + small UI are built together. The agent gets early feedback, and the wrong direction is caught early.
+
+<TwoBoxGrid>
+  <Box tone="red" label={<><IconX size={12} /> Problem</>}>
+    Horizontal development produces late feedback; AI writes "blind" code for long stretches.
+  </Box>
+  <Box tone="green" label={<><IconCheck size={12} /> Solution</>}>
+    Every issue should produce end-to-end, testable, visible value wherever possible.
+  </Box>
+</TwoBoxGrid>
+
+</ChallengeCard>
+
+<ChallengeCard num={5} title="Lack of Tests">
+
+Without a test signal, AI struggles to understand errors. It writes code, then breaks a working part while fixing another bug. **TDD is an especially powerful method for AI coding:** a failing test is written first, then the implementation, then the test and typecheck are run. This loop continuously signals the agent "are you on the right track?" It also reduces the agent's risk of hard-coding or taking shortcuts.
+
+<TwoBoxGrid>
+  <Box tone="red" label={<><IconX size={12} /> Problem</>}>
+    Without a feedback loop, it's unclear whether the agent is on the right track.
+  </Box>
+  <Box tone="green" label={<><IconCheck size={12} /> Solution</>}>
+    Unit tests, integration tests, typecheck, lint, build, and e2e tests where possible should be a mandatory part of the agent workflow.
+  </Box>
+</TwoBoxGrid>
+
+</ChallengeCard>
+
+<ChallengeCard num={6} title="Bad Architecture: Shallow Modules">
+
+*John Ousterhout — "A Philosophy of Software Design"* — the concepts below come from this book:
+
+<TwoBoxGrid>
+  <Box tone="red" label={<><IconLayersSubtract size={12} /> Shallow Module</>}>
+    A module that does very little work and exposes wide dependencies. Dozens of 10–15 line files, all importing each other. AI has to load dozens of files into context just to understand one piece of logic.
+  </Box>
+  <Box tone="green" label={<><IconLayersIntersect size={12} /> Deep Module</>}>
+    A module with a small, simple public interface that does meaningful work internally. Looks simple from the outside; encapsulates internal complexity. Test boundary is clear: you test the public interface.
+  </Box>
+</TwoBoxGrid>
+
+<TwoBoxGrid>
+  <Box tone="red" label={<><IconX size={12} /> Problem</>}>
+    Bad architecture lowers an AI agent's capacity for both understanding and producing tests.
+  </Box>
+  <Box tone="green" label={<><IconCheck size={12} /> Solution</>}>
+    Simplify module boundaries, shrink the public interface, enrich internal behavior, clarify test boundaries.
+  </Box>
+</TwoBoxGrid>
+
+</ChallengeCard>
+
+</Section>
+
+<Section id="s3" num="03" title="The Recommended AI Coding Workflow">
+
+The workflow consists of two layers:
+
+<TwoColGrid>
+  <GridCard icon={IconArrowUpCircle} iconColor="var(--accent-text)" title="Top layer (once)">
+    <ul>
+      <li>If you have an idea or vision → start with Stage 0</li>
+      <li>If you're adding a known feature → skip to Stage 1</li>
+      <li>Output: a prioritized list of feature briefs</li>
+    </ul>
+  </GridCard>
+  <GridCard icon={IconRefresh} iconColor="var(--accent-text)" title="Bottom layer (per feature)">
+    <ul>
+      <li>Each feature brief goes through Stages 1–6</li>
+      <li>Once a feature is done, the next brief is picked up</li>
+      <li>The loop starts over</li>
+    </ul>
+  </GridCard>
+</TwoColGrid>
+
+</Section>
+
+<Phase id="p0" num={0} title="Break the Idea into Features" subtitle="product discovery" optionalLabel="Optional">
+
+**When it's needed:** When you don't have a clear feature brief yet — a new product idea, a major pivot, a project starting from scratch, or a broad vision.
+
+**When to skip it:** If you're adding a known, well-defined feature to an existing product, skip straight to Stage 1.
+
+In this stage, AI acts as a **product discovery partner**. The goal: break the idea into independent, prioritizable features that produce user value.
+
+### Decomposition Prompt
+
+<CodeBlock lang={<><IconPrompt size={12} /> prompt</>} kind="prompt">
+{`Read the idea below. Don't produce a feature list right away.
+
+<idea>
+We want to build an online education platform. Students will be
+able to watch lessons, take quizzes, and earn certificates.
+Instructors will be able to upload content. Gamification will
+be used to boost motivation. It will be accessible on mobile
+and web.
+</idea>
+
+First, interrogate me. Ask about anything unclear under these
+headings:
+- Who is the target user?
+- What problem is being solved?
+- What's the revenue model?
+- What are the technical constraints?
+- What's must-have for the MVP vs. what can wait?
+- What are the platform constraints?
+
+Ask one question at a time. Offer your own suggestion with
+each question.
+
+Once all questions are done, produce output in this format:
+<feature_list>
+## MVP Features
+1. Feature name — 1-2 sentence description
+
+## Phase 2 Features
+1. Feature name — 1-2 sentence description
+
+## Dependency Map
+- Feature X → must happen before Feature Y
+
+## Recommended Order
+1. First feature (why: ...)
+</feature_list>`}
+</CodeBlock>
+
+<ExpandableExample label={<><IconEye size={16} /> Example output</>}>
+
+<CodeBlock lang={<><IconEye size={12} /> example output</>} kind="example">
+{`<feature_list>
+## MVP Features
+1. Lesson viewing — Student can watch video lessons; progress is saved.
+2. Instructor content upload — Can upload video and materials.
+3. Basic quiz — A multiple-choice quiz can be taken at the end of a lesson.
+4. User authentication — Sign up, log in, profile management.
+
+## Phase 2 Features
+1. Gamification (points, badges, leaderboard)
+2. Certificate generation and verification
+3. Mobile app (native)
+4. Instructor analytics dashboard
+
+## Dependency Map
+- Lesson viewing → after user authentication
+- Gamification → after lesson viewing + quizzes
+
+## Recommended Order
+1. User authentication (why: foundation for everything else)
+2. Instructor content upload (why: platform is empty without content)
+3. Lesson viewing (why: core value for the student)
+4. Basic quiz (why: validates learning)
+</feature_list>`}
+</CodeBlock>
+
+</ExpandableExample>
+
+<Callout icon={IconBulb} kind="tip">
+  Keep the feature list in a file like <code>docs/feature-backlog.md</code>. Update each feature's status as it's implemented (backlog → in progress → done).
+</Callout>
+
+</Phase>
+
+<Phase id="p1" num={1} title="Interrogate the Feature Brief" subtitle="analyst / product thinking partner">
+
+The first step shouldn't be "make a plan" — it should be: clarify assumptions, edge cases, the data model, test decisions, and what's out of scope, one at a time. In this stage, AI works like an **analyst**. The output isn't code — it's a **list of clarified decisions**.
+
+### Interrogation Prompt (Grill Me)
+
+<CodeBlock lang={<><IconPrompt size={12} /> prompt</>} kind="prompt">
+{`Read this feature brief. Don't produce a plan or code right away.
+
+<feature_brief>
+We're adding a gamification system to our education platform.
+Students will earn points when they complete a lesson, and their
+total points will show on the dashboard. Badges and a leaderboard
+will be added later, but the first version is just the points
+system.
+</feature_brief>
+
+First, relentlessly interview me. Question me under these
+headings:
+- Product goal and success criteria
+- User scenarios and edge cases
+- Data model decisions
+- Retroactive data migration
+- UI placement and behavior
+- What's out of scope
+- Testing decisions
+
+Rules:
+- Ask one question at a time.
+- Offer your own suggestion with each question.
+- Once all questions are done, summarize the decisions:
+
+  <decisions>
+  - Decision title: Description
+  </decisions>`}
+</CodeBlock>
+
+<ExpandableExample label={<><IconMessageDots size={16} /> Example interrogation flow and decisions</>}>
+
+<CodeBlock lang={<><IconEye size={12} /> example flow</>} kind="example">
+{`AI: Do points only come from completing a lesson, or do actions
+like taking a quiz or leaving a comment also earn points?
+My suggestion: Just lesson completion for v1.
+
+Developer: Yes, just lesson completion.
+
+AI: There are already completed lessons in the system. Should
+they be scored retroactively? My suggestion: No, only count
+completions from now on.
+
+Developer: Agreed, no retroactive scoring.
+
+(...more questions...)
+
+AI: All questions are done. Decisions reached:
+
+<decisions>
+- Point source: Lesson completion only.
+- Point amount: 10 points per lesson completion.
+- Retroactive scoring: No.
+- Repeat completion of the same lesson: No points awarded.
+- UI: A "Total Points" widget on the dashboard.
+- Level system: Not in v1.
+- Data model: points table (user_id, lesson_id, points, created_at).
+- Migration: No retroactive migration.
+</decisions>`}
+</CodeBlock>
+
+</ExpandableExample>
+
+</Phase>
+
+<Phase id="p2" num={2} title="Produce a PRD / Destination Document" subtitle="build the destination document">
+
+Here, the PRD isn't a "bureaucratic document" — it's the **destination document**: the single reference point everyone on the team can use to answer "what are we doing, why, and where do we stand."
+
+### PRD Template — <code>docs/templates/prd-template.md</code>
+
+<CodeBlock lang={<><IconFileText size={12} /> prd-template.md</>} kind="file">
+{`# Feature PRD: <Feature Name>
+
+## Problem
+What problem is the user experiencing?
+
+## Goal
+What outcome should this feature produce?
+
+## Non-Goals
+What's out of scope for this work.
+
+## User Stories
+- As a user, I want...
+
+## Acceptance Criteria
+- Every criterion must be testable. Don't use vague phrasing like "good experience."
+
+## Implementation Decisions
+- Reflect only the decisions from the <decisions> section — don't add new ones.
+
+## Testing Decisions
+- Unit tests, Integration tests, E2E tests, Edge case tests
+
+## Definition of Done
+- Tests pass · Typecheck passes · Build passes · Review complete`}
+</CodeBlock>
+
+### PRD Generation Prompt
+
+<CodeBlock lang={<><IconPrompt size={12} /> prompt</>} kind="prompt">
+{`Read the file docs/templates/prd-template.md.
+
+Using the feature brief and decisions below, produce a PRD.
+
+<feature_brief>
+We're adding a gamification system to our education platform.
+Students will earn points when they complete a lesson, and
+their total points will show on the dashboard.
+</feature_brief>
+
+<decisions>
+- Point source: Lesson completion only.
+- Point amount: 10 points per lesson completion.
+- Retroactive scoring: No.
+- Repeat completion of the same lesson: No points awarded.
+- UI: A "Total Points" widget on the dashboard.
+- Data model: points table (user_id, lesson_id, points, created_at).
+</decisions>
+
+Rules:
+- Fill in every section of the template.
+- In Implementation Decisions, reflect only the <decisions> — nothing new.
+- Every Acceptance Criteria item must be verifiable.
+- Save the PRD as docs/prd/gamification-points.md.`}
+</CodeBlock>
+
+<Callout icon={IconInfoCircle} kind="info">
+  <strong>File referencing per tool:</strong> Claude Code → <code>read the file</code> is enough. Cursor → <code>@docs/templates/prd-template.md</code>. What matters is that the template is read from a file rather than pasted into the prompt every time.
+</Callout>
+
+</Phase>
+
+<Phase id="p3" num={3} title="Split the PRD into Kanban Issues" subtitle="create vertical slice issues">
+
+Instead of the classic "Phase 1: DB, Phase 2: API, Phase 3: UI," split the PRD into **vertical slice issues**. A vertical slice is an end-to-end slice that covers all technical layers while keeping scope narrow.
+
+<TwoBoxGrid>
+  <Box tone="red" label={<><IconX size={12} /> Weak issue (horizontal)</>}>
+    <code>Create database schema for gamification</code><br /><br />Can&apos;t be tested independently on its own; produces no visible result for the user.
+  </Box>
+  <Box tone="green" label={<><IconCheck size={12} /> Strong issue (vertical slice)</>}>
+    <code>Award points for lesson completion and show total on dashboard</code><br /><br />Produces end-to-end value: data + service + API + UI + test all work together.
+  </Box>
+</TwoBoxGrid>
+
+### Issue Template — <code>docs/templates/issue-template.md</code>
+
+<CodeBlock lang={<><IconFileText size={12} /> issue-template.md</>} kind="file">
+{`# Issue <NUMBER> — <Short title>
+
+## Type
+feature | bug | refactor
+
+## Goal
+What will the user or system be able to do once this issue is done?
+
+## Scope
+- Database / schema change
+- Backend service / business logic
+- API endpoint
+- UI component
+- Test (unit, integration, smoke)
+
+## Out of Scope
+Things explicitly NOT done in this issue.
+
+## Dependencies
+Issues this depends on. "None" if there aren't any.
+
+## Acceptance Criteria
+- Criterion 1 (verifiable, no vague phrasing like "should work properly")
+- Criterion 2
+
+## Test Plan
+- Unit: Which module will be tested?
+- Integration: Which flow will be tested end-to-end?
+- UI smoke: Which screen render will be verified?`}
+</CodeBlock>
+
+### Issue Generation Prompt
+
+<CodeBlock lang={<><IconPrompt size={12} /> prompt</>} kind="prompt">
+{`Read these two files:
+- docs/prd/gamification-points.md
+- docs/templates/issue-template.md
+
+Split the PRD's scope into vertical slice issues.
+
+Rules:
+- Every issue must produce end-to-end value — no single-layer issues.
+- Every issue must be independently testable and demoable.
+- Number the issues in dependency order.
+- Fill in the Out of Scope section explicitly.
+- Save the issues as separate files:
+  docs/issues/issue-01.md, docs/issues/issue-02.md, ...
+- Finally, summarize the dependency graph.`}
+</CodeBlock>
+
+<ExpandableExample label={<><IconGitBranch size={16} /> Example dependency graph output</>}>
+
+<CodeBlock lang={<><IconEye size={12} /> example output</>} kind="example">
+{`docs/issues/issue-01.md → Award points for lesson completion
+                          and show total on dashboard
+docs/issues/issue-02.md → Prevent duplicate points for same lesson
+docs/issues/issue-03.md → Admin endpoint to view user points
+docs/issues/issue-04.md → Edge case handling (deleted lesson,
+                          deactivated user)
+
+Dependency graph:
+- Issue 01: Independent (build first)
+- Issue 02: Depends on Issue 01
+- Issue 03: Depends on Issue 01
+- Issue 04: Depends on Issue 01 + 02`}
+</CodeBlock>
+
+</ExpandableExample>
+
+</Phase>
+
+<Phase id="p4" num={4} title="Have the Agent Write Code with TDD" subtitle="human-in-the-loop implementation">
+
+The safest implementation method in AI coding is TDD. For the agent to put tests in the right place, it needs to know the project's test conventions: defined in <code>docs/test-conventions.md</code> (directory structure, file naming, test format, test commands).
+
+### TDD Implementation Prompt
+
+Used while the developer is sitting at the keyboard (human-in-the-loop), observing every step.
+
+<CodeBlock lang={<><IconPrompt size={12} /> prompt — human-in-the-loop</>} kind="prompt">
+{`Read these files:
+- docs/issues/issue-01.md
+- docs/test-conventions.md
+
+Implement using the TDD loop. Read the Type field and decide your
+strategy:
+
+[If Type = feature]
+  Step 1 — Write a test (Red):
+  - Write at least one test per Acceptance Criterion.
+  - Run the tests: npm test
+  - Confirm all new tests FAIL.
+    If a test passes without implementation, it was written wrong.
+
+  Step 2 — Implement (Green):
+  - Write the minimal code to pass the tests. Don't add unnecessary
+    abstraction.
+  - Run the tests again: npm test → all tests should PASS.
+
+[If Type = bug]
+  Step 1 — Reproduce the bug: write a failing test first. It must FAIL.
+  Step 2 — Fix: minimal change. The test must PASS.
+
+[If Type = refactor]
+  Step 1 — Confirm all existing tests PASS.
+  Step 2 — Refactor without changing behavior.
+  Step 3 — Tests must still PASS.
+
+[For all types]
+  Step 3 — Verify:
+  - npm run typecheck · npm run lint · npm run build
+  - Fix any errors and re-run.
+
+  Step 4 — Write a summary:
+  ## Implementation Summary
+  - Test files added: ...
+  - Source files added/changed: ...
+  - Test results: (paste the output)
+  - Typecheck/lint/build: pass/fail
+  - Out-of-scope notes: ...`}
+</CodeBlock>
+
+### What to Do When the Agent Is Stuck
+
+If it can't solve it after 2-3 attempts, there are 4 options:
+
+<TwoColGrid>
+  <GridCard icon={IconInfoCircle} iconColor="var(--blue-text)" title="Give context, continue">
+    <p>For cases like a missing env variable or wrong file path, give the info and continue. No new issue needed.</p>
+  </GridCard>
+  <GridCard icon={IconScissors} iconColor="var(--amber-text)" title="Shrink the issue">
+    <p>Scope may be too large. Narrow the acceptance criteria, turn the rest into a new issue.</p>
+  </GridCard>
+  <GridCard icon={IconUser} iconColor="var(--green-text)" title="Write the hard part yourself">
+    <p>Write the complex part yourself (race conditions, legacy side effects). Let the agent continue with the rest.</p>
+  </GridCard>
+  <GridCard icon={IconFileAlert} iconColor="var(--red-text)" title="Stop, analyze, open an issue">
+    <p>If it's a systemic problem, document it. Create a new issue using the Blocker Report format.</p>
+  </GridCard>
+</TwoColGrid>
+
+</Phase>
+
+<Phase id="p5" num={5} title="Human-in-the-Loop vs. AFK Task Split" subtitle="task distribution and AFK execution">
+
+Not every task should be handed to AI. Some are **human-in-the-loop**, others can be **AFK** (without developer intervention).
+
+<TwoBoxGrid>
+  <Box tone="green" label={<><IconUserCheck size={12} /> Human-in-the-loop work</>}>
+    <ul>
+      <li>Requirement clarification</li>
+      <li>Product decisions</li>
+      <li>Architecture boundary decisions</li>
+      <li>Data model decisions</li>
+      <li>Risky migration decisions</li>
+      <li>Code review · Final QA</li>
+    </ul>
+  </Box>
+  <Box tone="blue" label={<><IconRobot size={12} /> Work that can go AFK</>}>
+    <ul>
+      <li>Small issue implementation</li>
+      <li>Writing tests</li>
+      <li>Fixing typecheck / lint / build</li>
+      <li>Updating documentation</li>
+      <li>Simple refactors</li>
+    </ul>
+  </Box>
+</TwoBoxGrid>
+
+### Conditions and Risks of Running AFK
+
+<TwoBoxGrid>
+  <Box tone="green" label={<><IconShieldCheck size={12} /> Safe AFK conditions</>}>
+    <ul>
+      <li>Issue is small and scope is clear</li>
+      <li>Working in a separate branch / worktree</li>
+      <li>Test, typecheck, and build commands are defined</li>
+      <li>A max-iteration limit is set</li>
+    </ul>
+  </Box>
+  <Box tone="red" label={<><IconAlertTriangle size={12} /> AFK risks and mitigations</>}>
+    <ul>
+      <li><strong>Loop risk</strong> — set a max-10-attempts rule</li>
+      <li><strong>Scope drift</strong> — fill in the Out of Scope section</li>
+      <li><strong>Silent failure</strong> — include test output in the summary</li>
+      <li><strong>Wrong file changes</strong> — diff review before merge</li>
+    </ul>
+  </Box>
+</TwoBoxGrid>
+
+### Running AFK — 3 Steps
+
+<FlowSteps>
+  <FlowStep num={1} title="Preparation (~2 min)">
+    <p>Create a separate branch for the issue. Confirm the issue file and test-conventions file are ready.</p>
+    <CodeBlock lang="bash">
+{`git checkout -b feature/gamification-points
+# Optional: parallel worktree
+git worktree add ../project-issue-01 feature/gamification-points`}
+    </CodeBlock>
+  </FlowStep>
+  <FlowStep num={2} title="Start the Agent with the AFK Prompt">
+    <p>After giving this prompt, the developer can step away from the computer.</p>
+    <CodeBlock lang={<><IconPrompt size={12} /> prompt — AFK mode</>} kind="prompt">
+{`Read these files:
+- docs/issues/issue-01.md
+- docs/test-conventions.md
+
+Implement this issue.
+
+Working rules:
+1. Read the Type, Scope, and Out of Scope sections.
+   Do only the work in Scope.
+2. Decide your test strategy based on Type:
+   - feature → Write tests first (must fail), then implement.
+   - bug → Write a reproduction test first (must fail), then fix.
+   - refactor → Verify existing tests, refactor, verify again.
+3. Implement minimally.
+4. Run the commands and confirm all pass:
+   npm test · npm run typecheck · npm run lint · npm run build
+5. Fix errors if any. Maximum 10 attempts. Stop if unsolved after 10.
+6. Don't go outside scope.
+7. When done, write an Implementation Summary.
+   If unsolved, append a Blocker Report to the summary.`}
+    </CodeBlock>
+  </FlowStep>
+  <FlowStep num={3} title="Review When You Return">
+    <CodeBlock lang="bash">
+{`# Inspect the actual diff
+git diff main...feature/gamification-points
+# Check for unexpected file changes
+git diff --name-only main...feature/gamification-points
+# Run the tests yourself
+npm test && npm run typecheck && npm run build`}
+    </CodeBlock>
+    <Callout icon={IconAlertCircle} kind="warning">
+      After AFK coding, always review the changes by reading <code>git diff</code>. Trust the actual diff, not the agent&apos;s claim of &quot;success.&quot;
+    </Callout>
+  </FlowStep>
+</FlowSteps>
+
+### Blocker Report Format
+
+When the agent can't solve it, it appends this format to the end of the summary:
+
+<CodeBlock lang={<><IconFileAlert size={12} /> Blocker Report</>}>
+{`## Blocker Report
+### Issue
+Short description: what happened?
+### Error output
+Relevant error message or test output
+### Solutions tried
+1. Attempt: ... → Result: ...
+2. Attempt: ... → Result: ...
+### Likely root cause
+Your guess (developer should verify)
+### Affected acceptance criteria
+Which criterion wasn't met?
+### Suggested action
+- Update the scope of the existing issue
+- Open a new issue (suggested title: ...)
+- Environment/configuration issue — no issue needed`}
+</CodeBlock>
+
+### 3 Options After a Blocker Report
+
+<TwoColGrid>
+  <GridCard icon={IconCircleCheck} iconColor="var(--green-text)" title="A — Fix it yourself, continue">
+    <p>If it's a simple config or env issue, the developer fixes it and says "continue." No new issue needed.</p>
+  </GridCard>
+  <GridCard icon={IconPlus} iconColor="var(--blue-text)" title="B — Open a new issue">
+    <p>If the problem is outside the current issue's scope, create a new issue and feed it into the pipeline.</p>
+  </GridCard>
+</TwoColGrid>
+<TwoColGrid>
+  <GridCard icon={IconEdit} iconColor="var(--amber-text)" title="C — Update the existing issue">
+    <p>If the problem stems from a poorly defined scope, fix the existing issue instead of opening a new one.</p>
+  </GridCard>
+</TwoColGrid>
+
+### Parallel AFK: Run Independent Issues Simultaneously
+
+<CodeBlock lang="bash">
+{`git worktree add ../project-issue-01 -b feature/issue-01
+git worktree add ../project-issue-02 -b feature/issue-02
+git worktree add ../project-issue-03 -b feature/issue-03
+# Start a separate agent session in each worktree`}
+</CodeBlock>
+
+<Callout icon={IconInfoCircle} kind="info">
+  If there's a merge-conflict risk (issues touching the same files), run them sequentially instead. Merge order should always follow the dependency graph.
+</Callout>
+
+</Phase>
+
+<Phase id="p6" num={6} title="Improve the Codebase" subtitle="avoid the shallow module anti-pattern">
+
+Work isn't done once a feature ships. If left unchecked, the speed of AI coding creates **shallow module buildup**: lots of small files, each dependent on another, none of them doing meaningful work on its own. Every new feature then loads more files into the agent's context and raises maintenance costs.
+
+### Signs of Shallow Modules
+
+- You need to open more than 5 files to understand one piece of logic.
+- Most modules are 10–30 lines, and nearly all import another module.
+- A lot is exported, but each piece does very little.
+- Testing a module requires mocking 3–4 dependencies.
+- There are "pass-through" layers: taking data and handing it to the next layer without adding anything.
+
+### Deep Module Refactoring Strategy
+
+1. **Merge related small modules** — Gather files related to the same domain concept into one module.
+2. **Remove pass-through layers** — Remove them if they don't provide real abstraction.
+3. **Shrink the public interface** — Only export what truly needs to be called from outside.
+4. **Align test boundaries with module boundaries** — Tests should be written against the public interface.
+
+### Refactoring with AI — 2 Steps
+
+<CodeBlock lang={<><IconPrompt size={12} /> Step 1 — Analysis (don't change code)</>} kind="prompt">
+{`Analyze this group of modules: [file list]
+
+Answer these questions:
+- Which files belong to the same domain concept?
+- Are there pass-through layers?
+- How wide is the public interface?
+- Could we merge these modules into a deep module?
+
+Don't change code. Present analysis and suggestions first.`}
+</CodeBlock>
+
+<CodeBlock lang={<><IconPrompt size={12} /> Step 2 — Apply</>} kind="prompt">
+{`Apply the refactoring plan you proposed.
+Make sure existing tests still pass.
+Add any tests missing for the new module structure.
+Run test/typecheck/build after refactoring.
+Note any public interface change in the summary.`}
+</CodeBlock>
+
+### When to Refactor
+
+- **After every feature is done:** Review the new files the agent added.
+- **At the end of a sprint:** If shallow-module buildup has increased, create refactoring issues.
+- **When agent performance drops:** If it's making more mistakes on similar tasks, simplify the module structure.
+
+<Callout icon={IconBulb} kind="tip">
+  Keep refactoring issues small and independent, just like vertical slices. Set the Type in the issue template to <strong>refactor</strong> — when the agent sees this, it works by preserving existing tests instead of writing new ones.
+</Callout>
+
+</Phase>
+
+<Section id="resources" title="Resources">
+
+The core framework and examples in this document were compiled from the video presentation below, then restructured into a standalone tutorial.
+
+<Callout icon={IconVideo} kind="info">
+  <strong>Video:</strong> <em>Disciplined Software Development with AI Coding Agents</em> — covers the Smart Zone / Dumb Zone, the Grill Me technique, vertical slice / tracer bullet, deep vs. shallow modules, TDD with agentic coding, and AFK task management.
+</Callout>
+
+See **Part 2** for the rest: best practices, the skill map, the team model, and playbooks.
+
+</Section>
