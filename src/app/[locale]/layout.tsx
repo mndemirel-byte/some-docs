@@ -57,7 +57,7 @@ export default async function LocaleLayout({
       <head>
         <script dangerouslySetInnerHTML={{ __html: SET_STORED_THEME_SCRIPT }} />
       </head>
-      <body>
+      <body suppressHydrationWarning>
         <ThemeSync />
         <NextIntlClientProvider locale={locale} messages={messages}>
           {children}
