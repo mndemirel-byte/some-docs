@@ -26,10 +26,10 @@ Both consolidations follow the same shape: build the new deep module + migrate i
 
 ## Acceptance criteria
 
-- [ ] All 10 child issues completed
-- [ ] `src/components/doc/skill-card.tsx`, `challenge-card.tsx`, `collapsible-card.tsx`, `expandable-example.tsx` are deleted, fully replaced by `Disclosure`
-- [ ] `src/components/doc/responsive-card-grid.tsx`, `principles-grid.tsx`, `two-col-grid.tsx`, `team-grid.tsx`, `section-skill-card.tsx`, `value-row.tsx` are deleted, fully replaced by `InfoCard`
-- [ ] All four Doc pages (`setup`, `ai-coding-b1`, `ai-coding-b2`, `matt-pocock-skills`) still pass their existing page-level integration tests, in both locales
+- [x] All 10 child issues completed
+- [x] `src/components/doc/collapsible-card.tsx` is deleted, fully replaced by `Disclosure`. `challenge-card.tsx` and `expandable-example.tsx` remain as thin wrappers composing their family-specific trigger and forwarding to `Disclosure` (per issues 01/02's explicit "keep a thin wrapper" option); `skill-card.tsx` remains, now holding only `SkillCols`/`SkillCol` (per issue 04's explicit instruction) — `SkillCard` itself was deleted and replaced by `Disclosure` + `SkillCardTrigger`/`SkillCardFooter`
+- [x] `src/components/doc/responsive-card-grid.tsx`, `principles-grid.tsx`, `two-col-grid.tsx`, `team-grid.tsx`, `section-skill-card.tsx`, `value-row.tsx` are deleted, fully replaced by `InfoCard`
+- [x] All four Doc pages (`setup`, `ai-coding-b1`, `ai-coding-b2`, `matt-pocock-skills`) still pass their existing page-level integration tests, in both locales
 - [ ] Visual QA (both themes, both locales) confirms no regression on any migrated card/disclosure — same pattern used in `06-visual-qa-acceptance.md`
 
 ## Blocked by

@@ -1,8 +1,5 @@
-"use client";
-
 import type { ReactNode } from "react";
-import { useState } from "react";
-import { IconChevronDown } from "@tabler/icons-react";
+import { Disclosure } from "./disclosure";
 import styles from "./challenge-card.module.css";
 
 export function ChallengeCard({
@@ -14,23 +11,21 @@ export function ChallengeCard({
   title: ReactNode;
   children: ReactNode;
 }) {
-  const [open, setOpen] = useState(false);
-
   return (
-    <div className={styles.card}>
-      <button
-        type="button"
-        className={styles.header}
-        aria-expanded={open}
-        onClick={() => setOpen((current) => !current)}
-      >
-        <div className={styles.num}>{num}</div>
-        <div className={styles.title}>{title}</div>
-        <IconChevronDown
-          className={`${styles.toggleIcon} ${open ? styles.toggleIconOpen : ""}`}
-        />
-      </button>
-      {open ? <div className={styles.body}>{children}</div> : null}
-    </div>
+    <Disclosure
+      trigger={
+        <>
+          <div className={styles.num}>{num}</div>
+          <div className={styles.title}>{title}</div>
+        </>
+      }
+      className={styles.card}
+      triggerClassName={styles.header}
+      contentClassName={styles.body}
+      iconClassName={styles.toggleIcon}
+      iconOpenClassName={styles.toggleIconOpen}
+    >
+      {children}
+    </Disclosure>
   );
 }

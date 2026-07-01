@@ -23,7 +23,7 @@ import { HeroAuthor } from "@/components/doc/hero-author";
 import { Toc } from "@/components/doc/toc";
 import { Section } from "@/components/doc/section";
 import { Callout } from "@/components/doc/callout";
-import { TwoColGrid, GridCard } from "@/components/doc/two-col-grid";
+import { CardGrid, InfoCard } from "@/components/doc/info-card";
 import { CodeBlock } from "@/components/doc/code-block";
 import { TableBox } from "@/components/doc/table-box";
 import { DataTable } from "@/components/doc/data-table";
@@ -31,10 +31,8 @@ import { Cmd } from "@/components/doc/cmd";
 import { Phase } from "@/components/doc/phase-header";
 import { ExpandableExample } from "@/components/doc/expandable-example";
 import { Terminal } from "@/components/doc/terminal";
-import { ValueRow, ValueCard } from "@/components/doc/value-row";
 import { SimplePrincipleGrid, SimplePrincipleCard } from "@/components/doc/simple-principle-grid";
 import { StateFlow, State, StateArrow } from "@/components/doc/state-flow";
-import { SectionSkillGrid, SectionSkillCard } from "@/components/doc/section-skill-card";
 import { GroupedFlowPhase, GroupedFlowStep, FlowConnector } from "@/components/doc/grouped-flow";
 import { ResourceList, ResourceItem } from "@/components/doc/resource-list";
 
@@ -71,16 +69,16 @@ import { ResourceList, ResourceItem } from "@/components/doc/resource-list";
 
 <Section id="s1" num="01" title="Ön Koşullar ve Kurulum">
 
-<TwoColGrid>
-  <GridCard icon={IconTool} iconColor="var(--accent-text)" title="Gerekli araçlar">
+<CardGrid columns="two" spacing="cozy">
+  <InfoCard icon={IconTool} iconColor="var(--accent-text)" title="Gerekli araçlar" variant="caption">
     <ul>
       <li><strong>Claude Code</strong> — <code>npm install -g @anthropic-ai/claude-code</code></li>
       <li><strong>Node.js</strong> v18+ — skill installer ve örnek proje için</li>
       <li><strong>Git + GitHub</strong> — skill'ler GitHub Issues ile entegre çalışır</li>
       <li><strong>GitHub CLI (<code>gh</code>)</strong> — issue tracker'a yazması için gerekli</li>
     </ul>
-  </GridCard>
-  <GridCard icon={IconTerminal} iconColor="var(--blue-text)" title="gh CLI kurulum">
+  </InfoCard>
+  <InfoCard icon={IconTerminal} iconColor="var(--blue-text)" title="gh CLI kurulum" variant="caption">
     <CodeBlock lang="bash" copyLabel="Kopyala" copiedLabel="Kopyalandı">
 {`# macOS
 brew install gh
@@ -91,8 +89,8 @@ sudo apt install gh
 # Authenticate
 gh auth login`}
     </CodeBlock>
-  </GridCard>
-</TwoColGrid>
+  </InfoCard>
+</CardGrid>
 
 ### Skill'leri Yükleme
 
@@ -118,24 +116,24 @@ claude
 
 Örnek projemiz basit bir URL kısaltma servisi. Yeterince küçük (bir yazıda tamamlanabilir) ama yeterince derin (database, API, redirect mantığı, analytics) — skill'lerin her birini göstermek için ideal senaryo.
 
-<TwoColGrid>
-  <GridCard icon={IconLink} iconColor="var(--accent-text)" title="Özellikler">
+<CardGrid columns="two" spacing="cozy">
+  <InfoCard icon={IconLink} iconColor="var(--accent-text)" title="Özellikler" variant="caption">
     <ul>
       <li>Kullanıcı uzun URL verir, sistem kısa link döndürür</li>
       <li>Kısa link ziyaretinde orijinal URL'ye yönlendirme</li>
       <li>Her yönlendirme kayıt altına alınır (tıklama, tarih)</li>
       <li>Basit dashboard tıklama istatistiklerini gösterir</li>
     </ul>
-  </GridCard>
-  <GridCard icon={IconTerminal2} iconColor="var(--green-text)" title="Repo oluşturma">
+  </InfoCard>
+  <InfoCard icon={IconTerminal2} iconColor="var(--green-text)" title="Repo oluşturma" variant="caption">
     <CodeBlock lang="bash" copyLabel="Kopyala" copiedLabel="Kopyalandı">
 {`mkdir url-shortener && cd url-shortener
 git init
 gh repo create url-shortener \\
   --public --source=. --push`}
     </CodeBlock>
-  </GridCard>
-</TwoColGrid>
+  </InfoCard>
+</CardGrid>
 
 </Section>
 
@@ -284,17 +282,17 @@ docs/adr/:
 
 ### Bu Adımın Değeri
 
-<ValueRow>
-  <ValueCard icon={IconHeartHandshake} iconColor="var(--accent-text)" title="Shared Understanding">
+<CardGrid columns="three">
+  <InfoCard icon={IconHeartHandshake} iconColor="var(--accent-text)" title="Shared Understanding" variant="stat">
     Siz ve agent aynı şeyi aynı kelimelerle anlıyorsunuz
-  </ValueCard>
-  <ValueCard icon={IconBook} iconColor="var(--green-text)" title="CONTEXT.md">
+  </InfoCard>
+  <InfoCard icon={IconBook} iconColor="var(--green-text)" title="CONTEXT.md" variant="stat">
     Değişken ve fonksiyon adları domain dilini izleyecek
-  </ValueCard>
-  <ValueCard icon={IconGitBranch} iconColor="var(--blue-text)" title="ADR'lar">
+  </InfoCard>
+  <InfoCard icon={IconGitBranch} iconColor="var(--blue-text)" title="ADR'lar" variant="stat">
     Kararlar belgelenmiş; yeni session'da aynı sorular sorulmaz
-  </ValueCard>
-</ValueRow>
+  </InfoCard>
+</CardGrid>
 
 </Phase>
 
@@ -582,8 +580,8 @@ Uygulamak istediğiniz önerileri seçin.`}
 
 <Section id="s11" num="11" title="İhtiyaç Halinde: Yardımcı Skill'ler">
 
-<SectionSkillGrid>
-  <SectionSkillCard icon={IconBug} name={<><Cmd>/diagnose</Cmd> — Yapılandırılmış Debugging</>} when="Zor bug'larda — agent'ın veya sizin çözemediğiniz durumlarda">
+<CardGrid columns="one">
+  <InfoCard icon={IconBug} title={<><Cmd>/diagnose</Cmd> — Yapılandırılmış Debugging</>} meta="Zor bug'larda — agent'ın veya sizin çözemediğiniz durumlarda" variant="boxed">
     <p><strong>Loop sırası:</strong> feedback loop kur → reproduce et → minimize et → hipotez kur → instrument et → fix et → regression test yaz. En kritik adım ilkidir: agent deterministic, hızlı ve otomatik çalıştırılabilir bir feedback loop kurmadan ilerlemez.</p>
     <ExpandableExample label={<><IconTerminal size={16} /> Örnek çıktı</>}>
       <Terminal label="claude — /diagnose">
@@ -597,9 +595,9 @@ Bug'ı güvenilir şekilde reproduce edecek bir test yazıyorum...
 → fix → regression test eklendi]`}
       </Terminal>
     </ExpandableExample>
-  </SectionSkillCard>
+  </InfoCard>
 
-  <SectionSkillCard icon={IconZoomOut} name={<><Cmd>/zoom-out</Cmd> — Üst Düzey Bakış</>} when="Tanımadığınız bir kod alanına girdiğinizde">
+  <InfoCard icon={IconZoomOut} title={<><Cmd>/zoom-out</Cmd> — Üst Düzey Bakış</>} meta="Tanımadığınız bir kod alanına girdiğinizde" variant="boxed">
     <p>Agent'a belirli bir dizin veya modül hakkında <strong>CONTEXT.md'deki domain diliyle</strong> üst düzey bakış kazandırır: hangi modüller bağımlı, kim çağırıyor, hangi seam'ler var.</p>
     <Terminal label="claude — /zoom-out">
 {`> /zoom-out src/analytics/
@@ -614,9 +612,9 @@ servis katmanıdır.
 
 Caller'lar: GET /links/:slug/stats endpoint'i`}
     </Terminal>
-  </SectionSkillCard>
+  </InfoCard>
 
-  <SectionSkillCard icon={IconFlask} name={<><Cmd>/prototype</Cmd> — Tasarım Kararı Doğrulama</>} when={<>Mimari konusunda kararsızlık varsa — &quot;bu strateji doğru mu?&quot; gibi soruları somutlaştırmak için</>}>
+  <InfoCard icon={IconFlask} title={<><Cmd>/prototype</Cmd> — Tasarım Kararı Doğrulama</>} meta={<>Mimari konusunda kararsızlık varsa — &quot;bu strateji doğru mu?&quot; gibi soruları somutlaştırmak için</>} variant="boxed">
     <p>Throwaway prototype (terminal script, minimal UI veya log analizi) ile tasarım kararını veri ile doğrular. Sonucu ADR olarak belgeleyebilir.</p>
     <Terminal label="claude — /prototype">
 {`> /prototype Slug collision handling stratejisini test
@@ -633,8 +631,8 @@ fallback gereksiz karmaşıklık.
 
 Bu sonucu ADR olarak belgeleyelim mi?`}
     </Terminal>
-  </SectionSkillCard>
-</SectionSkillGrid>
+  </InfoCard>
+</CardGrid>
 
 </Section>
 

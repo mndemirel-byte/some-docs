@@ -24,14 +24,15 @@ import { Hero, Accent } from "@/components/doc/hero";
 import { Toc } from "@/components/doc/toc";
 import { Section } from "@/components/doc/section";
 import { FileTree, Dir, File, Special } from "@/components/doc/file-tree";
-import { ResponsiveCardGrid, ResponsiveCard } from "@/components/doc/responsive-card-grid";
+import { CardGrid, InfoCard } from "@/components/doc/info-card";
 import { OsTabs } from "@/components/doc/os-tabs";
 import { CodeBlock } from "@/components/doc/code-block";
-import { CollapsibleCard } from "@/components/doc/collapsible-card";
+import { Disclosure } from "@/components/doc/disclosure";
+import { CollapsibleTrigger } from "@/components/doc/collapsible-trigger";
+import collapsibleStyles from "@/components/doc/collapsible-trigger.module.css";
 import { SkillTable } from "@/components/doc/skill-table";
 import { WorkflowStep } from "@/components/doc/workflow-step";
 import { Callout } from "@/components/doc/callout";
-import { PrinciplesGrid, PrincipleCard } from "@/components/doc/principles-grid";
 import { AntiPatternRow } from "@/components/doc/anti-pattern-row";
 import { Pipeline } from "@/components/doc/pipeline";
 
@@ -103,35 +104,35 @@ The following structure is created in every new project:
 
 <Section id="s2" num="02" title="Folders' Responsibilities">
 
-<ResponsiveCardGrid>
-  <ResponsiveCard icon={IconFileDescription} name="CLAUDE.md">
+<CardGrid>
+  <InfoCard icon={IconFileDescription} title="CLAUDE.md">
     The main agent manifest. Project purpose, architecture rules, test commands, skill and agent workflow, agent boundaries. Long procedures go in <code>skills/*/SKILL.md</code>.
-  </ResponsiveCard>
-  <ResponsiveCard icon={IconTools} name=".claude/skills/">
+  </InfoCard>
+  <InfoCard icon={IconTools} title=".claude/skills/">
     Reusable working disciplines. A skill is not a "role" — it is the <strong>procedure</strong> the agent applies.
-  </ResponsiveCard>
-  <ResponsiveCard icon={IconRobot} name=".claude/agents/">
+  </InfoCard>
+  <InfoCard icon={IconRobot} title=".claude/agents/">
     Specialist agent roles. Each agent owns a specific job and may use multiple skills.
-  </ResponsiveCard>
-  <ResponsiveCard icon={IconNotebook} name="docs/CONTEXT.md">
+  </InfoCard>
+  <InfoCard icon={IconNotebook} title="docs/CONTEXT.md">
     The living context file. Domain language, key concepts, system boundaries, module responsibilities, and architectural assumptions.
-  </ResponsiveCard>
-  <ResponsiveCard icon={IconLayoutList} name="docs/prd/">
+  </InfoCard>
+  <InfoCard icon={IconLayoutList} title="docs/prd/">
     Product requirements documents. E.g.: <code>001-initial-product-requirements.md</code>
-  </ResponsiveCard>
-  <ResponsiveCard icon={IconChecklist} name="docs/issues/">
+  </InfoCard>
+  <InfoCard icon={IconChecklist} title="docs/issues/">
     Work items handed to agents. Every issue must be a <strong>vertical slice</strong> — never a horizontal layer task.
-  </ResponsiveCard>
-  <ResponsiveCard icon={IconGitBranch} name="docs/adr/">
+  </InfoCard>
+  <InfoCard icon={IconGitBranch} title="docs/adr/">
     Architecture Decision Records. E.g.: <code>0001-use-config-file-for-pricing.md</code>
-  </ResponsiveCard>
-  <ResponsiveCard icon={IconSitemap} name="docs/architecture/">
+  </InfoCard>
+  <InfoCard icon={IconSitemap} title="docs/architecture/">
     System architecture, module map, data flow, sequence diagrams, and high-level design documents.
-  </ResponsiveCard>
-  <ResponsiveCard icon={IconNotes} name="docs/decisions/">
+  </InfoCard>
+  <InfoCard icon={IconNotes} title="docs/decisions/">
     Smaller product, technical, or process decisions that don't warrant a full ADR but still need tracking.
-  </ResponsiveCard>
-</ResponsiveCardGrid>
+  </InfoCard>
+</CardGrid>
 
 </Section>
 
@@ -227,11 +228,20 @@ touch .claude/agents/documentation-agent.md`}
 
 Put the following content in a <code>CLAUDE.md</code> file at your project root.
 
-<CollapsibleCard
-  badge={<><IconFileDescription size={12} /> CLAUDE.md</>}
-  badgeKind="docs"
-  name="Project Instructions for Claude Code"
-  description="Expand to see the full template"
+<Disclosure
+  trigger={
+    <CollapsibleTrigger
+      badge={<><IconFileDescription size={12} /> CLAUDE.md</>}
+      badgeKind="docs"
+      name="Project Instructions for Claude Code"
+      description="Expand to see the full template"
+    />
+  }
+  className={collapsibleStyles.card}
+  triggerClassName={collapsibleStyles.header}
+  contentClassName={collapsibleStyles.body}
+  iconClassName={collapsibleStyles.toggleIcon}
+  iconOpenClassName={collapsibleStyles.toggleIconOpen}
 >
 
 <CodeBlock lang="markdown">
@@ -321,7 +331,7 @@ pytest
 - If a task is too broad, create or update an issue instead of coding immediately.`}
 </CodeBlock>
 
-</CollapsibleCard>
+</Disclosure>
 
 </Section>
 
@@ -349,7 +359,21 @@ The core skill set chosen for this setup. Skill = a working discipline / procedu
 
 The following files live under <code>.claude/skills/&lt;skill-name&gt;/SKILL.md</code>. Expand for details.
 
-<CollapsibleCard badge="skill" badgeKind="skill" name="grill-with-docs" description="Clarify ambiguous requirements, establish domain language">
+<Disclosure
+  trigger={
+    <CollapsibleTrigger
+      badge="skill"
+      badgeKind="skill"
+      name="grill-with-docs"
+      description="Clarify ambiguous requirements, establish domain language"
+    />
+  }
+  className={collapsibleStyles.card}
+  triggerClassName={collapsibleStyles.header}
+  contentClassName={collapsibleStyles.body}
+  iconClassName={collapsibleStyles.toggleIcon}
+  iconOpenClassName={collapsibleStyles.toggleIconOpen}
+>
 
 <p><strong>Purpose:</strong> Clarify project intent before producing a PRD.</p>
 <p><strong>When to use it:</strong></p>
@@ -370,9 +394,23 @@ The following files live under <code>.claude/skills/&lt;skill-name&gt;/SKILL.md<
 </ol>
 <p><strong>Rules:</strong> Don't implement code. Don't create issues (unless requested). Prefer concise context over long writing. Separate facts, assumptions, and open questions.</p>
 
-</CollapsibleCard>
+</Disclosure>
 
-<CollapsibleCard badge="skill" badgeKind="skill" name="to-prd" description="Convert a feature idea into a PRD">
+<Disclosure
+  trigger={
+    <CollapsibleTrigger
+      badge="skill"
+      badgeKind="skill"
+      name="to-prd"
+      description="Convert a feature idea into a PRD"
+    />
+  }
+  className={collapsibleStyles.card}
+  triggerClassName={collapsibleStyles.header}
+  contentClassName={collapsibleStyles.body}
+  iconClassName={collapsibleStyles.toggleIcon}
+  iconOpenClassName={collapsibleStyles.toggleIconOpen}
+>
 
 <p><strong>Purpose:</strong> Produce a PRD from the existing project context.</p>
 <p><strong>Inputs:</strong> <code>docs/CONTEXT.md</code>, <code>docs/decisions/</code>, <code>docs/adr/</code>, <code>README.md</code>, the user's request in the current conversation</p>
@@ -387,18 +425,46 @@ The following files live under <code>.claude/skills/&lt;skill-name&gt;/SKILL.md<
 </ul>
 <p><strong>Rules:</strong> Don't implement code. Don't produce a file-by-file implementation plan. Keep technical detail at the module-boundary level. If context is insufficient, run <code>grill-with-docs</code>.</p>
 
-</CollapsibleCard>
+</Disclosure>
 
-<CollapsibleCard badge="skill" badgeKind="skill" name="to-issues" description="Split the PRD into vertical slice issues">
+<Disclosure
+  trigger={
+    <CollapsibleTrigger
+      badge="skill"
+      badgeKind="skill"
+      name="to-issues"
+      description="Split the PRD into vertical slice issues"
+    />
+  }
+  className={collapsibleStyles.card}
+  triggerClassName={collapsibleStyles.header}
+  contentClassName={collapsibleStyles.body}
+  iconClassName={collapsibleStyles.toggleIcon}
+  iconOpenClassName={collapsibleStyles.toggleIconOpen}
+>
 
 <p><strong>Inputs:</strong> <code>docs/prd/</code>, <code>docs/CONTEXT.md</code>, relevant ADRs</p>
 <p><strong>Output:</strong> <code>docs/issues/NNN-short-title.md</code></p>
 <p><strong>Issue structure:</strong> Title, User story, Background, Acceptance criteria, Test expectations, Dependencies, Suggested agent, Required skills, Out of scope, Done checklist</p>
 <Callout icon={IconAlertCircle}>Issues must be vertical slices. NOT "Create database layer" or "Write pricing.py" — prefer behavior-focused issues like "User can load model pricing from config and get a cost estimate".</Callout>
 
-</CollapsibleCard>
+</Disclosure>
 
-<CollapsibleCard badge="skill" badgeKind="skill" name="tdd" description="Implementation via the red-green-refactor loop">
+<Disclosure
+  trigger={
+    <CollapsibleTrigger
+      badge="skill"
+      badgeKind="skill"
+      name="tdd"
+      description="Implementation via the red-green-refactor loop"
+    />
+  }
+  className={collapsibleStyles.card}
+  triggerClassName={collapsibleStyles.header}
+  contentClassName={collapsibleStyles.body}
+  iconClassName={collapsibleStyles.toggleIcon}
+  iconOpenClassName={collapsibleStyles.toggleIconOpen}
+>
 
 <p><strong>Purpose:</strong> Drive implementation through the red-green-refactor loop.</p>
 <p><strong>Steps:</strong></p>
@@ -417,9 +483,23 @@ The following files live under <code>.claude/skills/&lt;skill-name&gt;/SKILL.md<
 <p><strong>Test rules:</strong> Prefer behavior tests. Don't test private implementation details. Don't write brittle tests. Don't assert on volatile values. Use fixtures. Keep tests readable.</p>
 <p><strong>Implementation rules:</strong> Don't write large amounts of production code before tests. Don't add unrelated features. Don't do unrelated refactors. Stay focused on the active issue.</p>
 
-</CollapsibleCard>
+</Disclosure>
 
-<CollapsibleCard badge="skill" badgeKind="skill" name="codebase-design" description="Preserve module boundaries and clean design">
+<Disclosure
+  trigger={
+    <CollapsibleTrigger
+      badge="skill"
+      badgeKind="skill"
+      name="codebase-design"
+      description="Preserve module boundaries and clean design"
+    />
+  }
+  className={collapsibleStyles.card}
+  triggerClassName={collapsibleStyles.header}
+  contentClassName={collapsibleStyles.body}
+  iconClassName={collapsibleStyles.toggleIcon}
+  iconOpenClassName={collapsibleStyles.toggleIconOpen}
+>
 
 <p><strong>Design principles:</strong></p>
 <ul>
@@ -433,9 +513,23 @@ The following files live under <code>.claude/skills/&lt;skill-name&gt;/SKILL.md<
 </ul>
 <p><strong>ADR triggers:</strong> Framework choice, persistence strategy, module boundary definition/change, public interface stabilization, tradeoffs future agents need to understand.</p>
 
-</CollapsibleCard>
+</Disclosure>
 
-<CollapsibleCard badge="skill" badgeKind="skill" name="diagnosing-bugs" description="Diagnose bugs systematically">
+<Disclosure
+  trigger={
+    <CollapsibleTrigger
+      badge="skill"
+      badgeKind="skill"
+      name="diagnosing-bugs"
+      description="Diagnose bugs systematically"
+    />
+  }
+  className={collapsibleStyles.card}
+  triggerClassName={collapsibleStyles.header}
+  contentClassName={collapsibleStyles.body}
+  iconClassName={collapsibleStyles.toggleIcon}
+  iconOpenClassName={collapsibleStyles.toggleIconOpen}
+>
 
 <p><strong>Bug diagnosis steps:</strong></p>
 <ol>
@@ -451,9 +545,23 @@ The following files live under <code>.claude/skills/&lt;skill-name&gt;/SKILL.md<
 </ol>
 <p><strong>Rules:</strong> Don't guess and rewrite large sections. Don't fix multiple unrelated bugs at once. Don't suppress an error without understanding it. Prefer adding a regression test before the fix. Record surprising root causes in <code>docs/decisions/</code>.</p>
 
-</CollapsibleCard>
+</Disclosure>
 
-<CollapsibleCard badge="skill" badgeKind="skill" name="improve-codebase-architecture" description="Architecture review before a milestone">
+<Disclosure
+  trigger={
+    <CollapsibleTrigger
+      badge="skill"
+      badgeKind="skill"
+      name="improve-codebase-architecture"
+      description="Architecture review before a milestone"
+    />
+  }
+  className={collapsibleStyles.card}
+  triggerClassName={collapsibleStyles.header}
+  contentClassName={collapsibleStyles.body}
+  iconClassName={collapsibleStyles.toggleIcon}
+  iconOpenClassName={collapsibleStyles.toggleIconOpen}
+>
 
 <p><strong>Review areas:</strong> Module boundaries, duplicate business logic, shallow modules, framework leakage into core logic, missing tests, confusing names, missing ADRs, inaccurate README, overengineering, under-documented decisions.</p>
 <p><strong>Output format:</strong></p>
@@ -466,7 +574,7 @@ The following files live under <code>.claude/skills/&lt;skill-name&gt;/SKILL.md<
 </ol>
 <p><strong>Rules:</strong> Don't do large rewrites without explicit approval. Don't change public behavior outside of bug fixes. Prefer small, reversible refactors. Preserve existing tests.</p>
 
-</CollapsibleCard>
+</Disclosure>
 
 </Section>
 
@@ -474,7 +582,21 @@ The following files live under <code>.claude/skills/&lt;skill-name&gt;/SKILL.md<
 
 The following files live under <code>.claude/agents/*.md</code>. Agent = a role / specialist worker.
 
-<CollapsibleCard badge="agent" badgeKind="agent" name="planner-agent" description="Requirement clarification, PRD and issues — doesn't write code">
+<Disclosure
+  trigger={
+    <CollapsibleTrigger
+      badge="agent"
+      badgeKind="agent"
+      name="planner-agent"
+      description="Requirement clarification, PRD and issues — doesn't write code"
+    />
+  }
+  className={collapsibleStyles.card}
+  triggerClassName={collapsibleStyles.header}
+  contentClassName={collapsibleStyles.body}
+  iconClassName={collapsibleStyles.toggleIcon}
+  iconOpenClassName={collapsibleStyles.toggleIconOpen}
+>
 
 <p><strong>Model:</strong> sonnet &nbsp;·&nbsp; <strong>Effort:</strong> high &nbsp;·&nbsp; <strong>Tools:</strong> Read, Write, Edit, Glob, Grep</p>
 <p><strong>Skills:</strong> grill-with-docs, to-prd, to-issues, codebase-design</p>
@@ -488,9 +610,23 @@ The following files live under <code>.claude/agents/*.md</code>. Agent = a role 
 </ul>
 <p><strong>Rules:</strong> Don't write production code unless requested. Don't create horizontal-layer issues. Prefer tracer-bullet issues. Every issue must include acceptance criteria and test expectations.</p>
 
-</CollapsibleCard>
+</Disclosure>
 
-<CollapsibleCard badge="agent" badgeKind="agent" name="implementation-agent" description="Implements a single scoped issue using TDD">
+<Disclosure
+  trigger={
+    <CollapsibleTrigger
+      badge="agent"
+      badgeKind="agent"
+      name="implementation-agent"
+      description="Implements a single scoped issue using TDD"
+    />
+  }
+  className={collapsibleStyles.card}
+  triggerClassName={collapsibleStyles.header}
+  contentClassName={collapsibleStyles.body}
+  iconClassName={collapsibleStyles.toggleIcon}
+  iconOpenClassName={collapsibleStyles.toggleIconOpen}
+>
 
 <p><strong>Model:</strong> sonnet &nbsp;·&nbsp; <strong>Effort:</strong> high &nbsp;·&nbsp; <strong>Tools:</strong> Read, Write, Edit, Bash, Glob, Grep</p>
 <p><strong>Skills:</strong> tdd, codebase-design</p>
@@ -504,18 +640,46 @@ The following files live under <code>.claude/agents/*.md</code>. Agent = a role 
 </ul>
 <p><strong>Rules:</strong> Don't start unrelated refactors. Don't duplicate business logic. Don't mix unrelated issues. Don't add a dependency without explaining why. Run the full test suite before finishing.</p>
 
-</CollapsibleCard>
+</Disclosure>
 
-<CollapsibleCard badge="agent" badgeKind="agent" name="debugging-agent" description="Diagnoses test failures and unexpected behavior">
+<Disclosure
+  trigger={
+    <CollapsibleTrigger
+      badge="agent"
+      badgeKind="agent"
+      name="debugging-agent"
+      description="Diagnoses test failures and unexpected behavior"
+    />
+  }
+  className={collapsibleStyles.card}
+  triggerClassName={collapsibleStyles.header}
+  contentClassName={collapsibleStyles.body}
+  iconClassName={collapsibleStyles.toggleIcon}
+  iconOpenClassName={collapsibleStyles.toggleIconOpen}
+>
 
 <p><strong>Model:</strong> sonnet &nbsp;·&nbsp; <strong>Effort:</strong> high &nbsp;·&nbsp; <strong>Tools:</strong> Read, Write, Edit, Bash, Glob, Grep</p>
 <p><strong>Skills:</strong> diagnosing-bugs, tdd, codebase-design</p>
 <p><strong>Responsibilities:</strong> Reproduce the bug → Find the smallest failing test → Diagnose before changing code → Add a regression test where appropriate → Apply the smallest safe fix → Run nearby + full tests</p>
 <p><strong>Rules:</strong> Don't rewrite large sections. Don't suppress errors without understanding the code. Don't fix unrelated issues. Record surprising findings in issue notes or <code>docs/decisions/</code>.</p>
 
-</CollapsibleCard>
+</Disclosure>
 
-<CollapsibleCard badge="agent" badgeKind="agent" name="architecture-review-agent" description="Final architecture review before a milestone">
+<Disclosure
+  trigger={
+    <CollapsibleTrigger
+      badge="agent"
+      badgeKind="agent"
+      name="architecture-review-agent"
+      description="Final architecture review before a milestone"
+    />
+  }
+  className={collapsibleStyles.card}
+  triggerClassName={collapsibleStyles.header}
+  contentClassName={collapsibleStyles.body}
+  iconClassName={collapsibleStyles.toggleIcon}
+  iconOpenClassName={collapsibleStyles.toggleIconOpen}
+>
 
 <p><strong>Model:</strong> sonnet &nbsp;·&nbsp; <strong>Effort:</strong> high &nbsp;·&nbsp; <strong>Tools:</strong> Read, Write, Edit, Bash, Glob, Grep</p>
 <p><strong>Skills:</strong> improve-codebase-architecture, codebase-design</p>
@@ -527,9 +691,23 @@ The following files live under <code>.claude/agents/*.md</code>. Agent = a role 
 </ul>
 <p><strong>Rules:</strong> Don't do large rewrites without approval. Don't change public behavior outside of bug fixes. Group findings by severity. Run tests after changes.</p>
 
-</CollapsibleCard>
+</Disclosure>
 
-<CollapsibleCard badge="agent" badgeKind="agent" name="documentation-agent" description="Updates README, ADRs, and project documentation">
+<Disclosure
+  trigger={
+    <CollapsibleTrigger
+      badge="agent"
+      badgeKind="agent"
+      name="documentation-agent"
+      description="Updates README, ADRs, and project documentation"
+    />
+  }
+  className={collapsibleStyles.card}
+  triggerClassName={collapsibleStyles.header}
+  contentClassName={collapsibleStyles.body}
+  iconClassName={collapsibleStyles.toggleIcon}
+  iconOpenClassName={collapsibleStyles.toggleIconOpen}
+>
 
 <p><strong>Model:</strong> sonnet &nbsp;·&nbsp; <strong>Effort:</strong> medium &nbsp;·&nbsp; <strong>Tools:</strong> Read, Write, Edit, Glob, Grep</p>
 <p><strong>Skills:</strong> codebase-design</p>
@@ -543,20 +721,48 @@ The following files live under <code>.claude/agents/*.md</code>. Agent = a role 
 </ul>
 <p><strong>Rules:</strong> Don't invent behavior that doesn't exist. Verify commands against the codebase where possible. Prefer concise documentation. Link related PRDs, ADRs, and issues.</p>
 
-</CollapsibleCard>
+</Disclosure>
 
 </Section>
 
 <Section id="s8" num="08" title="Docs README Templates">
 
-<CollapsibleCard badge="docs" badgeKind="docs" name="docs/prd/README.md" description="PRD folder guide">
+<Disclosure
+  trigger={
+    <CollapsibleTrigger
+      badge="docs"
+      badgeKind="docs"
+      name="docs/prd/README.md"
+      description="PRD folder guide"
+    />
+  }
+  className={collapsibleStyles.card}
+  triggerClassName={collapsibleStyles.header}
+  contentClassName={collapsibleStyles.body}
+  iconClassName={collapsibleStyles.toggleIcon}
+  iconOpenClassName={collapsibleStyles.toggleIconOpen}
+>
 
 <p>Naming: <code>NNN-short-feature-name.md</code> — e.g. <code>001-token-cost-calculator.md</code></p>
 <p>Every PRD must include: goals, non-goals, user stories, requirements, acceptance criteria, and open questions.</p>
 
-</CollapsibleCard>
+</Disclosure>
 
-<CollapsibleCard badge="docs" badgeKind="docs" name="docs/issues/README.md" description="Issue folder guide">
+<Disclosure
+  trigger={
+    <CollapsibleTrigger
+      badge="docs"
+      badgeKind="docs"
+      name="docs/issues/README.md"
+      description="Issue folder guide"
+    />
+  }
+  className={collapsibleStyles.card}
+  triggerClassName={collapsibleStyles.header}
+  contentClassName={collapsibleStyles.body}
+  iconClassName={collapsibleStyles.toggleIcon}
+  iconOpenClassName={collapsibleStyles.toggleIconOpen}
+>
 
 <p>Every issue must be a vertical slice. Behavior-focused examples:</p>
 <ul>
@@ -566,22 +772,64 @@ The following files live under <code>.claude/agents/*.md</code>. Agent = a role 
 </ul>
 <p>Every issue must include: Title, User story, Acceptance criteria, Test expectations, Dependencies, Suggested agent, Required skills, Done checklist.</p>
 
-</CollapsibleCard>
+</Disclosure>
 
-<CollapsibleCard badge="docs" badgeKind="docs" name="docs/adr/README.md" description="Architecture Decision Records guide">
+<Disclosure
+  trigger={
+    <CollapsibleTrigger
+      badge="docs"
+      badgeKind="docs"
+      name="docs/adr/README.md"
+      description="Architecture Decision Records guide"
+    />
+  }
+  className={collapsibleStyles.card}
+  triggerClassName={collapsibleStyles.header}
+  contentClassName={collapsibleStyles.body}
+  iconClassName={collapsibleStyles.toggleIcon}
+  iconOpenClassName={collapsibleStyles.toggleIconOpen}
+>
 
 <p><strong>When to create an ADR:</strong> Framework choice, persistence strategy choice, module boundary definition, public interface stabilization, tradeoffs future agents need to understand.</p>
 <p>Naming: <code>NNNN-short-title.md</code> — e.g. <code>0001-use-fastapi-for-api-layer.md</code></p>
 
-</CollapsibleCard>
+</Disclosure>
 
-<CollapsibleCard badge="docs" badgeKind="docs" name="docs/architecture/README.md" description="High-level architecture notes">
+<Disclosure
+  trigger={
+    <CollapsibleTrigger
+      badge="docs"
+      badgeKind="docs"
+      name="docs/architecture/README.md"
+      description="High-level architecture notes"
+    />
+  }
+  className={collapsibleStyles.card}
+  triggerClassName={collapsibleStyles.header}
+  contentClassName={collapsibleStyles.body}
+  iconClassName={collapsibleStyles.toggleIcon}
+  iconOpenClassName={collapsibleStyles.toggleIconOpen}
+>
 
 <p>This folder contains: module map, data flow, sequence diagrams, integration boundaries, deployment notes.</p>
 
-</CollapsibleCard>
+</Disclosure>
 
-<CollapsibleCard badge="docs" badgeKind="docs" name="docs/decisions/README.md" description="Lightweight decision notes">
+<Disclosure
+  trigger={
+    <CollapsibleTrigger
+      badge="docs"
+      badgeKind="docs"
+      name="docs/decisions/README.md"
+      description="Lightweight decision notes"
+    />
+  }
+  className={collapsibleStyles.card}
+  triggerClassName={collapsibleStyles.header}
+  contentClassName={collapsibleStyles.body}
+  iconClassName={collapsibleStyles.toggleIcon}
+  iconOpenClassName={collapsibleStyles.toggleIconOpen}
+>
 
 <p>For decisions that don't warrant a full ADR. Use cases:</p>
 <ul>
@@ -591,7 +839,7 @@ The following files live under <code>.claude/agents/*.md</code>. Agent = a role 
   <li>Known tradeoffs</li>
 </ul>
 
-</CollapsibleCard>
+</Disclosure>
 
 </Section>
 
@@ -645,20 +893,20 @@ Apply only low-risk fixes.`}
 
 <Section id="s10" num="10" title="Usage Principles">
 
-<PrinciplesGrid>
-  <PrincipleCard icon={IconTools} title="What is a skill?">
+<CardGrid columns="two">
+  <InfoCard icon={IconTools} title="What is a skill?" variant="inline">
     A working discipline or procedure. <code>tdd</code> is a skill. <code>codebase-design</code> is a skill.
-  </PrincipleCard>
-  <PrincipleCard icon={IconRobot} title="What is an agent?">
+  </InfoCard>
+  <InfoCard icon={IconRobot} title="What is an agent?" variant="inline">
     A role or specialist worker. <code>implementation-agent</code> is an agent. It uses the <code>tdd</code> and <code>codebase-design</code> skills.
-  </PrincipleCard>
-  <PrincipleCard icon={IconFolderCog} title="Project-level setup">
+  </InfoCard>
+  <InfoCard icon={IconFolderCog} title="Project-level setup" variant="inline">
     Each repo keeps <code>.claude/skills/</code>, <code>.claude/agents/</code>, <code>CLAUDE.md</code>, and <code>docs/</code>. The project carries its own agentic workflow.
-  </PrincipleCard>
-  <PrincipleCard icon={IconHome} title="Personal-level setup">
+  </InfoCard>
+  <InfoCard icon={IconHome} title="Personal-level setup" variant="inline">
     Use <code>~/.claude/skills/</code> and <code>~/.claude/agents/</code> to share the same definitions globally across all projects. For team projects, however, project-level is safer.
-  </PrincipleCard>
-</PrinciplesGrid>
+  </InfoCard>
+</CardGrid>
 
 </Section>
 

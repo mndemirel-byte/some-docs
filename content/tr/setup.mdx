@@ -24,14 +24,15 @@ import { Hero, Accent } from "@/components/doc/hero";
 import { Toc } from "@/components/doc/toc";
 import { Section } from "@/components/doc/section";
 import { FileTree, Dir, File, Special } from "@/components/doc/file-tree";
-import { ResponsiveCardGrid, ResponsiveCard } from "@/components/doc/responsive-card-grid";
+import { CardGrid, InfoCard } from "@/components/doc/info-card";
 import { OsTabs } from "@/components/doc/os-tabs";
 import { CodeBlock } from "@/components/doc/code-block";
-import { CollapsibleCard } from "@/components/doc/collapsible-card";
+import { Disclosure } from "@/components/doc/disclosure";
+import { CollapsibleTrigger } from "@/components/doc/collapsible-trigger";
+import collapsibleStyles from "@/components/doc/collapsible-trigger.module.css";
 import { SkillTable } from "@/components/doc/skill-table";
 import { WorkflowStep } from "@/components/doc/workflow-step";
 import { Callout } from "@/components/doc/callout";
-import { PrinciplesGrid, PrincipleCard } from "@/components/doc/principles-grid";
 import { AntiPatternRow } from "@/components/doc/anti-pattern-row";
 import { Pipeline } from "@/components/doc/pipeline";
 
@@ -103,35 +104,35 @@ Her yeni projede aşağıdaki yapı oluşturulur:
 
 <Section id="s2" num="02" title="Klasörlerin Sorumlulukları">
 
-<ResponsiveCardGrid>
-  <ResponsiveCard icon={IconFileDescription} name="CLAUDE.md">
+<CardGrid>
+  <InfoCard icon={IconFileDescription} title="CLAUDE.md">
     Ana agent manifest. Proje amacı, mimari kurallar, test komutları, skill ve agent workflow'u, agent sınırları. Uzun prosedürler <code>skills/*/SKILL.md</code>'ye gider.
-  </ResponsiveCard>
-  <ResponsiveCard icon={IconTools} name=".claude/skills/">
+  </InfoCard>
+  <InfoCard icon={IconTools} title=".claude/skills/">
     Tekrar kullanılabilir çalışma disiplinleri. Skill bir "rol" değil, agent'ın uygulayacağı <strong>prosedür</strong>dür.
-  </ResponsiveCard>
-  <ResponsiveCard icon={IconRobot} name=".claude/agents/">
+  </InfoCard>
+  <InfoCard icon={IconRobot} title=".claude/agents/">
     Uzman agent rolleri. Her agent belirli bir işi üstlenir ve birden fazla skill kullanabilir.
-  </ResponsiveCard>
-  <ResponsiveCard icon={IconNotebook} name="docs/CONTEXT.md">
+  </InfoCard>
+  <InfoCard icon={IconNotebook} title="docs/CONTEXT.md">
     Yaşayan bağlam dosyası. Domain dili, önemli kavramlar, sistem sınırları, modül sorumlulukları ve mimari kabuller.
-  </ResponsiveCard>
-  <ResponsiveCard icon={IconLayoutList} name="docs/prd/">
+  </InfoCard>
+  <InfoCard icon={IconLayoutList} title="docs/prd/">
     Ürün gereksinim dokümanları. Ör: <code>001-initial-product-requirements.md</code>
-  </ResponsiveCard>
-  <ResponsiveCard icon={IconChecklist} name="docs/issues/">
+  </InfoCard>
+  <InfoCard icon={IconChecklist} title="docs/issues/">
     Agent'lara verilecek iş parçaları. Her issue <strong>vertical slice</strong> olmalı — yatay katman görevi olmamalı.
-  </ResponsiveCard>
-  <ResponsiveCard icon={IconGitBranch} name="docs/adr/">
+  </InfoCard>
+  <InfoCard icon={IconGitBranch} title="docs/adr/">
     Architecture Decision Records. Ör: <code>0001-use-config-file-for-pricing.md</code>
-  </ResponsiveCard>
-  <ResponsiveCard icon={IconSitemap} name="docs/architecture/">
+  </InfoCard>
+  <InfoCard icon={IconSitemap} title="docs/architecture/">
     Sistem mimarisi, modül haritası, veri akışı, sequence diagram ve high-level design dokümanları.
-  </ResponsiveCard>
-  <ResponsiveCard icon={IconNotes} name="docs/decisions/">
+  </InfoCard>
+  <InfoCard icon={IconNotes} title="docs/decisions/">
     ADR seviyesinde olmayan ama takip edilmesi gereken küçük ürün, teknik veya süreç kararları.
-  </ResponsiveCard>
-</ResponsiveCardGrid>
+  </InfoCard>
+</CardGrid>
 
 </Section>
 
@@ -227,11 +228,20 @@ touch .claude/agents/documentation-agent.md`}
 
 Aşağıdaki içeriği proje kökündeki <code>CLAUDE.md</code> dosyasına koy.
 
-<CollapsibleCard
-  badge={<><IconFileDescription size={12} /> CLAUDE.md</>}
-  badgeKind="docs"
-  name="Project Instructions for Claude Code"
-  description="Tam şablonu görmek için genişlet"
+<Disclosure
+  trigger={
+    <CollapsibleTrigger
+      badge={<><IconFileDescription size={12} /> CLAUDE.md</>}
+      badgeKind="docs"
+      name="Project Instructions for Claude Code"
+      description="Tam şablonu görmek için genişlet"
+    />
+  }
+  className={collapsibleStyles.card}
+  triggerClassName={collapsibleStyles.header}
+  contentClassName={collapsibleStyles.body}
+  iconClassName={collapsibleStyles.toggleIcon}
+  iconOpenClassName={collapsibleStyles.toggleIconOpen}
 >
 
 <CodeBlock lang="markdown" copyLabel="Kopyala" copiedLabel="Kopyalandı">
@@ -321,7 +331,7 @@ pytest
 - If a task is too broad, create or update an issue instead of coding immediately.`}
 </CodeBlock>
 
-</CollapsibleCard>
+</Disclosure>
 
 </Section>
 
@@ -349,7 +359,21 @@ Bu setup içinde seçilen temel skill set. Skill = çalışma disiplini / prosed
 
 Aşağıdaki dosyalar <code>.claude/skills/&lt;skill-name&gt;/SKILL.md</code> altında tutulur. Detaylar için genişlet.
 
-<CollapsibleCard badge="skill" badgeKind="skill" name="grill-with-docs" description="Belirsiz gereksinimi netleştir, domain dili oluştur">
+<Disclosure
+  trigger={
+    <CollapsibleTrigger
+      badge="skill"
+      badgeKind="skill"
+      name="grill-with-docs"
+      description="Belirsiz gereksinimi netleştir, domain dili oluştur"
+    />
+  }
+  className={collapsibleStyles.card}
+  triggerClassName={collapsibleStyles.header}
+  contentClassName={collapsibleStyles.body}
+  iconClassName={collapsibleStyles.toggleIcon}
+  iconOpenClassName={collapsibleStyles.toggleIconOpen}
+>
 
 <p><strong>Amaç:</strong> PRD oluşturmadan önce proje niyetini netleştirmek.</p>
 <p><strong>Ne zaman kullanılır:</strong></p>
@@ -370,9 +394,23 @@ Aşağıdaki dosyalar <code>.claude/skills/&lt;skill-name&gt;/SKILL.md</code> al
 </ol>
 <p><strong>Kurallar:</strong> Kod implemente etme. Issue oluşturma (talep edilmediğinde). Uzun yazılar yerine özlü bağlam tercih et. Gerçekleri, varsayımları ve açık soruları birbirinden ayır.</p>
 
-</CollapsibleCard>
+</Disclosure>
 
-<CollapsibleCard badge="skill" badgeKind="skill" name="to-prd" description="Feature fikrini PRD'ye çevir">
+<Disclosure
+  trigger={
+    <CollapsibleTrigger
+      badge="skill"
+      badgeKind="skill"
+      name="to-prd"
+      description="Feature fikrini PRD'ye çevir"
+    />
+  }
+  className={collapsibleStyles.card}
+  triggerClassName={collapsibleStyles.header}
+  contentClassName={collapsibleStyles.body}
+  iconClassName={collapsibleStyles.toggleIcon}
+  iconOpenClassName={collapsibleStyles.toggleIconOpen}
+>
 
 <p><strong>Amaç:</strong> Mevcut proje bağlamından PRD oluşturmak.</p>
 <p><strong>Girdiler:</strong> <code>docs/CONTEXT.md</code>, <code>docs/decisions/</code>, <code>docs/adr/</code>, <code>README.md</code>, mevcut konuşmadaki kullanıcı isteği</p>
@@ -387,18 +425,46 @@ Aşağıdaki dosyalar <code>.claude/skills/&lt;skill-name&gt;/SKILL.md</code> al
 </ul>
 <p><strong>Kurallar:</strong> Kod implemente etme. Dosya bazlı implementation planı yapma. Teknik detayı modül sınırı seviyesinde tut. Bağlam yetersizse <code>grill-with-docs</code> çalıştır.</p>
 
-</CollapsibleCard>
+</Disclosure>
 
-<CollapsibleCard badge="skill" badgeKind="skill" name="to-issues" description="PRD'yi vertical slice issue'lara böl">
+<Disclosure
+  trigger={
+    <CollapsibleTrigger
+      badge="skill"
+      badgeKind="skill"
+      name="to-issues"
+      description="PRD'yi vertical slice issue'lara böl"
+    />
+  }
+  className={collapsibleStyles.card}
+  triggerClassName={collapsibleStyles.header}
+  contentClassName={collapsibleStyles.body}
+  iconClassName={collapsibleStyles.toggleIcon}
+  iconOpenClassName={collapsibleStyles.toggleIconOpen}
+>
 
 <p><strong>Girdiler:</strong> <code>docs/prd/</code>, <code>docs/CONTEXT.md</code>, ilgili ADR'lar</p>
 <p><strong>Output:</strong> <code>docs/issues/NNN-short-title.md</code></p>
 <p><strong>Issue yapısı:</strong> Title, User story, Background, Acceptance criteria, Test expectations, Dependencies, Suggested agent, Required skills, Out of scope, Done checklist</p>
 <Callout icon={IconAlertCircle}>Issue'lar vertical slice olmalıdır. "Create database layer" veya "Write pricing.py" DEĞIL; "User can load model pricing from config and get a cost estimate" gibi davranış odaklı issue'lar tercih edilir.</Callout>
 
-</CollapsibleCard>
+</Disclosure>
 
-<CollapsibleCard badge="skill" badgeKind="skill" name="tdd" description="Red-green-refactor döngüsü ile implementation">
+<Disclosure
+  trigger={
+    <CollapsibleTrigger
+      badge="skill"
+      badgeKind="skill"
+      name="tdd"
+      description="Red-green-refactor döngüsü ile implementation"
+    />
+  }
+  className={collapsibleStyles.card}
+  triggerClassName={collapsibleStyles.header}
+  contentClassName={collapsibleStyles.body}
+  iconClassName={collapsibleStyles.toggleIcon}
+  iconOpenClassName={collapsibleStyles.toggleIconOpen}
+>
 
 <p><strong>Amaç:</strong> Implementation'ı red-green-refactor döngüsü ile yönlendirmek.</p>
 <p><strong>Adımlar:</strong></p>
@@ -417,9 +483,23 @@ Aşağıdaki dosyalar <code>.claude/skills/&lt;skill-name&gt;/SKILL.md</code> al
 <p><strong>Test kuralları:</strong> Davranış testleri tercih et. Private implementation detaylarını test etme. Brittle test yazma. Değişken değerlere assert etme. Fixture kullan. Testleri okunabilir tut.</p>
 <p><strong>Implementation kuralları:</strong> Testlerden önce büyük üretim kodu yazma. İlgisiz feature ekleme. İlgisiz refactor yapma. Aktif issue'ya odaklı kal.</p>
 
-</CollapsibleCard>
+</Disclosure>
 
-<CollapsibleCard badge="skill" badgeKind="skill" name="codebase-design" description="Modül sınırlarını ve temiz tasarımı koru">
+<Disclosure
+  trigger={
+    <CollapsibleTrigger
+      badge="skill"
+      badgeKind="skill"
+      name="codebase-design"
+      description="Modül sınırlarını ve temiz tasarımı koru"
+    />
+  }
+  className={collapsibleStyles.card}
+  triggerClassName={collapsibleStyles.header}
+  contentClassName={collapsibleStyles.body}
+  iconClassName={collapsibleStyles.toggleIcon}
+  iconOpenClassName={collapsibleStyles.toggleIconOpen}
+>
 
 <p><strong>Tasarım prensipleri:</strong></p>
 <ul>
@@ -433,9 +513,23 @@ Aşağıdaki dosyalar <code>.claude/skills/&lt;skill-name&gt;/SKILL.md</code> al
 </ul>
 <p><strong>ADR tetikleyicileri:</strong> Framework seçimi, persistence stratejisi, modül sınırı tanımı/değişimi, public interface stabilizasyonu, gelecek agent'ların anlaması gereken tradeoff.</p>
 
-</CollapsibleCard>
+</Disclosure>
 
-<CollapsibleCard badge="skill" badgeKind="skill" name="diagnosing-bugs" description="Hataları sistematik olarak teşhis et">
+<Disclosure
+  trigger={
+    <CollapsibleTrigger
+      badge="skill"
+      badgeKind="skill"
+      name="diagnosing-bugs"
+      description="Hataları sistematik olarak teşhis et"
+    />
+  }
+  className={collapsibleStyles.card}
+  triggerClassName={collapsibleStyles.header}
+  contentClassName={collapsibleStyles.body}
+  iconClassName={collapsibleStyles.toggleIcon}
+  iconOpenClassName={collapsibleStyles.toggleIconOpen}
+>
 
 <p><strong>Bug teşhis adımları:</strong></p>
 <ol>
@@ -451,9 +545,23 @@ Aşağıdaki dosyalar <code>.claude/skills/&lt;skill-name&gt;/SKILL.md</code> al
 </ol>
 <p><strong>Kurallar:</strong> Büyük bölümleri tahmin edip yeniden yazma. Birden fazla ilgisiz bug'ı aynı anda düzeltme. Hatayı anlamadan bastırma. Fix'ten önce regression test eklemeyi tercih et. Şaşırtıcı root cause'ları <code>docs/decisions/</code>'a kaydet.</p>
 
-</CollapsibleCard>
+</Disclosure>
 
-<CollapsibleCard badge="skill" badgeKind="skill" name="improve-codebase-architecture" description="Milestone öncesi mimari gözden geçirme">
+<Disclosure
+  trigger={
+    <CollapsibleTrigger
+      badge="skill"
+      badgeKind="skill"
+      name="improve-codebase-architecture"
+      description="Milestone öncesi mimari gözden geçirme"
+    />
+  }
+  className={collapsibleStyles.card}
+  triggerClassName={collapsibleStyles.header}
+  contentClassName={collapsibleStyles.body}
+  iconClassName={collapsibleStyles.toggleIcon}
+  iconOpenClassName={collapsibleStyles.toggleIconOpen}
+>
 
 <p><strong>Review alanları:</strong> Modül sınırları, duplicate business logic, shallow modules, framework leakage into core logic, missing tests, confusing names, missing ADRs, inaccurate README, overengineering, under-documented decisions.</p>
 <p><strong>Çıktı formatı:</strong></p>
@@ -466,7 +574,7 @@ Aşağıdaki dosyalar <code>.claude/skills/&lt;skill-name&gt;/SKILL.md</code> al
 </ol>
 <p><strong>Kurallar:</strong> Açık onay olmadan büyük yeniden yazma yapma. Bug düzeltmesi dışında public davranışı değiştirme. Küçük, geri alınabilir refactor'ları tercih et. Mevcut testleri koru.</p>
 
-</CollapsibleCard>
+</Disclosure>
 
 </Section>
 
@@ -474,7 +582,21 @@ Aşağıdaki dosyalar <code>.claude/skills/&lt;skill-name&gt;/SKILL.md</code> al
 
 Aşağıdaki dosyalar <code>.claude/agents/*.md</code> altında tutulur. Agent = rol / uzman worker.
 
-<CollapsibleCard badge="agent" badgeKind="agent" name="planner-agent" description="Gereksinim netleştirme, PRD ve issue — kod yazmaz">
+<Disclosure
+  trigger={
+    <CollapsibleTrigger
+      badge="agent"
+      badgeKind="agent"
+      name="planner-agent"
+      description="Gereksinim netleştirme, PRD ve issue — kod yazmaz"
+    />
+  }
+  className={collapsibleStyles.card}
+  triggerClassName={collapsibleStyles.header}
+  contentClassName={collapsibleStyles.body}
+  iconClassName={collapsibleStyles.toggleIcon}
+  iconOpenClassName={collapsibleStyles.toggleIconOpen}
+>
 
 <p><strong>Model:</strong> sonnet &nbsp;·&nbsp; <strong>Effort:</strong> high &nbsp;·&nbsp; <strong>Tools:</strong> Read, Write, Edit, Glob, Grep</p>
 <p><strong>Skills:</strong> grill-with-docs, to-prd, to-issues, codebase-design</p>
@@ -488,9 +610,23 @@ Aşağıdaki dosyalar <code>.claude/agents/*.md</code> altında tutulur. Agent =
 </ul>
 <p><strong>Kurallar:</strong> Talep edilmediğinde production kodu yazma. Yatay katman issue'ları oluşturma. Tracer bullet issue'ları tercih et. Her issue acceptance criteria ve test expectations içermeli.</p>
 
-</CollapsibleCard>
+</Disclosure>
 
-<CollapsibleCard badge="agent" badgeKind="agent" name="implementation-agent" description="TDD ile tek scoped issue implement eder">
+<Disclosure
+  trigger={
+    <CollapsibleTrigger
+      badge="agent"
+      badgeKind="agent"
+      name="implementation-agent"
+      description="TDD ile tek scoped issue implement eder"
+    />
+  }
+  className={collapsibleStyles.card}
+  triggerClassName={collapsibleStyles.header}
+  contentClassName={collapsibleStyles.body}
+  iconClassName={collapsibleStyles.toggleIcon}
+  iconOpenClassName={collapsibleStyles.toggleIconOpen}
+>
 
 <p><strong>Model:</strong> sonnet &nbsp;·&nbsp; <strong>Effort:</strong> high &nbsp;·&nbsp; <strong>Tools:</strong> Read, Write, Edit, Bash, Glob, Grep</p>
 <p><strong>Skills:</strong> tdd, codebase-design</p>
@@ -504,18 +640,46 @@ Aşağıdaki dosyalar <code>.claude/agents/*.md</code> altında tutulur. Agent =
 </ul>
 <p><strong>Kurallar:</strong> İlgisiz refactor başlatma. Business logic'i tekrar etme. İlgisiz issue'ları karıştırma. Neden açıklamadan dependency ekleme. Bitirmeden önce tam test suite'ini çalıştır.</p>
 
-</CollapsibleCard>
+</Disclosure>
 
-<CollapsibleCard badge="agent" badgeKind="agent" name="debugging-agent" description="Test hataları ve beklenmedik davranışları teşhis eder">
+<Disclosure
+  trigger={
+    <CollapsibleTrigger
+      badge="agent"
+      badgeKind="agent"
+      name="debugging-agent"
+      description="Test hataları ve beklenmedik davranışları teşhis eder"
+    />
+  }
+  className={collapsibleStyles.card}
+  triggerClassName={collapsibleStyles.header}
+  contentClassName={collapsibleStyles.body}
+  iconClassName={collapsibleStyles.toggleIcon}
+  iconOpenClassName={collapsibleStyles.toggleIconOpen}
+>
 
 <p><strong>Model:</strong> sonnet &nbsp;·&nbsp; <strong>Effort:</strong> high &nbsp;·&nbsp; <strong>Tools:</strong> Read, Write, Edit, Bash, Glob, Grep</p>
 <p><strong>Skills:</strong> diagnosing-bugs, tdd, codebase-design</p>
 <p><strong>Sorumluluklar:</strong> Bug'ı yeniden oluştur → En küçük failing test'i bul → Kod değiştirmeden önce teşhis et → Uygunsa regression test ekle → En küçük güvenli fix'i uygula → Yakın + tam testleri çalıştır</p>
 <p><strong>Kurallar:</strong> Büyük bölümleri yeniden yazma. Kodu anlamadan hataları bastırma. İlgisiz sorunları düzeltme. Şaşırtıcı bulguları issue notlarına veya <code>docs/decisions/</code>'a kaydet.</p>
 
-</CollapsibleCard>
+</Disclosure>
 
-<CollapsibleCard badge="agent" badgeKind="agent" name="architecture-review-agent" description="Milestone öncesi final mimari gözden geçirme">
+<Disclosure
+  trigger={
+    <CollapsibleTrigger
+      badge="agent"
+      badgeKind="agent"
+      name="architecture-review-agent"
+      description="Milestone öncesi final mimari gözden geçirme"
+    />
+  }
+  className={collapsibleStyles.card}
+  triggerClassName={collapsibleStyles.header}
+  contentClassName={collapsibleStyles.body}
+  iconClassName={collapsibleStyles.toggleIcon}
+  iconOpenClassName={collapsibleStyles.toggleIconOpen}
+>
 
 <p><strong>Model:</strong> sonnet &nbsp;·&nbsp; <strong>Effort:</strong> high &nbsp;·&nbsp; <strong>Tools:</strong> Read, Write, Edit, Bash, Glob, Grep</p>
 <p><strong>Skills:</strong> improve-codebase-architecture, codebase-design</p>
@@ -527,9 +691,23 @@ Aşağıdaki dosyalar <code>.claude/agents/*.md</code> altında tutulur. Agent =
 </ul>
 <p><strong>Kurallar:</strong> Onaysız büyük yeniden yazma yapma. Bug düzeltmesi dışında public davranışı değiştirme. Bulguları severity bazlı grupla. Değişikliklerden sonra testleri çalıştır.</p>
 
-</CollapsibleCard>
+</Disclosure>
 
-<CollapsibleCard badge="agent" badgeKind="agent" name="documentation-agent" description="README, ADR ve proje dokümantasyonunu günceller">
+<Disclosure
+  trigger={
+    <CollapsibleTrigger
+      badge="agent"
+      badgeKind="agent"
+      name="documentation-agent"
+      description="README, ADR ve proje dokümantasyonunu günceller"
+    />
+  }
+  className={collapsibleStyles.card}
+  triggerClassName={collapsibleStyles.header}
+  contentClassName={collapsibleStyles.body}
+  iconClassName={collapsibleStyles.toggleIcon}
+  iconOpenClassName={collapsibleStyles.toggleIconOpen}
+>
 
 <p><strong>Model:</strong> sonnet &nbsp;·&nbsp; <strong>Effort:</strong> medium &nbsp;·&nbsp; <strong>Tools:</strong> Read, Write, Edit, Glob, Grep</p>
 <p><strong>Skills:</strong> codebase-design</p>
@@ -543,20 +721,48 @@ Aşağıdaki dosyalar <code>.claude/agents/*.md</code> altında tutulur. Agent =
 </ul>
 <p><strong>Kurallar:</strong> Var olmayan davranışı icat etme. Mümkünse komutları codebase'e karşı doğrula. Özlü dokümantasyonu tercih et. İlgili PRD, ADR ve issue'ları linkle.</p>
 
-</CollapsibleCard>
+</Disclosure>
 
 </Section>
 
 <Section id="s8" num="08" title="Docs README Şablonları">
 
-<CollapsibleCard badge="docs" badgeKind="docs" name="docs/prd/README.md" description="PRD klasörü rehberi">
+<Disclosure
+  trigger={
+    <CollapsibleTrigger
+      badge="docs"
+      badgeKind="docs"
+      name="docs/prd/README.md"
+      description="PRD klasörü rehberi"
+    />
+  }
+  className={collapsibleStyles.card}
+  triggerClassName={collapsibleStyles.header}
+  contentClassName={collapsibleStyles.body}
+  iconClassName={collapsibleStyles.toggleIcon}
+  iconOpenClassName={collapsibleStyles.toggleIconOpen}
+>
 
 <p>Naming: <code>NNN-short-feature-name.md</code> — ör. <code>001-token-cost-calculator.md</code></p>
 <p>Her PRD: goals, non-goals, user stories, requirements, acceptance criteria ve open questions içermeli.</p>
 
-</CollapsibleCard>
+</Disclosure>
 
-<CollapsibleCard badge="docs" badgeKind="docs" name="docs/issues/README.md" description="Issue klasörü rehberi">
+<Disclosure
+  trigger={
+    <CollapsibleTrigger
+      badge="docs"
+      badgeKind="docs"
+      name="docs/issues/README.md"
+      description="Issue klasörü rehberi"
+    />
+  }
+  className={collapsibleStyles.card}
+  triggerClassName={collapsibleStyles.header}
+  contentClassName={collapsibleStyles.body}
+  iconClassName={collapsibleStyles.toggleIcon}
+  iconOpenClassName={collapsibleStyles.toggleIconOpen}
+>
 
 <p>Her issue vertical slice olmalı. Davranış odaklı örnekler:</p>
 <ul>
@@ -566,22 +772,64 @@ Aşağıdaki dosyalar <code>.claude/agents/*.md</code> altında tutulur. Agent =
 </ul>
 <p>Her issue: Title, User story, Acceptance criteria, Test expectations, Dependencies, Suggested agent, Required skills, Done checklist içermeli.</p>
 
-</CollapsibleCard>
+</Disclosure>
 
-<CollapsibleCard badge="docs" badgeKind="docs" name="docs/adr/README.md" description="Architecture Decision Records rehberi">
+<Disclosure
+  trigger={
+    <CollapsibleTrigger
+      badge="docs"
+      badgeKind="docs"
+      name="docs/adr/README.md"
+      description="Architecture Decision Records rehberi"
+    />
+  }
+  className={collapsibleStyles.card}
+  triggerClassName={collapsibleStyles.header}
+  contentClassName={collapsibleStyles.body}
+  iconClassName={collapsibleStyles.toggleIcon}
+  iconOpenClassName={collapsibleStyles.toggleIconOpen}
+>
 
 <p><strong>ADR oluşturma zamanı:</strong> Framework seçimi, persistence stratejisi seçimi, modül sınırı tanımı, public interface stabilizasyonu, gelecek agent'ların anlaması gereken tradeoff.</p>
 <p>Naming: <code>NNNN-short-title.md</code> — ör. <code>0001-use-fastapi-for-api-layer.md</code></p>
 
-</CollapsibleCard>
+</Disclosure>
 
-<CollapsibleCard badge="docs" badgeKind="docs" name="docs/architecture/README.md" description="High-level architecture notları">
+<Disclosure
+  trigger={
+    <CollapsibleTrigger
+      badge="docs"
+      badgeKind="docs"
+      name="docs/architecture/README.md"
+      description="High-level architecture notları"
+    />
+  }
+  className={collapsibleStyles.card}
+  triggerClassName={collapsibleStyles.header}
+  contentClassName={collapsibleStyles.body}
+  iconClassName={collapsibleStyles.toggleIcon}
+  iconOpenClassName={collapsibleStyles.toggleIconOpen}
+>
 
 <p>Bu klasör şunları içerir: module map, data flow, sequence diagrams, integration boundaries, deployment notes.</p>
 
-</CollapsibleCard>
+</Disclosure>
 
-<CollapsibleCard badge="docs" badgeKind="docs" name="docs/decisions/README.md" description="Lightweight karar notları">
+<Disclosure
+  trigger={
+    <CollapsibleTrigger
+      badge="docs"
+      badgeKind="docs"
+      name="docs/decisions/README.md"
+      description="Lightweight karar notları"
+    />
+  }
+  className={collapsibleStyles.card}
+  triggerClassName={collapsibleStyles.header}
+  contentClassName={collapsibleStyles.body}
+  iconClassName={collapsibleStyles.toggleIcon}
+  iconOpenClassName={collapsibleStyles.toggleIconOpen}
+>
 
 <p>Tam ADR gerektirmeyen kararlar için. Kullanım alanları:</p>
 <ul>
@@ -591,7 +839,7 @@ Aşağıdaki dosyalar <code>.claude/agents/*.md</code> altında tutulur. Agent =
   <li>Bilinen tradeoff'lar</li>
 </ul>
 
-</CollapsibleCard>
+</Disclosure>
 
 </Section>
 
@@ -645,20 +893,20 @@ Apply only low-risk fixes.`}
 
 <Section id="s10" num="10" title="Kullanım Prensipleri">
 
-<PrinciplesGrid>
-  <PrincipleCard icon={IconTools} title="Skill nedir?">
+<CardGrid columns="two">
+  <InfoCard icon={IconTools} title="Skill nedir?" variant="inline">
     Çalışma disiplini veya prosedürdür. <code>tdd</code> bir skill'dir. <code>codebase-design</code> bir skill'dir.
-  </PrincipleCard>
-  <PrincipleCard icon={IconRobot} title="Agent nedir?">
+  </InfoCard>
+  <InfoCard icon={IconRobot} title="Agent nedir?" variant="inline">
     Rol veya uzman worker'dır. <code>implementation-agent</code> bir agent'tır. <code>tdd</code> ve <code>codebase-design</code> skill'lerini kullanır.
-  </PrincipleCard>
-  <PrincipleCard icon={IconFolderCog} title="Project-level setup">
+  </InfoCard>
+  <InfoCard icon={IconFolderCog} title="Project-level setup" variant="inline">
     Her repo içinde <code>.claude/skills/</code>, <code>.claude/agents/</code>, <code>CLAUDE.md</code> ve <code>docs/</code> tutulur. Proje kendi agentic workflow'unu taşır.
-  </PrincipleCard>
-  <PrincipleCard icon={IconHome} title="Personal-level setup">
+  </InfoCard>
+  <InfoCard icon={IconHome} title="Personal-level setup" variant="inline">
     Aynı tanımları tüm projelerde global kullanmak için <code>~/.claude/skills/</code> ve <code>~/.claude/agents/</code>. Ancak ekip projelerinde project-level daha güvenlidir.
-  </PrincipleCard>
-</PrinciplesGrid>
+  </InfoCard>
+</CardGrid>
 
 </Section>
 

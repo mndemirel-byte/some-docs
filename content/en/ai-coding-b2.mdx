@@ -16,10 +16,14 @@ import { Section } from "@/components/doc/section";
 import { Callout } from "@/components/doc/callout";
 import { DoDontList, DoItem, DontItem } from "@/components/doc/do-dont-list";
 import { Playbook } from "@/components/doc/playbook";
-import { SkillCard, SkillCols, SkillCol } from "@/components/doc/skill-card";
+import { SkillCols, SkillCol } from "@/components/doc/skill-card";
+import { SkillCardTrigger } from "@/components/doc/skill-card-trigger";
+import { SkillCardFooter } from "@/components/doc/skill-card-footer";
+import { Disclosure } from "@/components/doc/disclosure";
+import skillCardStyles from "@/components/doc/skill-card.module.css";
 import { CodeBlock } from "@/components/doc/code-block";
 import { DataTable } from "@/components/doc/data-table";
-import { TeamGrid, TeamCard } from "@/components/doc/team-grid";
+import { CardGrid, InfoCard } from "@/components/doc/info-card";
 import { Session, DevTurn, AiTurn } from "@/components/doc/session";
 import { NumberedGrid, NumberedItem } from "@/components/doc/numbered-grid";
 import { Formula } from "@/components/doc/formula";
@@ -168,7 +172,15 @@ import { Formula } from "@/components/doc/formula";
 
 The skill areas below aren't a linear sequence — they are **dimensions you can develop independently.** A senior developer can start directly with dimension D or E. You should set your own priority based on your experience and needs.
 
-<SkillCard id="da" letter="A" name="Pair Programming with AI" goal="Using AI as a thinking partner, not autocomplete" prereq="Basic programming" forWho="Everyone; the entry point into AI coding.">
+<Disclosure
+  id="da"
+  trigger={<SkillCardTrigger letter="A" name="Pair Programming with AI" goal="Using AI as a thinking partner, not autocomplete" prereq="Basic programming" />}
+  className={skillCardStyles.card}
+  triggerClassName={skillCardStyles.header}
+  contentClassName={skillCardStyles.body}
+  iconClassName={skillCardStyles.toggleIcon}
+  iconOpenClassName={skillCardStyles.toggleIconOpen}
+>
   <SkillCols>
     <SkillCol title="Topics to work on">
       <ul>
@@ -189,9 +201,18 @@ Then have it add edge case tests.`}
       </CodeBlock>
     </SkillCol>
   </SkillCols>
-</SkillCard>
+  <SkillCardFooter forWho="Everyone; the entry point into AI coding." />
+</Disclosure>
 
-<SkillCard id="db" letter="B" name="Structured Prompting" goal="Giving AI a formatted task instead of free-form code requests" prereq="Basic AI experience" forWho="Everyone, especially those who want to improve prompt quality.">
+<Disclosure
+  id="db"
+  trigger={<SkillCardTrigger letter="B" name="Structured Prompting" goal="Giving AI a formatted task instead of free-form code requests" prereq="Basic AI experience" />}
+  className={skillCardStyles.card}
+  triggerClassName={skillCardStyles.header}
+  contentClassName={skillCardStyles.body}
+  iconClassName={skillCardStyles.toggleIcon}
+  iconOpenClassName={skillCardStyles.toggleIconOpen}
+>
   <SkillCols>
     <SkillCol title="Patterns to learn">
       <ul>
@@ -224,9 +245,18 @@ Output:
       </CodeBlock>
     </SkillCol>
   </SkillCols>
-</SkillCard>
+  <SkillCardFooter forWho="Everyone, especially those who want to improve prompt quality." />
+</Disclosure>
 
-<SkillCard id="dc" letter="C" name="PRD- and Issue-Based Work" goal="Turning conversation with AI into permanent development artifacts" prereq="Basic product development" forWho="Developers, product managers, technical leads.">
+<Disclosure
+  id="dc"
+  trigger={<SkillCardTrigger letter="C" name="PRD- and Issue-Based Work" goal="Turning conversation with AI into permanent development artifacts" prereq="Basic product development" />}
+  className={skillCardStyles.card}
+  triggerClassName={skillCardStyles.header}
+  contentClassName={skillCardStyles.body}
+  iconClassName={skillCardStyles.toggleIcon}
+  iconOpenClassName={skillCardStyles.toggleIconOpen}
+>
   <SkillCols>
     <SkillCol title="Things to learn">
       <ul>
@@ -248,9 +278,18 @@ Then have it split the PRD into
       </CodeBlock>
     </SkillCol>
   </SkillCols>
-</SkillCard>
+  <SkillCardFooter forWho="Developers, product managers, technical leads." />
+</Disclosure>
 
-<SkillCard id="dd" letter="D" name="Agentic Coding with TDD" goal="Tying AI's code generation to a test feedback loop" prereq="Test framework knowledge" forWho="Developers who have TDD experience or want to learn it.">
+<Disclosure
+  id="dd"
+  trigger={<SkillCardTrigger letter="D" name="Agentic Coding with TDD" goal="Tying AI's code generation to a test feedback loop" prereq="Test framework knowledge" />}
+  className={skillCardStyles.card}
+  triggerClassName={skillCardStyles.header}
+  contentClassName={skillCardStyles.body}
+  iconClassName={skillCardStyles.toggleIcon}
+  iconOpenClassName={skillCardStyles.toggleIconOpen}
+>
   <SkillCols>
     <SkillCol title="Things to learn">
       <ul>
@@ -275,9 +314,18 @@ test/typecheck/build output.`}
       </CodeBlock>
     </SkillCol>
   </SkillCols>
-</SkillCard>
+  <SkillCardFooter forWho="Developers who have TDD experience or want to learn it." />
+</Disclosure>
 
-<SkillCard id="de" letter="E" name="Agent Workflow and AFK Coding" goal="Letting the agent finish small issues on its own" prereq="Git workflow + test infrastructure" forWho="Experienced developers looking to move into agentic coding.">
+<Disclosure
+  id="de"
+  trigger={<SkillCardTrigger letter="E" name="Agent Workflow and AFK Coding" goal="Letting the agent finish small issues on its own" prereq="Git workflow + test infrastructure" />}
+  className={skillCardStyles.card}
+  triggerClassName={skillCardStyles.header}
+  contentClassName={skillCardStyles.body}
+  iconClassName={skillCardStyles.toggleIcon}
+  iconOpenClassName={skillCardStyles.toggleIconOpen}
+>
   <SkillCols>
     <SkillCol title="Things to learn">
       <ul>
@@ -302,7 +350,8 @@ Review the results and merge.`}
       </CodeBlock>
     </SkillCol>
   </SkillCols>
-</SkillCard>
+  <SkillCardFooter forWho="Experienced developers looking to move into agentic coding." />
+</Disclosure>
 
 ### Which Dimension Should I Start With?
 
@@ -338,14 +387,14 @@ The areas of responsibility below don't need to be separate roles. On a small te
 
 ### Small Team Examples
 
-<TeamGrid>
-  <TeamCard icon={IconUsers} title="A team of 2">
+<CardGrid columns="two" spacing="cozy">
+  <InfoCard icon={IconUsers} title="A team of 2" variant="caption">
     Developer A: requirement clarification, implementation, agent management, and QA.<br />Developer B: review, architecture decisions, and orchestration.<br />Roles can rotate.
-  </TeamCard>
-  <TeamCard icon={IconUser} title="Solo developer">
+  </InfoCard>
+  <InfoCard icon={IconUser} title="Solo developer" variant="caption">
     All areas fall on one person. In this case it&apos;s useful to use the AI agent as a "second pair of eyes" — having it review its own code in a different session, asking it to suggest missing tests, and so on.
-  </TeamCard>
-</TeamGrid>
+  </InfoCard>
+</CardGrid>
 
 </Section>
 

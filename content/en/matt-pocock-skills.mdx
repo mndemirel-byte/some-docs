@@ -25,7 +25,7 @@ import { HeroAuthor } from "@/components/doc/hero-author";
 import { Toc } from "@/components/doc/toc";
 import { Section } from "@/components/doc/section";
 import { Callout } from "@/components/doc/callout";
-import { TwoColGrid, GridCard } from "@/components/doc/two-col-grid";
+import { CardGrid, InfoCard } from "@/components/doc/info-card";
 import { OsTabs } from "@/components/doc/os-tabs";
 import { CodeBlock } from "@/components/doc/code-block";
 import { TableBox } from "@/components/doc/table-box";
@@ -34,10 +34,8 @@ import { Cmd } from "@/components/doc/cmd";
 import { Phase } from "@/components/doc/phase-header";
 import { ExpandableExample } from "@/components/doc/expandable-example";
 import { Terminal } from "@/components/doc/terminal";
-import { ValueRow, ValueCard } from "@/components/doc/value-row";
 import { SimplePrincipleGrid, SimplePrincipleCard } from "@/components/doc/simple-principle-grid";
 import { StateFlow, State, StateArrow } from "@/components/doc/state-flow";
-import { SectionSkillGrid, SectionSkillCard } from "@/components/doc/section-skill-card";
 import { GroupedFlowPhase, GroupedFlowStep, FlowConnector } from "@/components/doc/grouped-flow";
 import { ResourceList, ResourceItem } from "@/components/doc/resource-list";
 
@@ -74,16 +72,16 @@ import { ResourceList, ResourceItem } from "@/components/doc/resource-list";
 
 <Section id="s1" num="01" title="Prerequisites and Setup">
 
-<TwoColGrid>
-  <GridCard icon={IconTool} iconColor="var(--accent-text)" title="Required tools">
+<CardGrid columns="two" spacing="cozy">
+  <InfoCard icon={IconTool} iconColor="var(--accent-text)" title="Required tools" variant="caption">
     <ul>
       <li><strong>Claude Code</strong> — <code>npm install -g @anthropic-ai/claude-code</code></li>
       <li><strong>Node.js</strong> v18+ — for the skill installer and the example project</li>
       <li><strong>Git + GitHub</strong> — skills integrate with GitHub Issues</li>
       <li><strong>GitHub CLI (<code>gh</code>)</strong> — needed for writing to the issue tracker</li>
     </ul>
-  </GridCard>
-  <GridCard icon={IconTerminal} iconColor="var(--blue-text)" title="Installing the gh CLI">
+  </InfoCard>
+  <InfoCard icon={IconTerminal} iconColor="var(--blue-text)" title="Installing the gh CLI" variant="caption">
     <OsTabs
       tabs={[
         { id: "linux", label: <><IconBrandUbuntu size={16} /> Linux / macOS</> },
@@ -111,8 +109,8 @@ scoop install gh
 gh auth login`}
       </CodeBlock>
     </OsTabs>
-  </GridCard>
-</TwoColGrid>
+  </InfoCard>
+</CardGrid>
 
 ### Installing the Skills
 
@@ -138,16 +136,16 @@ claude
 
 Our example project is a simple URL shortening service. Small enough to finish in one piece, but deep enough (database, API, redirect logic, analytics) to be an ideal scenario for showcasing each skill.
 
-<TwoColGrid>
-  <GridCard icon={IconLink} iconColor="var(--accent-text)" title="Features">
+<CardGrid columns="two" spacing="cozy">
+  <InfoCard icon={IconLink} iconColor="var(--accent-text)" title="Features" variant="caption">
     <ul>
       <li>The user provides a long URL; the system returns a short link</li>
       <li>Visiting the short link redirects to the original URL</li>
       <li>Every redirect is recorded (click, date)</li>
       <li>A simple dashboard shows click statistics</li>
     </ul>
-  </GridCard>
-  <GridCard icon={IconTerminal2} iconColor="var(--green-text)" title="Creating the repo">
+  </InfoCard>
+  <InfoCard icon={IconTerminal2} iconColor="var(--green-text)" title="Creating the repo" variant="caption">
     <OsTabs
       tabs={[
         { id: "linux", label: <><IconBrandUbuntu size={16} /> Linux / macOS</> },
@@ -167,8 +165,8 @@ gh repo create url-shortener \`
   --public --source=. --push`}
       </CodeBlock>
     </OsTabs>
-  </GridCard>
-</TwoColGrid>
+  </InfoCard>
+</CardGrid>
 
 </Section>
 
@@ -321,17 +319,17 @@ docs/adr/:
 
 ### The Value of This Step
 
-<ValueRow>
-  <ValueCard icon={IconHeartHandshake} iconColor="var(--accent-text)" title="Shared Understanding">
+<CardGrid columns="three">
+  <InfoCard icon={IconHeartHandshake} iconColor="var(--accent-text)" title="Shared Understanding" variant="stat">
     You and the agent understand the same thing using the same words
-  </ValueCard>
-  <ValueCard icon={IconBook} iconColor="var(--green-text)" title="CONTEXT.md">
+  </InfoCard>
+  <InfoCard icon={IconBook} iconColor="var(--green-text)" title="CONTEXT.md" variant="stat">
     Variable and function names will follow the domain language
-  </ValueCard>
-  <ValueCard icon={IconGitBranch} iconColor="var(--blue-text)" title="ADRs">
+  </InfoCard>
+  <InfoCard icon={IconGitBranch} iconColor="var(--blue-text)" title="ADRs" variant="stat">
     Decisions are documented; the same questions won't be asked in a new session
-  </ValueCard>
-</ValueRow>
+  </InfoCard>
+</CardGrid>
 
 </Phase>
 
@@ -619,8 +617,8 @@ Select which suggestions you'd like to apply.`}
 
 <Section id="s11" num="11" title="As Needed: Helper Skills">
 
-<SectionSkillGrid>
-  <SectionSkillCard icon={IconBug} name={<><Cmd>/diagnose</Cmd> — Structured Debugging</>} when="For hard bugs — when neither the agent nor you can solve it">
+<CardGrid columns="one">
+  <InfoCard icon={IconBug} title={<><Cmd>/diagnose</Cmd> — Structured Debugging</>} meta="For hard bugs — when neither the agent nor you can solve it" variant="boxed">
     <p><strong>Loop order:</strong> build a feedback loop → reproduce → minimize → form a hypothesis → instrument → fix → write a regression test. The most critical step is the first one: the agent doesn't proceed until it has a deterministic, fast, automatically runnable feedback loop.</p>
     <ExpandableExample label={<><IconTerminal size={16} /> Example output</>}>
       <Terminal label="claude — /diagnose">
@@ -634,9 +632,9 @@ Writing a test that reliably reproduces the bug...
 → fixed → regression test added]`}
       </Terminal>
     </ExpandableExample>
-  </SectionSkillCard>
+  </InfoCard>
 
-  <SectionSkillCard icon={IconZoomOut} name={<><Cmd>/zoom-out</Cmd> — High-Level Overview</>} when="When you step into a part of the codebase you don't know">
+  <InfoCard icon={IconZoomOut} title={<><Cmd>/zoom-out</Cmd> — High-Level Overview</>} meta="When you step into a part of the codebase you don't know" variant="boxed">
     <p>Gives the agent a high-level overview of a specific directory or module, using the <strong>domain language in CONTEXT.md</strong>: which modules are dependent, who calls what, what seams exist.</p>
     <Terminal label="claude — /zoom-out">
 {`> /zoom-out src/analytics/
@@ -651,9 +649,9 @@ queries click records.
 
 Callers: the GET /links/:slug/stats endpoint`}
     </Terminal>
-  </SectionSkillCard>
+  </InfoCard>
 
-  <SectionSkillCard icon={IconFlask} name={<><Cmd>/prototype</Cmd> — Design Decision Validation</>} when="When you're unsure about an architecture choice — to make questions like &quot;is this strategy correct?&quot; concrete">
+  <InfoCard icon={IconFlask} title={<><Cmd>/prototype</Cmd> — Design Decision Validation</>} meta="When you're unsure about an architecture choice — to make questions like &quot;is this strategy correct?&quot; concrete" variant="boxed">
     <p>Validates a design decision with data using a throwaway prototype (a terminal script, minimal UI, or log analysis). It can document the result as an ADR.</p>
     <Terminal label="claude — /prototype">
 {`> /prototype I want to test our slug collision handling
@@ -670,8 +668,8 @@ a sequential fallback is unnecessary complexity.
 
 Should we document this result as an ADR?`}
     </Terminal>
-  </SectionSkillCard>
-</SectionSkillGrid>
+  </InfoCard>
+</CardGrid>
 
 </Section>
 

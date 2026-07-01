@@ -16,10 +16,14 @@ import { Section } from "@/components/doc/section";
 import { Callout } from "@/components/doc/callout";
 import { DoDontList, DoItem, DontItem } from "@/components/doc/do-dont-list";
 import { Playbook } from "@/components/doc/playbook";
-import { SkillCard, SkillCols, SkillCol } from "@/components/doc/skill-card";
+import { SkillCols, SkillCol } from "@/components/doc/skill-card";
+import { SkillCardTrigger } from "@/components/doc/skill-card-trigger";
+import { SkillCardFooter } from "@/components/doc/skill-card-footer";
+import { Disclosure } from "@/components/doc/disclosure";
+import skillCardStyles from "@/components/doc/skill-card.module.css";
 import { CodeBlock } from "@/components/doc/code-block";
 import { DataTable } from "@/components/doc/data-table";
-import { TeamGrid, TeamCard } from "@/components/doc/team-grid";
+import { CardGrid, InfoCard } from "@/components/doc/info-card";
 import { Session, DevTurn, AiTurn } from "@/components/doc/session";
 import { NumberedGrid, NumberedItem } from "@/components/doc/numbered-grid";
 import { Formula } from "@/components/doc/formula";
@@ -168,7 +172,15 @@ import { Formula } from "@/components/doc/formula";
 
 Aşağıdaki beceri alanları lineer bir sıralama değil, **bağımsız geliştirilebilecek boyutlardır.** Bir senior developer doğrudan D veya E boyutundan başlayabilir. Kendi deneyim ve ihtiyacına göre öncelik belirlemelisin.
 
-<SkillCard id="da" letter="A" name="AI ile Pair Programming" goal="AI'ı autocomplete değil, düşünce partneri olarak kullanmak" prereq="Temel programlama" forWho="Herkes; AI coding'e giriş noktası.">
+<Disclosure
+  id="da"
+  trigger={<SkillCardTrigger letter="A" name="AI ile Pair Programming" goal="AI'ı autocomplete değil, düşünce partneri olarak kullanmak" prereq="Temel programlama" />}
+  className={skillCardStyles.card}
+  triggerClassName={skillCardStyles.header}
+  contentClassName={skillCardStyles.body}
+  iconClassName={skillCardStyles.toggleIcon}
+  iconOpenClassName={skillCardStyles.toggleIconOpen}
+>
   <SkillCols>
     <SkillCol title="Çalışılacak konular">
       <ul>
@@ -189,9 +201,18 @@ Sonra edge case testleri eklet.`}
       </CodeBlock>
     </SkillCol>
   </SkillCols>
-</SkillCard>
+  <SkillCardFooter forWho="Herkes; AI coding'e giriş noktası." />
+</Disclosure>
 
-<SkillCard id="db" letter="B" name="Structured Prompting" goal="AI'a serbest kod yazdırmak yerine formatlı görev vermek" prereq="Temel AI deneyimi" forWho="Herkes; özellikle prompt kalitesini artırmak isteyenler.">
+<Disclosure
+  id="db"
+  trigger={<SkillCardTrigger letter="B" name="Structured Prompting" goal="AI'a serbest kod yazdırmak yerine formatlı görev vermek" prereq="Temel AI deneyimi" />}
+  className={skillCardStyles.card}
+  triggerClassName={skillCardStyles.header}
+  contentClassName={skillCardStyles.body}
+  iconClassName={skillCardStyles.toggleIcon}
+  iconOpenClassName={skillCardStyles.toggleIconOpen}
+>
   <SkillCols>
     <SkillCol title="Öğrenilecek kalıplar">
       <ul>
@@ -224,9 +245,18 @@ Output:
       </CodeBlock>
     </SkillCol>
   </SkillCols>
-</SkillCard>
+  <SkillCardFooter forWho="Herkes; özellikle prompt kalitesini artırmak isteyenler." />
+</Disclosure>
 
-<SkillCard id="dc" letter="C" name="PRD ve Issue Tabanlı Çalışma" goal="AI ile konuşmayı kalıcı geliştirme artefact'larına dönüştürmek" prereq="Temel ürün geliştirme" forWho="Developer'lar, product manager'lar, teknik liderler.">
+<Disclosure
+  id="dc"
+  trigger={<SkillCardTrigger letter="C" name="PRD ve Issue Tabanlı Çalışma" goal="AI ile konuşmayı kalıcı geliştirme artefact'larına dönüştürmek" prereq="Temel ürün geliştirme" />}
+  className={skillCardStyles.card}
+  triggerClassName={skillCardStyles.header}
+  contentClassName={skillCardStyles.body}
+  iconClassName={skillCardStyles.toggleIcon}
+  iconOpenClassName={skillCardStyles.toggleIconOpen}
+>
   <SkillCols>
     <SkillCol title="Öğrenilecekler">
       <ul>
@@ -248,9 +278,18 @@ issue'ya böldür.`}
       </CodeBlock>
     </SkillCol>
   </SkillCols>
-</SkillCard>
+  <SkillCardFooter forWho="Developer'lar, product manager'lar, teknik liderler." />
+</Disclosure>
 
-<SkillCard id="dd" letter="D" name="TDD ile Agentic Coding" goal="AI'ın kod üretimini test feedback loop'una bağlamak" prereq="Test framework bilgisi" forWho="TDD deneyimi olan veya öğrenmek isteyen developer'lar.">
+<Disclosure
+  id="dd"
+  trigger={<SkillCardTrigger letter="D" name="TDD ile Agentic Coding" goal="AI'ın kod üretimini test feedback loop'una bağlamak" prereq="Test framework bilgisi" />}
+  className={skillCardStyles.card}
+  triggerClassName={skillCardStyles.header}
+  contentClassName={skillCardStyles.body}
+  iconClassName={skillCardStyles.toggleIcon}
+  iconOpenClassName={skillCardStyles.toggleIconOpen}
+>
   <SkillCols>
     <SkillCol title="Öğrenilecekler">
       <ul>
@@ -275,9 +314,18 @@ Son olarak test/typecheck/build
       </CodeBlock>
     </SkillCol>
   </SkillCols>
-</SkillCard>
+  <SkillCardFooter forWho="TDD deneyimi olan veya öğrenmek isteyen developer'lar." />
+</Disclosure>
 
-<SkillCard id="de" letter="E" name="Agent Workflow ve AFK Coding" goal="Agent'ın küçük issue'ları kendi başına tamamlamasını sağlamak" prereq="Git workflow + test altyapısı" forWho="Agentic coding'e geçmek isteyen deneyimli developer'lar.">
+<Disclosure
+  id="de"
+  trigger={<SkillCardTrigger letter="E" name="Agent Workflow ve AFK Coding" goal="Agent'ın küçük issue'ları kendi başına tamamlamasını sağlamak" prereq="Git workflow + test altyapısı" />}
+  className={skillCardStyles.card}
+  triggerClassName={skillCardStyles.header}
+  contentClassName={skillCardStyles.body}
+  iconClassName={skillCardStyles.toggleIcon}
+  iconOpenClassName={skillCardStyles.toggleIconOpen}
+>
   <SkillCols>
     <SkillCol title="Öğrenilecekler">
       <ul>
@@ -302,7 +350,8 @@ Sonuçları review edip merge et.`}
       </CodeBlock>
     </SkillCol>
   </SkillCols>
-</SkillCard>
+  <SkillCardFooter forWho="Agentic coding'e geçmek isteyen deneyimli developer'lar." />
+</Disclosure>
 
 ### Hangi Boyuttan Başlamalıyım?
 
@@ -338,14 +387,14 @@ Aşağıdaki sorumluluk alanları ayrı roller olmak zorunda değildir. Küçük
 
 ### Küçük Ekip Örnekleri
 
-<TeamGrid>
-  <TeamCard icon={IconUsers} title="2 kişilik ekip">
+<CardGrid columns="two" spacing="cozy">
+  <InfoCard icon={IconUsers} title="2 kişilik ekip" variant="caption">
     Developer A: gereksinim netleştirme, implementation, agent yönetimi ve QA.<br />Developer B: review, mimari karar ve orchestration.<br />Roller dönüşümlü olabilir.
-  </TeamCard>
-  <TeamCard icon={IconUser} title="Solo developer">
+  </InfoCard>
+  <InfoCard icon={IconUser} title="Solo developer" variant="caption">
     Tüm alanlar tek kişide toplanır. Bu durumda AI agent&apos;ı "ikinci göz" olarak kullanmak faydalıdır: agent&apos;a kendi kodunu farklı bir session&apos;da review ettirmek, eksik test önerisi istemek gibi.
-  </TeamCard>
-</TeamGrid>
+  </InfoCard>
+</CardGrid>
 
 </Section>
 

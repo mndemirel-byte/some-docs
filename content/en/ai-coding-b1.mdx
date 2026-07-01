@@ -31,7 +31,7 @@ import { KeyQuote } from "@/components/doc/key-quote";
 import { Toc } from "@/components/doc/toc";
 import { Section } from "@/components/doc/section";
 import { Callout } from "@/components/doc/callout";
-import { TwoColGrid, GridCard } from "@/components/doc/two-col-grid";
+import { CardGrid, InfoCard } from "@/components/doc/info-card";
 import { SkillTable } from "@/components/doc/skill-table";
 import { ChallengeCard } from "@/components/doc/challenge-card";
 import { TwoBoxGrid, Box } from "@/components/doc/two-box-grid";
@@ -98,23 +98,23 @@ This is aimed at software professionals who want to integrate AI coding tools in
   This document is not tied to a specific language or tool. Examples are drawn mostly from the TypeScript/Python ecosystems, but the principles (vertical slices, TDD, deep modules, context management) are language- and tool-agnostic.
 </Callout>
 
-<TwoColGrid>
-  <GridCard icon={IconCircleCheck} iconColor="var(--red-text)" title="Required prerequisites">
+<CardGrid columns="two" spacing="cozy">
+  <InfoCard icon={IconCircleCheck} iconColor="var(--red-text)" title="Required prerequisites" variant="caption">
     <ul>
       <li>Basic competency in at least one language</li>
       <li>Basic Git knowledge (commit, branch, merge)</li>
       <li>Familiarity with any AI coding tool</li>
     </ul>
-  </GridCard>
-  <GridCard icon={IconCirclePlus} iconColor="var(--green-text)" title="Helpful but not required">
+  </InfoCard>
+  <InfoCard icon={IconCirclePlus} iconColor="var(--green-text)" title="Helpful but not required" variant="caption">
     <ul>
       <li>Experience writing tests (unit, integration)</li>
       <li>Command line: build, test, lint</li>
       <li>Basic product development understanding</li>
       <li>Knowledge of CI/CD pipelines</li>
     </ul>
-  </GridCard>
-</TwoColGrid>
+  </InfoCard>
+</CardGrid>
 
 </Section>
 
@@ -273,22 +273,22 @@ Without a test signal, AI struggles to understand errors. It writes code, then b
 
 The workflow consists of two layers:
 
-<TwoColGrid>
-  <GridCard icon={IconArrowUpCircle} iconColor="var(--accent-text)" title="Top layer (once)">
+<CardGrid columns="two" spacing="cozy">
+  <InfoCard icon={IconArrowUpCircle} iconColor="var(--accent-text)" title="Top layer (once)" variant="caption">
     <ul>
       <li>If you have an idea or vision → start with Stage 0</li>
       <li>If you're adding a known feature → skip to Stage 1</li>
       <li>Output: a prioritized list of feature briefs</li>
     </ul>
-  </GridCard>
-  <GridCard icon={IconRefresh} iconColor="var(--accent-text)" title="Bottom layer (per feature)">
+  </InfoCard>
+  <InfoCard icon={IconRefresh} iconColor="var(--accent-text)" title="Bottom layer (per feature)" variant="caption">
     <ul>
       <li>Each feature brief goes through Stages 1–6</li>
       <li>Once a feature is done, the next brief is picked up</li>
       <li>The loop starts over</li>
     </ul>
-  </GridCard>
-</TwoColGrid>
+  </InfoCard>
+</CardGrid>
 
 </Section>
 
@@ -660,20 +660,20 @@ strategy:
 
 If it can't solve it after 2-3 attempts, there are 4 options:
 
-<TwoColGrid>
-  <GridCard icon={IconInfoCircle} iconColor="var(--blue-text)" title="Give context, continue">
+<CardGrid columns="two" spacing="cozy">
+  <InfoCard icon={IconInfoCircle} iconColor="var(--blue-text)" title="Give context, continue" variant="caption">
     <p>For cases like a missing env variable or wrong file path, give the info and continue. No new issue needed.</p>
-  </GridCard>
-  <GridCard icon={IconScissors} iconColor="var(--amber-text)" title="Shrink the issue">
+  </InfoCard>
+  <InfoCard icon={IconScissors} iconColor="var(--amber-text)" title="Shrink the issue" variant="caption">
     <p>Scope may be too large. Narrow the acceptance criteria, turn the rest into a new issue.</p>
-  </GridCard>
-  <GridCard icon={IconUser} iconColor="var(--green-text)" title="Write the hard part yourself">
+  </InfoCard>
+  <InfoCard icon={IconUser} iconColor="var(--green-text)" title="Write the hard part yourself" variant="caption">
     <p>Write the complex part yourself (race conditions, legacy side effects). Let the agent continue with the rest.</p>
-  </GridCard>
-  <GridCard icon={IconFileAlert} iconColor="var(--red-text)" title="Stop, analyze, open an issue">
+  </InfoCard>
+  <InfoCard icon={IconFileAlert} iconColor="var(--red-text)" title="Stop, analyze, open an issue" variant="caption">
     <p>If it's a systemic problem, document it. Create a new issue using the Blocker Report format.</p>
-  </GridCard>
-</TwoColGrid>
+  </InfoCard>
+</CardGrid>
 
 </Phase>
 
@@ -800,19 +800,19 @@ Which criterion wasn't met?
 
 ### 3 Options After a Blocker Report
 
-<TwoColGrid>
-  <GridCard icon={IconCircleCheck} iconColor="var(--green-text)" title="A — Fix it yourself, continue">
+<CardGrid columns="two" spacing="cozy">
+  <InfoCard icon={IconCircleCheck} iconColor="var(--green-text)" title="A — Fix it yourself, continue" variant="caption">
     <p>If it's a simple config or env issue, the developer fixes it and says "continue." No new issue needed.</p>
-  </GridCard>
-  <GridCard icon={IconPlus} iconColor="var(--blue-text)" title="B — Open a new issue">
+  </InfoCard>
+  <InfoCard icon={IconPlus} iconColor="var(--blue-text)" title="B — Open a new issue" variant="caption">
     <p>If the problem is outside the current issue's scope, create a new issue and feed it into the pipeline.</p>
-  </GridCard>
-</TwoColGrid>
-<TwoColGrid>
-  <GridCard icon={IconEdit} iconColor="var(--amber-text)" title="C — Update the existing issue">
+  </InfoCard>
+</CardGrid>
+<CardGrid columns="two" spacing="cozy">
+  <InfoCard icon={IconEdit} iconColor="var(--amber-text)" title="C — Update the existing issue" variant="caption">
     <p>If the problem stems from a poorly defined scope, fix the existing issue instead of opening a new one.</p>
-  </GridCard>
-</TwoColGrid>
+  </InfoCard>
+</CardGrid>
 
 ### Parallel AFK: Run Independent Issues Simultaneously
 

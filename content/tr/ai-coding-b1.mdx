@@ -31,7 +31,7 @@ import { KeyQuote } from "@/components/doc/key-quote";
 import { Toc } from "@/components/doc/toc";
 import { Section } from "@/components/doc/section";
 import { Callout } from "@/components/doc/callout";
-import { TwoColGrid, GridCard } from "@/components/doc/two-col-grid";
+import { CardGrid, InfoCard } from "@/components/doc/info-card";
 import { SkillTable } from "@/components/doc/skill-table";
 import { ChallengeCard } from "@/components/doc/challenge-card";
 import { TwoBoxGrid, Box } from "@/components/doc/two-box-grid";
@@ -98,23 +98,23 @@ AI coding araçlarını günlük iş akışına entegre etmek isteyen yazılım 
   Doküman belirli bir dile veya araca bağlı değildir. Örnekler TypeScript/Python ekosistemlerinden verilmiştir; prensipler (vertical slice, TDD, deep module, context yönetimi) dil ve araç bağımsızdır.
 </Callout>
 
-<TwoColGrid>
-  <GridCard icon={IconCircleCheck} iconColor="var(--red-text)" title="Zorunlu ön gereksinimler">
+<CardGrid columns="two" spacing="cozy">
+  <InfoCard icon={IconCircleCheck} iconColor="var(--red-text)" title="Zorunlu ön gereksinimler" variant="caption">
     <ul>
       <li>En az bir dilde temel yetkinlik</li>
       <li>Temel Git bilgisi (commit, branch, merge)</li>
       <li>Herhangi bir AI coding aracıyla tanışıklık</li>
     </ul>
-  </GridCard>
-  <GridCard icon={IconCirclePlus} iconColor="var(--green-text)" title="Faydalı ama zorunlu değil">
+  </InfoCard>
+  <InfoCard icon={IconCirclePlus} iconColor="var(--green-text)" title="Faydalı ama zorunlu değil" variant="caption">
     <ul>
       <li>Test yazma deneyimi (unit, integration)</li>
       <li>Komut satırı: build, test, lint</li>
       <li>Temel ürün geliştirme anlayışı</li>
       <li>CI/CD pipeline bilgisi</li>
     </ul>
-  </GridCard>
-</TwoColGrid>
+  </InfoCard>
+</CardGrid>
 
 </Section>
 
@@ -273,22 +273,22 @@ AI test sinyali olmadan çalıştığında hatayı anlamakta zorlanır. Kod üre
 
 Workflow iki katmandan oluşur:
 
-<TwoColGrid>
-  <GridCard icon={IconArrowUpCircle} iconColor="var(--accent-text)" title="Üst katman (bir kez)">
+<CardGrid columns="two" spacing="cozy">
+  <InfoCard icon={IconArrowUpCircle} iconColor="var(--accent-text)" title="Üst katman (bir kez)" variant="caption">
     <ul>
       <li>Fikir veya vizyon varsa → Aşama 0 ile başla</li>
       <li>Bilinen bir feature ekliyorsan → Aşama 1'e geç</li>
       <li>Çıktı: önceliklendirilmiş feature brief'ler listesi</li>
     </ul>
-  </GridCard>
-  <GridCard icon={IconRefresh} iconColor="var(--accent-text)" title="Alt katman (her feature için)">
+  </InfoCard>
+  <InfoCard icon={IconRefresh} iconColor="var(--accent-text)" title="Alt katman (her feature için)" variant="caption">
     <ul>
       <li>Her feature brief Aşama 1-6'dan geçer</li>
       <li>Feature tamamlanınca sıradaki brief alınır</li>
       <li>Döngü tekrar başlar</li>
     </ul>
-  </GridCard>
-</TwoColGrid>
+  </InfoCard>
+</CardGrid>
 
 </Section>
 
@@ -651,20 +651,20 @@ TDD döngüsü ile implement et. Type alanını oku ve stratejini belirle:
 
 2-3 denemede çözemediyse 4 seçenek:
 
-<TwoColGrid>
-  <GridCard icon={IconInfoCircle} iconColor="var(--blue-text)" title="Bağlam ver, devam ettir">
+<CardGrid columns="two" spacing="cozy">
+  <InfoCard icon={IconInfoCircle} iconColor="var(--blue-text)" title="Bağlam ver, devam ettir" variant="caption">
     <p>Eksik env variable, yanlış dosya yolu gibi durumlarda bilgiyi ver ve devam ettir. Yeni issue gerekmez.</p>
-  </GridCard>
-  <GridCard icon={IconScissors} iconColor="var(--amber-text)" title="Issue'yu küçült">
+  </InfoCard>
+  <InfoCard icon={IconScissors} iconColor="var(--amber-text)" title="Issue'yu küçült" variant="caption">
     <p>Scope fazla büyük olabilir. Kabul kriterini daralt, geri kalanı yeni issue yap.</p>
-  </GridCard>
-  <GridCard icon={IconUser} iconColor="var(--green-text)" title="Zor kısmı kendin yaz">
+  </InfoCard>
+  <InfoCard icon={IconUser} iconColor="var(--green-text)" title="Zor kısmı kendin yaz" variant="caption">
     <p>Karmaşık kısmı (race condition, legacy side effect) kendin yaz. Agent geri kalanla devam etsin.</p>
-  </GridCard>
-  <GridCard icon={IconFileAlert} iconColor="var(--red-text)" title="Dur, analiz et, issue aç">
+  </InfoCard>
+  <InfoCard icon={IconFileAlert} iconColor="var(--red-text)" title="Dur, analiz et, issue aç" variant="caption">
     <p>Sistematik sorunsa belgele. Blocker Report formatıyla yeni issue oluştur.</p>
-  </GridCard>
-</TwoColGrid>
+  </InfoCard>
+</CardGrid>
 
 </Phase>
 
@@ -791,19 +791,19 @@ Hangi kriter karşılanamadı?
 
 ### Blocker Report Sonrası 3 Seçenek
 
-<TwoColGrid>
-  <GridCard icon={IconCircleCheck} iconColor="var(--green-text)" title="A — Kendim düzelt, devam ettir">
+<CardGrid columns="two" spacing="cozy">
+  <InfoCard icon={IconCircleCheck} iconColor="var(--green-text)" title="A — Kendim düzelt, devam ettir" variant="caption">
     <p>Basit konfigürasyon veya env sorunu ise developer düzeltir ve "devam et" der. Yeni issue gerekmez.</p>
-  </GridCard>
-  <GridCard icon={IconPlus} iconColor="var(--blue-text)" title="B — Yeni issue aç">
+  </InfoCard>
+  <InfoCard icon={IconPlus} iconColor="var(--blue-text)" title="B — Yeni issue aç" variant="caption">
     <p>Sorun mevcut issue scope'u dışındaysa yeni issue oluştur, pipeline'a sok.</p>
-  </GridCard>
-</TwoColGrid>
-<TwoColGrid>
-  <GridCard icon={IconEdit} iconColor="var(--amber-text)" title="C — Mevcut issue'yu güncelle">
+  </InfoCard>
+</CardGrid>
+<CardGrid columns="two" spacing="cozy">
+  <InfoCard icon={IconEdit} iconColor="var(--amber-text)" title="C — Mevcut issue'yu güncelle" variant="caption">
     <p>Sorun issue'nun eksik tanımlanmış scope'undan kaynaklanıyorsa, yeni issue açmak yerine mevcut issue'yu düzelt.</p>
-  </GridCard>
-</TwoColGrid>
+  </InfoCard>
+</CardGrid>
 
 ### Paralel AFK: Bağımsız Issue'ları Aynı Anda Çalıştır
 
