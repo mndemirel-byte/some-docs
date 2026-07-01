@@ -1,3 +1,5 @@
+import { PageWrap } from "@/components/doc/page-wrap";
+
 export default async function Page({
   params,
 }: {
@@ -8,5 +10,9 @@ export default async function Page({
     `../../../../content/${locale}/matt-pocock-skills.mdx`
   );
 
-  return <Content />;
+  return (
+    <PageWrap>
+      <Content />
+    </PageWrap>
+  );
 }

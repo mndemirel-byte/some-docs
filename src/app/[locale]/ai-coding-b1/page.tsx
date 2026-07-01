@@ -1,3 +1,5 @@
+import { PageWrap } from "@/components/doc/page-wrap";
+
 export default async function Page({
   params,
 }: {
@@ -8,5 +10,9 @@ export default async function Page({
     `../../../../content/${locale}/ai-coding-b1.mdx`
   );
 
-  return <Content />;
+  return (
+    <PageWrap>
+      <Content />
+    </PageWrap>
+  );
 }
