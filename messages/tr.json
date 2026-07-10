@@ -44,6 +44,15 @@
         "desc": "URL Shortener örneği üzerinden komple skill akışı. /setup, /grill-with-docs, /to-prd, /to-issues, /tdd, /triage, /improve-codebase-architecture ve yardımcı skill'ler. Gerçek terminal çıktılarıyla.",
         "tags": ["slash-commands", "CONTEXT.md", "ADR", "URL-shortener", "TypeScript"],
         "cta": "Dokümana Git"
+      },
+      {
+        "num": "05",
+        "type": "Referans Sayfası",
+        "title": "Agentic Development Cheat Sheet",
+        "subtitle": "Rules · Skills · Agents · Hooks · Plugins",
+        "desc": "Oturum sonrası pratik referans: rules/skills/agents/hooks arkasındaki mental model, kopyalanabilir klasör yapısı ve setup komutları, CLAUDE.md ve settings.json şablonları, tam skill/agent tanımları.",
+        "tags": ["CLAUDE.md", "rules", "settings.json", "skills", "agents", "hooks", "plugin"],
+        "cta": "Dokümana Git"
       }
     ],
     "footer": "Tüm dokümanlar aynı klasörde olduğunda linklerin çalışır · Claude Code Agentic Development Serisi"

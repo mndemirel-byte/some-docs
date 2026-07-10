@@ -49,6 +49,7 @@
   --card-cta-hover-blue: var(--blue-text);
   --card-cta-hover-green: var(--green-text);
   --card-cta-hover-amber: var(--amber-text);
+  --card-cta-hover-red: var(--red-text);
 
   --filetree-icon: #c9971f;
 }
@@ -95,6 +96,7 @@
   --card-cta-hover-blue: #0e7490;
   --card-cta-hover-green: #059669;
   --card-cta-hover-amber: #b45309;
+  --card-cta-hover-red: #be123c;
 
   --filetree-icon: #fde047;
 }

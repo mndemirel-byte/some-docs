@@ -6,6 +6,7 @@ import {
   IconFolderCog,
   IconMap,
   IconRoute,
+  IconStack2,
   IconTerminal,
   IconTerminal2,
 } from "@tabler/icons-react";
@@ -31,6 +32,7 @@ const cardChrome = [
   { variant: "c2", href: "ai-coding-b1", icon: IconRoute },
   { variant: "c3", href: "ai-coding-b2", icon: IconMap },
   { variant: "c4", href: "matt-pocock-skills", icon: IconTerminal2 },
+  { variant: "c5", href: "agentic-workflow-cheat-sheet", icon: IconStack2 },
 ] as const;
 
 export default async function Page({

@@ -44,6 +44,15 @@
         "desc": "A complete skill workflow through a URL Shortener example. /setup, /grill-with-docs, /to-prd, /to-issues, /tdd, /triage, /improve-codebase-architecture, and supporting skills — with real terminal output.",
         "tags": ["slash-commands", "CONTEXT.md", "ADR", "URL-shortener", "TypeScript"],
         "cta": "Open Document"
+      },
+      {
+        "num": "05",
+        "type": "Reference Sheet",
+        "title": "Agentic Development Cheat Sheet",
+        "subtitle": "Rules · Skills · Agents · Hooks · Plugins",
+        "desc": "A practical after-session reference: the mental model behind rules/skills/agents/hooks, a copyable folder structure and setup commands, CLAUDE.md and settings.json templates, and full skill/agent definitions.",
+        "tags": ["CLAUDE.md", "rules", "settings.json", "skills", "agents", "hooks", "plugin"],
+        "cta": "Open Document"
       }
     ],
     "footer": "Links work when all documents are in the same folder · Claude Code Agentic Development Series"

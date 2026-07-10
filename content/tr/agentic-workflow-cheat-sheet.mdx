@@ -1,0 +1,1169 @@
+import {
+  IconAdjustments,
+  IconBrandUbuntu,
+  IconBrandWindows,
+  IconFileDescription,
+  IconSettings,
+  IconTerminal2,
+  IconTools,
+  IconRobot,
+  IconGitBranch,
+} from "@tabler/icons-react";
+import { Hero, Accent } from "@/components/doc/hero";
+import { Toc } from "@/components/doc/toc";
+import { Section } from "@/components/doc/section";
+import { CardGrid, InfoCard } from "@/components/doc/info-card";
+import { Callout } from "@/components/doc/callout";
+import { FileTree, Dir, File, Special } from "@/components/doc/file-tree";
+import { DataTable } from "@/components/doc/data-table";
+import { OsTabs } from "@/components/doc/os-tabs";
+import { CodeBlock } from "@/components/doc/code-block";
+import { Disclosure } from "@/components/doc/disclosure";
+import { CollapsibleTrigger } from "@/components/doc/collapsible-trigger";
+import collapsibleStyles from "@/components/doc/collapsible-trigger.module.css";
+import { FlowSteps, FlowStep } from "@/components/doc/flow-steps";
+import { DoDontList, DoItem, DontItem } from "@/components/doc/do-dont-list";
+
+<Hero
+  badge="agentic setup · referans"
+  title={<>Agentic Development <Accent>Cheat Sheet</Accent></>}
+  description="Oturumdan sonra tekrar bakılacak pratik referans: kavramlar, dosya yapısı, örnek CLAUDE.md, rules, settings.json, skills, agents, hooks ve plugin yapısı."
+  tags={["CLAUDE.md", "rules", "settings.json", "skills", "agents", "hooks", "plugin"]}
+/>
+
+<Toc
+  title="İçindekiler"
+  entries={[
+    { id: "mental", num: "01", label: "Mental model" },
+    { id: "structure", num: "02", label: "Dosya yapısı" },
+    { id: "setup", num: "03", label: "Setup komutları" },
+    { id: "claude", num: "04", label: "CLAUDE.md" },
+    { id: "rules", num: "05", label: "rules" },
+    { id: "settings", num: "06", label: "settings.json" },
+    { id: "commands", num: "07", label: "commands" },
+    { id: "skills", num: "08", label: "skills" },
+    { id: "agents", num: "09", label: "agents" },
+    { id: "hooks", num: "10", label: "hooks" },
+    { id: "plugin", num: "11", label: "plugin" },
+    { id: "context", num: "12", label: "context / token yönetimi" },
+    { id: "patterns", num: "13", label: "Yap / Yapma" },
+  ]}
+/>
+
+<Section id="mental" num="01" title="Mental model">
+
+<CardGrid>
+  <InfoCard icon={IconAdjustments} title="rules">
+    Kalıcı davranış standardı, kodlama prensipleri, workflow guardrail'leri. Her işte bilmesi gereken kısa ve tekrar eden davranış kuralları için kullanılır.
+  </InfoCard>
+  <InfoCard icon={IconFileDescription} title="CLAUDE.md">
+    Repo seviyesinde proje hafızası: amaç, kritik komutlar, mimari notlar ve test talimatları. Claude'un sık hatırlaması gereken projeye özgü bilgiler için kullanılır.
+  </InfoCard>
+  <InfoCard icon={IconSettings} title="settings.json">
+    İzinler, hook tanımları, env/config, tool davranışı ve paylaşılan proje ayarları. Davranış metni değil, gerçek yapılandırma gerektiğinde kullanılır.
+  </InfoCard>
+  <InfoCard icon={IconTerminal2} title="commands">
+    Claude Code'un kendi built-in slash command'ları. Yeni custom command workflow'ları artık pratikte <code>skills</code> üzerinden yönetilir.
+  </InfoCard>
+  <InfoCard icon={IconTools} title="skills">
+    Tekrar kullanılabilir prosedürler ve slash-command entrypoint'leri; gerekirse bir agent'ı dispatch edebilir. Bir workflow tekrar kullanılacaksa veya <code>/plan</code>, <code>/work</code>, <code>/review</code> gibi komutlaşacaksa kullanılır.
+  </InfoCard>
+  <InfoCard icon={IconRobot} title="agents">
+    Kendi prompt'u, araçları ve odağı olan uzman roller. Planner / worker / reviewer gibi ayrık sorumluluklar gerektiğinde kullanılır.
+  </InfoCard>
+  <InfoCard icon={IconGitBranch} title="hooks">
+    Tool lifecycle otomasyonları: tool öncesi/sonrası, edit sonrası, stop anı vb. Otomatik kontrol, güvenlik, format veya test hatırlatma gibi deterministik işler için kullanılır.
+  </InfoCard>
+</CardGrid>
+
+<Callout kind="tip">
+  <strong>Kısa ayrım:</strong> <code>rules</code> davranış standardıdır, <code>CLAUDE.md</code> proje manifestidir, <code>skills</code> prosedürdür, <code>agents</code> roldür, <code>hooks</code> otomasyondur.
+</Callout>
+
+<Callout kind="info">
+  <strong>Skill ↔ Agent ilişkisi:</strong> Pratik kullanımda skill genellikle workflow entrypoint'idir — <code>/plan</code>, <code>/work</code>, <code>/review</code>. Skill'in içinde agent dispatch edilebilir veya agent'lardan destek istenebilir. Agent ise rol, araç seti, model ve sınırları tanımlayan execution context'tir. Resmi dokümanda <code>context: fork</code> + <code>agent:</code> ile skill'i doğrudan forked subagent içinde çalıştırma desteği de var; ancak bu ileri seviye bir pattern'dir, ana akışta şart değildir.
+</Callout>
+
+</Section>
+
+<Section id="structure" num="02" title="Dosya yapısı">
+
+Bu bölüm sadece ana klasörleri ve temel dosyaları gösterir.
+
+<FileTree>
+  <Dir name="your-project/" root>
+    <Special name="CLAUDE.md" />
+    <Dir name=".claude/">
+      <File name="settings.json" />
+      <File name="settings.local.json" />
+      <Dir name="rules/" />
+      <Dir name="skills/" />
+      <Dir name="agents/" />
+      <Dir name="hooks/" />
+      <Dir name="commands/" />
+    </Dir>
+    <Dir name="docs/">
+      <Dir name="context/" />
+      <Dir name="issues/" />
+      <Dir name="adr/" />
+      <Dir name="decisions/" />
+    </Dir>
+    <Dir name="src/" />
+    <Dir name="tests/" />
+    <File name="README.md" />
+  </Dir>
+</FileTree>
+
+<DataTable
+  headers={["Dosya/Klasör", "Sorumluluk"]}
+  rows={[
+    ["CLAUDE.md", "Proje manifesti: amaç, kritik komutlar, mimari sınırlar, test talimatları, güvenlik guardrail'leri."],
+    [".claude/", "Claude Code'a özel proje ayarlarının ana klasörü: skills, agents, hooks ve settings."],
+    [".claude/settings.json", "Davranış metni değil, config dosyası. İzinler, hook tanımları, plugin enablement, env/config, paylaşılan proje ayarları."],
+    [".claude/settings.local.json", "Kişisel/lokal ayarlar — makineye özel path, geçici izin veya deneysel ayarlar. Git'e girmez."],
+    [".claude/rules/", "Modüler kalıcı talimatlar: kod stili, test standardı, güvenlik veya path-specific kurallar."],
+    [".claude/skills/", "Tekrar kullanılabilir workflow prosedürleri — yeni custom command'lar için modern varsayılan yer, örn. plan, work, review."],
+    [".claude/agents/", "Uzman agent tanımları: rol, araçlar, model tercihi, izin sınırları, çıktı beklentisi."],
+    [".claude/hooks/", "LLM'in hatırlamasına bırakılmayacak deterministik otomasyonlar."],
+    [".claude/commands/", "Eski/uyumluluk yolu. Flat markdown custom command'lar hâlâ çalışır; yeni workflow'lar için skills/ tercih edilir."],
+    ["docs/", "Agent'ların ve insanların ortak okuyacağı proje dokümantasyonu: kararlar, context, issue'lar, mimari notlar."],
+    ["docs/context/", "Yaşayan proje bağlamı: domain dili, sistem sınırları, modül sorumlulukları, önemli kabuller."],
+    ["docs/issues/", "Agent-ready küçük iş parçaları — acceptance criteria, test beklentisi ve done checklist içerir."],
+    ["docs/adr/", "Geri dönmesi maliyetli teknik kararların (framework, persistence gibi) gerekçesini tutan Architecture Decision Record'lar."],
+    ["docs/decisions/", "ADR seviyesinde olmayan ama unutulmaması gereken küçük ürün/teknik/süreç kararları."],
+    ["src/", "Uygulama kaynak kodu. Agent'ın rahat çalışması için modül sınırları, isimlendirme ve test edilebilir yapı önemlidir."],
+    ["tests/", "Unit/integration testleri — agentic workflow'un güvenlik ağı, özellikle Work ve Review aşamalarında."],
+    ["README.md", "Projeyi çalıştırma, test etme ve temel komutları gösteren insan + agent başlangıç noktası."],
+  ]}
+/>
+
+</Section>
+
+<Section id="setup" num="03" title="Setup komutları">
+
+Boş bir projeye temel agentic setup iskeleti eklemek için kullanılabilir.
+
+<OsTabs
+  tabs={[
+    { id: "linux", label: <><IconBrandUbuntu size={16} /> Linux / macOS</> },
+    { id: "windows", label: <><IconBrandWindows size={16} /> Windows (PowerShell)</> },
+  ]}
+>
+
+<CodeBlock lang="bash">
+{`mkdir -p .claude/skills/{plan,work,review,diagnose,commit}
+mkdir -p .claude/rules/{frontend,backend}
+mkdir -p .claude/agents
+mkdir -p .claude/hooks
+mkdir -p docs/{context,issues,adr,decisions}
+
+touch CLAUDE.md
+touch .claude/settings.json
+touch .claude/settings.local.json
+# Add .claude/settings.local.json to .gitignore if Claude did not create it.
+touch .claude/rules/code-style.md
+touch .claude/rules/testing.md
+touch .claude/rules/backend/api.md
+touch .claude/skills/plan/SKILL.md
+touch .claude/skills/work/SKILL.md
+touch .claude/skills/review/SKILL.md
+touch .claude/skills/diagnose/SKILL.md
+touch .claude/skills/commit/SKILL.md
+touch .claude/agents/planner.md
+touch .claude/agents/worker.md
+touch .claude/agents/reviewer.md
+touch docs/context/PROJECT.md`}
+</CodeBlock>
+
+<CodeBlock lang="powershell">
+{`$dirs = @(
+  ".claude\\skills\\plan",
+  ".claude\\skills\\work",
+  ".claude\\skills\\review",
+  ".claude\\skills\\diagnose",
+  ".claude\\skills\\commit",
+  ".claude\\rules\\frontend",
+  ".claude\\rules\\backend",
+  ".claude\\agents",
+  ".claude\\hooks",
+  "docs\\context",
+  "docs\\issues",
+  "docs\\adr",
+  "docs\\decisions"
+)
+$dirs | ForEach-Object { New-Item -ItemType Directory -Force $_ | Out-Null }
+
+$files = @(
+  "CLAUDE.md",
+  ".claude\\settings.json",
+  ".claude\\settings.local.json",
+  ".claude\\rules\\code-style.md",
+  ".claude\\rules\\testing.md",
+  ".claude\\rules\\backend\\api.md",
+  ".claude\\skills\\plan\\SKILL.md",
+  ".claude\\skills\\work\\SKILL.md",
+  ".claude\\skills\\review\\SKILL.md",
+  ".claude\\skills\\diagnose\\SKILL.md",
+  ".claude\\skills\\commit\\SKILL.md",
+  ".claude\\agents\\planner.md",
+  ".claude\\agents\\worker.md",
+  ".claude\\agents\\reviewer.md",
+  "docs\\context\\PROJECT.md"
+)
+$files | ForEach-Object { New-Item -ItemType File -Force $_ | Out-Null }`}
+</CodeBlock>
+
+</OsTabs>
+
+</Section>
+
+<Section id="claude" num="04" title="CLAUDE.md">
+
+<code>CLAUDE.md</code>, repo seviyesinde Claude'un projeyi anlamasına yardım eden ana manifesttir. Çok uzun prosedürleri buraya gömmek yerine skill dosyalarına taşımak daha sürdürülebilirdir.
+
+<CardGrid columns="two">
+  <InfoCard icon={IconFileDescription} title="İyi içerikler">
+    <ul>
+      <li>Proje amacı</li>
+      <li>Setup/test/build komutları</li>
+      <li>Mimari sınırlar</li>
+      <li>Güvenlik ve scope kuralları</li>
+      <li>Önemli dosya/klasör açıklamaları</li>
+    </ul>
+  </InfoCard>
+  <InfoCard icon={IconFileDescription} title="Kaçınılacak şeyler">
+    <ul>
+      <li>Çok uzun prompt metinleri</li>
+      <li>Her feature'ın geçici detayı</li>
+      <li>Güncel tutulmayacak roadmap'ler</li>
+      <li>Plugin/skill ile paylaşılması gereken prosedürler</li>
+    </ul>
+  </InfoCard>
+</CardGrid>
+
+<CodeBlock lang="markdown" kind="file">
+{`# Project Instructions
+
+## Project Context
+- Project type: TODO
+- Primary language/framework: TODO
+- Main entry points: TODO
+- Important commands: TODO
+
+## Workflow
+Default development flow is Plan -> Work -> Review.
+
+1. Plan first when requirements are unclear or the task is larger than one small change.
+2. Work on one scoped issue/change at a time.
+3. Review the diff before considering the task complete.
+4. Keep changes small, reversible, and testable.
+
+## Architecture Rules
+- Keep business logic separate from UI/framework glue.
+- Prefer small public interfaces and deep modules.
+- Do not introduce new dependencies without explaining why.
+- Do not perform unrelated refactors while implementing an issue.
+- Document meaningful architecture decisions in docs/adr/.
+
+## Test Commands
+- Unit tests: TODO
+- Typecheck: TODO
+- Lint: TODO
+- Build: TODO
+
+## Safety
+- Do not delete files without explicit instruction.
+- Do not change public behavior outside the active task.
+- Ask before large rewrites, schema migrations, or dependency changes.
+- If scope grows, stop and propose a new issue.`}
+</CodeBlock>
+
+</Section>
+
+<Section id="rules" num="05" title="rules">
+
+<code>.claude/rules/</code>, <code>CLAUDE.md</code>'yi şişirmeden kalıcı talimatları modüler dosyalara bölmek için kullanılır. Rules, Claude'un bilmesi gereken davranış/proje kurallarıdır. Ama önemli nüans şu: <strong>path verilmemiş rule dosyaları session başında context'e girer</strong>; <code>paths</code> frontmatter kullanılan rule dosyaları ise Claude ilgili dosyalarla çalışırken yüklenir. Bu yüzden rules klasörü iyi bölünmezse session/context şişirebilir.
+
+<CodeBlock lang="text" kind="file">
+{`.claude/
+└─ rules/
+   ├─ always.md              # tiny global rules; loads every session
+   ├─ testing.md             # general test rules; loads every session if no paths
+   ├─ frontend/
+   │  └─ react.md            # path-scoped to React/TSX files
+   └─ backend/
+      └─ api.md              # path-scoped to API files`}
+</CodeBlock>
+
+<Callout kind="info">
+  <strong>Frontmatter neden önemli?</strong> Rule dosyası markdown'dır; başına YAML frontmatter koyabilirsin. En pratik alan <code>paths</code>. <code>paths</code> yoksa rule genel kabul edilir ve session başında yüklenebilir. <code>paths</code> varsa Claude bu rule'u sadece eşleşen dosyalarla çalışırken context'e alır. Amaç: her şeyi baştan okutmak yerine Claude'un o an ihtiyaç duyduğu kuralı okutmak.
+</Callout>
+
+<CodeBlock lang="markdown" kind="file">
+{`---
+paths:
+  - "src/api/**/*.ts"
+  - "app/api/**/*.ts"
+  - "server/**/*.ts"
+---
+
+# API Rules
+
+- Validate request input at the boundary.
+- Return the shared error response shape.
+- Keep database access behind the repository/service layer.
+- Add or update tests for behavior changes.`}
+</CodeBlock>
+
+<CodeBlock lang="markdown" kind="file">
+{`---
+paths:
+  - "src/**/*.tsx"
+  - "app/**/*.tsx"
+  - "components/**/*.tsx"
+---
+
+# React / UI Rules
+
+- Prefer small, focused components.
+- Keep server/client boundaries explicit.
+- Do not introduce a new UI library without approval.
+- Add accessible labels for interactive elements.`}
+</CodeBlock>
+
+<DataTable
+  headers={["Rule tipi", "Nasıl yüklenir?", "Ne koymalı?"]}
+  rows={[
+    ["Global rule (.claude/rules/always.md)", "paths yoksa session başında yüklenebilir.", "Çok kısa, her zaman gerekli kurallar: güvenlik, genel review standardı, commit disiplini."],
+    ["Path-scoped rule (paths: frontmatter)", "Claude eşleşen dosyaları okuduğunda/üzerinde çalıştığında yüklenir.", "API, frontend, test, database, mobile gibi sadece belirli alanlarda geçerli kurallar."],
+    ["Skill", "Kullanıcı çağırdığında veya Claude ilgili gördüğünde yüklenir.", "Çok adımlı prosedür: planla, implement et, review et, diagnose et, commit hazırla."],
+    ["Hook / settings", "Modelin hatırlamasına bağlı değildir; config/lifecycle olarak çalışır.", "Kesin uygulanması gereken permission, komut kontrolü, otomatik hatırlatma veya policy."],
+  ]}
+/>
+
+<Callout kind="tip">
+  <strong>Pratik rule stratejisi:</strong> <code>CLAUDE.md</code> ve global rules minimumda kalsın. "Her işte bilmesi şart mı?" sorusunun cevabı hayırsa rule'u path-scoped yap veya skill'e taşı. Büyük checklist'leri global rule'a koyma; ilgili alana böl. Örneğin API standardı sadece <code>{"src/api/**"}</code>, UI standardı sadece <code>{"**/*.tsx"}</code>, test standardı sadece <code>{"**/*.test.ts"}</code> için yüklensin.
+</Callout>
+
+</Section>
+
+<Section id="settings" num="06" title="settings.json">
+
+<code>settings.json</code> metinsel talimat değil, yapılandırmadır. İzinler, hook'lar, env bilgileri ve proje seviyesinde paylaşılması gereken teknik ayarlar burada durabilir.
+
+<DataTable
+  headers={["Scope", "Ne için?", "Paylaşılır mı?"]}
+  rows={[
+    ["User", "Kişisel tercih ve global ayarlar.", "Hayır"],
+    ["Project", "Takım/repo için ortak ayarlar.", "Evet"],
+    ["Local", "Makineye özel, gizli veya kişisel ayarlar.", "Hayır"],
+  ]}
+/>
+
+<CodeBlock lang="json" kind="file">
+{`{
+  "permissions": {
+    "allow": [
+      "Bash(npm test)",
+      "Bash(npm run lint)",
+      "Bash(npm run typecheck)",
+      "Bash(npm run build)"
+    ],
+    "deny": [
+      "Bash(rm -rf /)",
+      "Bash(git push --force*)"
+    ]
+  },
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo 'File changed. Consider running tests.'"
+          }
+        ]
+      }
+    ]
+  }
+}`}
+</CodeBlock>
+
+<Callout kind="tip">
+  <strong>Best practice:</strong> Takımca paylaşılacak ayarlar <code>.claude/settings.json</code> içinde project scope'ta, kişisel izinler ve lokal path/env bilgileri <code>.claude/settings.local.json</code> içinde tutulmalıdır. <code>settings.local.json</code> git'e girmemeli; dosyayı Claude oluşturduysa gitignore'a ekler, elle oluşturduysan sen ekle.
+</Callout>
+
+</Section>
+
+<Section id="commands" num="07" title="commands">
+
+Claude Code'da <strong>commands</strong> derken iki farklı şeyi ayırmak gerekir: Claude Code'un kendi built-in slash command'ları ve eskiden <code>.claude/commands/</code> altında tutulan custom command workflow'ları. Güncel setup anlatımında custom workflow'lar için tercih edilen yer <code>skills</code>'tir.
+
+<Callout kind="tip">
+  <strong>Güncel ayrım:</strong> <code>/usage</code>, <code>/context</code>, <code>/compact</code>, <code>/clear</code>, <code>/model</code> gibi built-in command'lar hâlâ ayrı kavramdır. Fakat yeni bir custom workflow yazacaksan <code>.claude/skills/&lt;name&gt;/SKILL.md</code> kullanmak daha doğru anlatımdır. <code>.claude/commands/</code> varsa backward compatibility/legacy olarak düşünülebilir.
+</Callout>
+
+<Callout kind="info">
+  <strong>İsim çakışması notu:</strong> Bu dokümanda okunabilirlik için skill-backed command örnekleri <code>/plan</code>, <code>/work</code>, <code>/review</code> olarak gösterilir. Claude Code sürümünde aynı isimli built-in komutlarla çakışma yaşanırsa plugin namespace kullanmak (<code>/agentic:plan</code>) veya ekip standardına göre farklı bir isim seçmek daha güvenlidir.
+</Callout>
+
+<DataTable
+  headers={["Tür", "Nerede yaşar?", "Ne için kullanılır?", "Öneri"]}
+  rows={[
+    ["Built-in slash commands", "Claude Code içinde gelir", "Session yönetimi, context, model, usage, tool durumları", "Ayrı anlat; bunlar skill dosyası değildir."],
+    ["Skill-backed commands", "​.claude/skills/<name>/SKILL.md", "Planlama, implementasyon, review, diagnose, commit gibi tekrar kullanılabilir prosedürler", "Yeni custom workflow için bunu kullan."],
+    ["Legacy custom commands", ".claude/commands/*.md", "Eski command-style custom prompt/workflow dosyaları", "Varsa çalışabilir; yeni setup'ta skills'e taşımayı tercih et."],
+  ]}
+/>
+
+<DataTable
+  headers={["Built-in komut", "Amaç", "Ne zaman gösterilir?"]}
+  rows={[
+    ["/usage", "Kullanım, maliyet veya limit durumunu görmek.", "Uzun demo/session sırasında kontrol noktası olarak."],
+    ["/context", "Context kullanımını görmek.", "Context şiştiğinde kalite düşüşünü konuşurken."],
+    ["/compact", "Konuşmayı özetleyip context'i küçültmek.", "Kararları dosyaya yazdırdıktan sonra session'ı toparlamak için."],
+    ["/clear", "Yeni temiz session başlatmak.", "Büyük faz geçişlerinde veya context çok kirlendiğinde."],
+    ["/model", "Aktif modeli değiştirmek.", "Plan/review için güçlü model, basit işler için daha ekonomik model seçimini anlatırken."],
+    ["/skills", "Yüklü skill'leri görmek/yönetmek.", "Plugin veya proje içindeki skill'lerin geldiğini doğrulamak için."],
+  ]}
+/>
+
+<CardGrid columns="two">
+  <InfoCard icon={IconTools} title="Modern custom workflow">
+    <FileTree>
+      <Dir name=".claude/" root>
+        <Dir name="skills/">
+          <Dir name="plan/">
+            <File kind="code" name="SKILL.md" />
+          </Dir>
+        </Dir>
+      </Dir>
+    </FileTree>
+  </InfoCard>
+  <InfoCard icon={IconTerminal2} title="Legacy custom command (yeni setup'ta kaçının)">
+    <FileTree>
+      <Dir name=".claude/" root>
+        <Dir name="commands/">
+          <File name="plan.md" />
+        </Dir>
+      </Dir>
+    </FileTree>
+  </InfoCard>
+</CardGrid>
+
+</Section>
+
+<Section id="skills" num="08" title="skills">
+
+Skill, tekrar kullanılabilir prosedürdür ve slash-command entrypoint gibi çalışabilir. Güncel custom workflow'lar için önerilen ana yer <code>.claude/skills/&lt;name&gt;/SKILL.md</code>'dir. Bu dokümanda skill'leri ana kullanıcı arayüzü gibi ele alıyoruz: <code>/plan</code>, <code>/work</code>, <code>/review</code>.
+
+<Callout kind="info">
+  <strong>Discovery/path notu:</strong> Project/personal skill için beklenen yapı <code>.claude/skills/plan/SKILL.md</code> şeklindedir; <code>.claude/skills/plan.md</code> düz dosyası skill olarak yüklenmez. Komut olarak yazdığın ad klasör adından gelir: <code>.claude/skills/plan/SKILL.md</code> → <code>/plan</code>. Frontmatter'daki <code>name</code> alanı slash menüsündeki görüntü/display adını değiştirebilir; çoğu skill konumunda yazdığın komut adını değiştirmez. İstisna: plugin root <code>SKILL.md</code> kullanımı.
+</Callout>
+
+<Callout kind="info">
+  <strong>Küçük discovery notları:</strong> Aynı isimde hem <code>.claude/commands/plan.md</code> hem <code>.claude/skills/plan/SKILL.md</code> varsa skill önceliklidir. Claude mevcut skill klasörlerindeki değişiklikleri canlı yakalar; ama session başlarken <code>.claude/skills/</code> hiç yoksa yeni klasörün izlenmesi için Claude'u restart etmek gerekebilir. Monorepo'da alt klasörlerdeki <code>.claude/skills/</code> yapıları da ilgili dosyalarla çalışırken devreye girebilir.
+</Callout>
+
+<DataTable
+  headers={["Pattern", "Nasıl çalışır?", "Ne zaman kullanılır?"]}
+  rows={[
+    ["Inline skill", "/skill-name skill içeriğini ana session context'ine yükler.", "Kısa checklist, style guide, küçük prosedür."],
+    ["Skill-driven orchestration", "Skill, ana procedure olur; gerektiğinde ilgili agent'ı dispatch etmeyi veya agent'lardan focused review/research istemeyi tarif eder.", "/plan, /work, /review gibi workflow entrypoint'leri."],
+    ["Agent → Skill preload", "Agent frontmatter içinde skills: yazılır; bu skill içerikleri agent context'ine başlangıçta inject edilir.", "Agent'ın sürekli bilmesi gereken domain convention veya reference skill'leri."],
+    ["Advanced: context: fork", "Skill, resmi olarak belirli bir subagent context'inde izole çalıştırılabilir.", "Context izolasyonu çok önemliyse; workshop ana akışında şart değildir."],
+  ]}
+/>
+
+<Callout kind="info">
+  <strong>Skill ↔ agent çağrı mantığı:</strong> Skill'ler gerektiğinde agent'lardan yardım isteyebilir; örn. <code>/review</code> skill'i non-trivial diff için <code>reviewer</code> agent'a focused review yaptırır. Agent'lar da <code>Skill</code> tool erişimine sahipse çalışma sırasında ilgili skill'i keşfedip çağırabilir. Best practice: kullanıcıya görünen ana workflow'u skill'de tut, uzman rol ve tool sınırını agent'ta tut.
+</Callout>
+
+<DataTable
+  headers={["Parça", "İyi olduğu şeyler", "Kaçın"]}
+  rows={[
+    ["Skill", "Slash entrypoint, checklist, prosedür, output formatı, issue/PR/review akışı, gerektiğinde agent dispatch yönergesi.", "Uzun role prompt'u, her şeyi context'e preload etmek, tool/permission politikasını sadece metinle yönetmek."],
+    ["Agent", "Uzman rol, isolated/focused execution, model/tool/permission sınırı, planner/worker/reviewer gibi farklı davranış profili.", "Her işi tek mega-agent'a vermek, kullanıcı-facing prosedürü agent prompt'una gömmek, gereksiz skill preload etmek."],
+    ["Rule", "Her zaman veya path-specific bilinmesi gereken kısa standartlar: test, API, style, security.", "Çok adımlı prosedür veya nadiren gereken uzun referans metni."],
+    ["Hook/settings", "Model unutsa bile çalışması gereken enforcement, permission ve lifecycle otomasyonu.", "Yaratıcı karar, product reasoning veya insan onayı gerektiren şeyleri tamamen otomatikleştirmek."],
+  ]}
+/>
+
+<Callout kind="tip">
+  <strong>Bu setup için önerilen model:</strong> <code>/plan</code>, <code>/work</code>, <code>/review</code> birer skill-backed command olsun. Agent'lar ise bu skill'lerin gerektiğinde başvuracağı uzman worker'lar olsun. Böylece katılımcı önce skill'i kopyalayıp kullanabilir; agent kısmını sonra detaylandırabilir.
+</Callout>
+
+<Callout kind="info">
+  <strong>Invocation kontrolü:</strong> Skill'ler iki şekilde devreye girebilir: kullanıcı doğrudan <code>/skill-name</code> ile çağırabilir veya Claude, skill açıklamasını uygun bulursa otomatik kullanabilir. Varsayılan davranış ikisine de izin verir. Sadece manuel çağrı istiyorsan <code>disable-model-invocation: true</code> kullan. Kullanıcının slash menüsünde görmesini istemediğin, sadece modelin gerektiğinde kullanacağı arka plan bilgisi için <code>user-invocable: false</code> kullan.
+</Callout>
+
+<DataTable
+  headers={["Frontmatter", "Kullanıcı çağırabilir mi?", "Claude otomatik çağırabilir mi?", "Ne zaman?"]}
+  rows={[
+    ["default", "Evet", "Evet", "Hem slash command hem model-driven yardımcı skill için."],
+    ["disable-model-invocation: true", "Evet", "Hayır", "/commit, /deploy, /send-slack-message gibi yan etkisi veya timing hassasiyeti olan işler."],
+    ["user-invocable: false", "Hayır", "Evet", "Legacy sistem bilgisi, domain context, style guide gibi kullanıcının command olarak çalıştırması anlamlı olmayan arka plan bilgisi."],
+  ]}
+/>
+
+<DataTable
+  headers={["Alan", "Kısa anlamı"]}
+  rows={[
+    ["description", "Skill ne yapar ve Claude ne zaman otomatik düşünsün? En önemli discovery alanı."],
+    ["when_to_use", "Ek tetikleme ipuçları veya örnek kullanıcı istekleri. Çok uzatma."],
+    ["argument-hint", "Slash autocomplete'ta görünen kısa argüman ipucu: [issue-number], [file] gibi."],
+    ["arguments", "Pozisyonel argümanları isimlendirir; skill içinde $name gibi kullanmayı kolaylaştırır."],
+    ["model / effort", "Bu skill çalışırken model veya düşünme eforunu geçici override eder. Sonraki kullanıcı mesajında session ayarına döner."],
+    ["allowed-tools", "Skill aktifken bazı tool'ları ön onaylı hale getirmek için. Yan etkili işlerde dikkatli kullan."],
+    ["paths", "Skill'in sadece belirli dosya pattern'leriyle çalışırken otomatik devreye girmesini sınırlar."],
+  ]}
+/>
+
+<DataTable
+  headers={["Skill", "İlgili agent", "Amaç"]}
+  rows={[
+    ["plan", "planner", "Belirsiz işi netleştirir, küçük issue'lara böler."],
+    ["work", "worker", "Tek scoped issue'yu testli ve sınırlı şekilde uygular."],
+    ["review", "reviewer", "Diff'i correctness, scope, test ve mimari açısından kontrol eder."],
+    ["diagnose", "worker / debugging agent", "Hata/failed test durumunda sistematik teşhis yapar."],
+    ["commit", "inline", "Commit öncesi diff/test kontrolü ve commit mesajı hazırlar."],
+  ]}
+/>
+
+<Disclosure
+  trigger={
+    <CollapsibleTrigger
+      badge="skill"
+      badgeKind="skill"
+      name="plan/SKILL.md"
+      description="Gereksinim netleştirme ve issue çıkarma"
+    />
+  }
+  className={collapsibleStyles.card}
+  triggerClassName={collapsibleStyles.header}
+  contentClassName={collapsibleStyles.body}
+  iconClassName={collapsibleStyles.toggleIcon}
+  iconOpenClassName={collapsibleStyles.toggleIconOpen}
+>
+
+<CodeBlock lang="markdown">
+{`---
+name: plan
+description: Clarify requirements and turn broad work into small implementation issues.
+disable-model-invocation: true
+argument-hint: "<feature idea or task>"
+---
+
+# Plan Skill
+
+Use this skill when the request is unclear, broad, risky, or larger than one small implementation step.
+
+## User Request
+$ARGUMENTS
+
+## Inputs
+- User request or feature idea
+- Existing README / docs / issues / ADRs
+- Relevant source files when needed
+
+## Procedure
+1. Read existing project context before proposing a plan.
+2. Identify the goal, users, constraints, non-goals, and unknowns.
+3. Ask only the most important clarification questions.
+4. If deeper isolated research is useful, dispatch or ask for help from the planner agent.
+5. Convert the work into small vertical-slice issues.
+6. For each issue, include:
+   - title
+   - user story or behavior
+   - acceptance criteria
+   - test expectations
+   - out of scope
+   - suggested owner/agent
+
+## Rules
+- Do not implement code while planning.
+- Do not create horizontal tasks like "create database layer" unless explicitly required.
+- Prefer tracer-bullet issues that produce visible behavior.
+- Separate facts, assumptions, and open questions.`}
+</CodeBlock>
+
+</Disclosure>
+
+<Disclosure
+  trigger={
+    <CollapsibleTrigger
+      badge="skill"
+      badgeKind="skill"
+      name="work/SKILL.md"
+      description="Tek scoped işi uygula"
+    />
+  }
+  className={collapsibleStyles.card}
+  triggerClassName={collapsibleStyles.header}
+  contentClassName={collapsibleStyles.body}
+  iconClassName={collapsibleStyles.toggleIcon}
+  iconOpenClassName={collapsibleStyles.toggleIconOpen}
+>
+
+<CodeBlock lang="markdown">
+{`---
+name: work
+description: Implement one scoped issue with tests and minimal unrelated changes.
+disable-model-invocation: true
+argument-hint: "<issue file or task>"
+---
+
+# Work Skill
+
+Use this skill when an issue is clear enough to implement.
+
+## Active Issue / Task
+$ARGUMENTS
+
+## Inputs
+- One issue or task
+- Acceptance criteria
+- Test commands
+- Relevant source files
+
+## Procedure
+1. Restate the active scope in one short paragraph.
+2. Inspect the relevant files.
+3. Choose the smallest behavior to implement first.
+4. Write or update a failing test when practical.
+5. Implement the smallest change that makes the test pass.
+6. Repeat until acceptance criteria are covered.
+7. Use the worker agent for isolated implementation when the task is large enough to benefit from a fresh context.
+8. Run relevant checks.
+9. Summarize changed files, tests run, and remaining risks.
+
+## Rules
+- Work on one issue at a time.
+- Do not perform unrelated refactors.
+- Do not silently add dependencies.
+- Do not broaden scope without stopping and asking.
+- Keep changes reviewable.`}
+</CodeBlock>
+
+</Disclosure>
+
+<Disclosure
+  trigger={
+    <CollapsibleTrigger
+      badge="skill"
+      badgeKind="skill"
+      name="review/SKILL.md"
+      description="Diff review prosedürü"
+    />
+  }
+  className={collapsibleStyles.card}
+  triggerClassName={collapsibleStyles.header}
+  contentClassName={collapsibleStyles.body}
+  iconClassName={collapsibleStyles.toggleIcon}
+  iconOpenClassName={collapsibleStyles.toggleIconOpen}
+>
+
+<CodeBlock lang="markdown">
+{`---
+name: review
+description: Review a diff for correctness, scope, tests, architecture, and documentation.
+disable-model-invocation: true
+argument-hint: "<base branch, diff, issue, or PR URL>"
+---
+
+# Review Skill
+
+Use this skill before marking work complete or before commit/PR.
+
+## Inputs
+- Git diff
+- Active issue / acceptance criteria
+- Test results
+- Relevant docs
+
+## Review Checklist
+1. Does the diff satisfy the acceptance criteria?
+2. Are there unrelated changes?
+3. Are tests meaningful and behavior-focused?
+4. Did typecheck/lint/build pass?
+5. Is business logic placed in the right module?
+6. Were docs updated when behavior, commands, or architecture changed?
+7. Are there security, data, or migration risks?
+8. If the diff is non-trivial, dispatch or ask for help from the reviewer agent.
+
+## Output Format
+- Summary
+- Must fix
+- Should fix
+- Nice to have
+- Tests run
+- Final recommendation: approve / request changes / blocked
+
+## Rules
+- Be stricter with correctness than style.
+- Do not approve untested behavior.
+- Do not hide uncertainty.`}
+</CodeBlock>
+
+</Disclosure>
+
+<Disclosure
+  trigger={
+    <CollapsibleTrigger
+      badge="skill"
+      badgeKind="skill"
+      name="diagnose/SKILL.md"
+      description="Debugging prosedürü"
+    />
+  }
+  className={collapsibleStyles.card}
+  triggerClassName={collapsibleStyles.header}
+  contentClassName={collapsibleStyles.body}
+  iconClassName={collapsibleStyles.toggleIcon}
+  iconOpenClassName={collapsibleStyles.toggleIconOpen}
+>
+
+<CodeBlock lang="markdown">
+{`---
+name: diagnose
+description: Diagnose failed tests, runtime errors, and surprising behavior before attempting a fix.
+disable-model-invocation: true
+argument-hint: "<error, failing command, or symptom>"
+---
+
+# Diagnose Skill
+
+## Procedure
+1. Reproduce the failure or identify the smallest failing command.
+2. Capture the exact error output.
+3. List the most likely hypotheses.
+4. Test one hypothesis at a time.
+5. Add a regression test when possible.
+6. Apply the smallest safe fix.
+7. Run the nearest relevant tests, then broader checks if needed.
+
+## Rules
+- Do not rewrite large areas before understanding the failure.
+- Do not suppress errors to make tests pass.
+- Do not fix unrelated issues in the same pass.`}
+</CodeBlock>
+
+</Disclosure>
+
+<Disclosure
+  trigger={
+    <CollapsibleTrigger
+      badge="skill"
+      badgeKind="skill"
+      name="commit/SKILL.md"
+      description="Commit hazırlığı"
+    />
+  }
+  className={collapsibleStyles.card}
+  triggerClassName={collapsibleStyles.header}
+  contentClassName={collapsibleStyles.body}
+  iconClassName={collapsibleStyles.toggleIcon}
+  iconOpenClassName={collapsibleStyles.toggleIconOpen}
+>
+
+<CodeBlock lang="markdown">
+{`---
+name: commit
+description: Review current changes, verify checks, and prepare a Conventional Commit message.
+disable-model-invocation: true
+argument-hint: "<optional scope or push flag>"
+---
+
+# Commit Skill
+
+## Procedure
+1. Inspect git status and diff.
+2. Summarize what changed.
+3. Confirm relevant tests/checks were run, or clearly list what was not run.
+4. Identify risks or unrelated changes.
+5. Propose a Conventional Commit message.
+6. Commit only when the user explicitly approves or the workflow already permits it.
+
+## Rules
+- Do not commit secrets or unrelated files.
+- Do not invent test results.
+- Prefer small commits that map to a coherent change.`}
+</CodeBlock>
+
+</Disclosure>
+
+</Section>
+
+<Section id="agents" num="09" title="agents">
+
+Agent, belirli bir role ait execution context'tir: system prompt, model, tool set, permission mode ve çıktı beklentisi burada tanımlanır. Bu setup'ta agent'lar tek başına da çağrılabilir; ama daha pratik model, <code>/plan</code>, <code>/work</code>, <code>/review</code> gibi skill'lerin gerektiğinde ilgili agent'lardan destek istemesidir.
+
+<Callout kind="info">
+  <strong>Önemli:</strong> <code>skills:</code> alanı agent'ın bazı skill içeriklerini başlangıçta preload etmesi içindir. Yani agent daha işe başlamadan o skill'in tam içeriği context'ine eklenir. Bu, agent'ın sürekli bilmesi gereken convention/reference bilgileri için iyidir; her agent'a her şeyi preload etmek context'i şişirir. <code>disable-model-invocation: true</code> olan manuel-only skill'ler preload edilemez. Preload etmesen bile agent, Skill tool erişimi varsa ilgili project/user/plugin skill'lerini çalışma sırasında yine keşfedip çağırabilir.
+</Callout>
+
+<CodeBlock lang="markdown" kind="example">
+{`---
+name: api-worker
+description: Implements API changes using team conventions.
+tools: Read, Write, Edit, Bash, Glob, Grep, Skill
+model: sonnet
+skills:
+  - api-conventions
+  - error-handling-patterns
+---
+
+You implement one scoped API task. Follow the preloaded conventions.`}
+</CodeBlock>
+
+<DataTable
+  headers={["Agent skill kullanımı", "Ne anlama gelir?"]}
+  rows={[
+    ["skills: preload", "Agent başlamadan önce listelenen skill'lerin tam içeriği context'e eklenir. Convention/reference için iyi, context maliyeti vardır."],
+    ["On-demand Skill tool", "Agent çalışırken ihtiyacı olursa project/user/plugin skill'lerini keşfedip çağırabilir. Genelde daha hafif ve esnektir."],
+    ["disallowedTools: Skill", "Agent'ın skill çağırmasını istemiyorsan Skill tool'u kapatabilirsin."],
+  ]}
+/>
+
+<Disclosure
+  trigger={
+    <CollapsibleTrigger
+      badge="agent"
+      badgeKind="agent"
+      name="planner.md"
+      description="Kod yazmadan plan/issue üretir"
+    />
+  }
+  className={collapsibleStyles.card}
+  triggerClassName={collapsibleStyles.header}
+  contentClassName={collapsibleStyles.body}
+  iconClassName={collapsibleStyles.toggleIcon}
+  iconOpenClassName={collapsibleStyles.toggleIconOpen}
+>
+
+<CodeBlock lang="markdown">
+{`---
+name: planner
+description: Clarifies requirements, creates PRDs/issues, and does not write production code.
+tools: Read, Write, Edit, Glob, Grep
+model: sonnet
+---
+
+You are a planning agent.
+
+Typical invocation:
+- The \`/plan\` skill may dispatch this agent for isolated planning or codebase research.
+- The skill defines the procedure; this file defines the role, tools, and boundaries.
+
+Responsibilities:
+- Understand the request and project context.
+- Ask clarification questions when important information is missing.
+- Update context docs when domain language or assumptions become clear.
+- Produce small vertical-slice issues with acceptance criteria and test expectations.
+- Flag architectural decisions that may need ADRs.
+
+Rules:
+- Do not write production code unless explicitly instructed.
+- Do not create broad horizontal implementation phases.
+- Separate facts, assumptions, and open questions.
+- Prefer implementation issues that can be completed and reviewed independently.`}
+</CodeBlock>
+
+</Disclosure>
+
+<Disclosure
+  trigger={
+    <CollapsibleTrigger
+      badge="agent"
+      badgeKind="agent"
+      name="worker.md"
+      description="Tek işi uygular"
+    />
+  }
+  className={collapsibleStyles.card}
+  triggerClassName={collapsibleStyles.header}
+  contentClassName={collapsibleStyles.body}
+  iconClassName={collapsibleStyles.toggleIcon}
+  iconOpenClassName={collapsibleStyles.toggleIconOpen}
+>
+
+<CodeBlock lang="markdown">
+{`---
+name: worker
+description: Implements one scoped issue using the project rules and relevant skills.
+tools: Read, Write, Edit, MultiEdit, Bash, Glob, Grep
+model: sonnet
+---
+
+You are an implementation agent.
+
+Typical invocation:
+- The \`/work\` skill may dispatch this agent to implement a scoped issue in a fresh context.
+- The skill defines the work procedure; this file defines implementation boundaries.
+
+Responsibilities:
+- Read the active issue and relevant project context.
+- Implement one scoped change at a time.
+- Use tests to guide implementation when practical.
+- Run relevant checks and report results.
+- Update docs when behavior, commands, or architecture changes.
+
+Rules:
+- Stay inside the active issue.
+- Do not do unrelated refactors.
+- Do not add dependencies without explaining the reason.
+- Do not mark work complete until tests/checks have been run or the blocker is documented.`}
+</CodeBlock>
+
+</Disclosure>
+
+<Disclosure
+  trigger={
+    <CollapsibleTrigger
+      badge="agent"
+      badgeKind="agent"
+      name="reviewer.md"
+      description="Diff'i inceler"
+    />
+  }
+  className={collapsibleStyles.card}
+  triggerClassName={collapsibleStyles.header}
+  contentClassName={collapsibleStyles.body}
+  iconClassName={collapsibleStyles.toggleIcon}
+  iconOpenClassName={collapsibleStyles.toggleIconOpen}
+>
+
+<CodeBlock lang="markdown">
+{`---
+name: reviewer
+description: Reviews a completed diff for correctness, scope, quality, tests, and documentation.
+tools: Read, Bash, Glob, Grep
+model: sonnet
+---
+
+You are a review agent.
+
+Typical invocation:
+- The \`/review\` skill may dispatch this agent to review a specific diff or PR.
+- The skill defines the review procedure; this file defines the review lens.
+
+Responsibilities:
+- Compare the diff against the issue and acceptance criteria.
+- Identify correctness problems, missing tests, scope leakage, and architecture risks.
+- Verify that relevant commands were run.
+- Produce a review summary with actionable findings.
+
+Output:
+- Summary
+- Must fix
+- Should fix
+- Nice to have
+- Tests/checks observed
+- Recommendation
+
+Rules:
+- Do not approve untested risky changes.
+- Do not rewrite code during review unless explicitly asked.
+- Be specific: point to files, behaviors, and risks.`}
+</CodeBlock>
+
+</Disclosure>
+
+<Callout kind="tip">
+  <strong>Agent best practice:</strong> Agent'a geniş yetki vermek yerine, net görev + sınırlı tool set + açık çıktı formatı ver. Review agent'ı genelde kod yazmamalı; worker agent review yapmadan işi tamamlanmış saymamalı.
+</Callout>
+
+<CodeBlock lang="markdown" kind="example">
+{`---
+name: api-worker
+description: Implements API changes using project conventions.
+tools: Read, Write, Edit, Bash, Glob, Grep
+model: sonnet
+skills:
+  - api-conventions
+  - error-handling-patterns
+---
+
+You are an API implementation agent.
+Follow the preloaded conventions and implement only the scoped task.`}
+</CodeBlock>
+
+</Section>
+
+<Section id="hooks" num="10" title="hooks">
+
+Hook, belirli Claude Code lifecycle noktalarında otomatik çalışan komut/script'tir. Hook'lar LLM kararına bırakılmaması gereken küçük deterministik kontroller için iyidir.
+
+<DataTable
+  headers={["Hook tipi", "Örnek kullanım"]}
+  rows={[
+    ["PreToolUse", "Riskli bash komutunu engellemek veya onay istemek."],
+    ["PostToolUse", "Edit sonrası test/format hatırlatmak veya otomatik kontrol çalıştırmak."],
+    ["Stop", "Session sonunda özet/checklist üretmek."],
+    ["Notification", "Kullanıcı onayı veya dikkat gerektiren olayları bildirmek."],
+  ]}
+/>
+
+<CodeBlock lang="python" kind="file">
+{`#!/usr/bin/env python3
+import json
+import sys
+
+payload = json.load(sys.stdin)
+tool_name = payload.get("tool_name", "")
+
+if tool_name in {"Write", "Edit", "MultiEdit"}:
+    print("Reminder: file changed. Run the smallest relevant test before continuing.")
+
+sys.exit(0)`}
+</CodeBlock>
+
+<CodeBlock lang="json" kind="file">
+{`{
+  "permissions": {
+    "allow": [
+      "Bash(npm test)",
+      "Bash(npm run lint)",
+      "Bash(npm run typecheck)",
+      "Bash(npm run build)"
+    ],
+    "deny": [
+      "Bash(rm -rf /)",
+      "Bash(git push --force*)"
+    ]
+  },
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo 'File changed. Consider running tests.'"
+          }
+        ]
+      }
+    ]
+  }
+}`}
+</CodeBlock>
+
+<Callout kind="tip">
+  <strong>Hook best practice:</strong> Hook'ları sıkıcı ve güvenli tut. Büyük iş mantığı, karmaşık kararlar veya sık false-positive üretecek kontroller hook için iyi aday değildir.
+</Callout>
+
+</Section>
+
+<Section id="plugin" num="11" title="plugin">
+
+Plugin, skills/agents/hooks gibi tekrar kullanılabilir setup parçalarını tek projeden çıkarıp lokal veya GitHub üzerinde versiyonlanabilir hale getirir. Böylece her repo için baştan kopyalamak yerine aynı workflow tekrar kullanılabilir.
+
+<CardGrid columns="two">
+  <InfoCard icon={IconTools} title="Ne zaman lokal?">
+    <ul>
+      <li>Kişisel workflow denemesi</li>
+      <li>Hızlı iterasyon</li>
+      <li>Henüz takıma hazır olmayan yapı</li>
+    </ul>
+  </InfoCard>
+  <InfoCard icon={IconGitBranch} title="Ne zaman GitHub?">
+    <ul>
+      <li>Takımca paylaşılacaksa</li>
+      <li>Versiyonlama gerekiyorsa</li>
+      <li>Review/PR sürecinden geçecekse</li>
+    </ul>
+  </InfoCard>
+</CardGrid>
+
+<FileTree>
+  <Dir name="agentic-workflow-plugin/" root>
+    <Dir name=".claude-plugin/">
+      <File kind="code" name="plugin.json" />
+    </Dir>
+    <Dir name="skills/">
+      <File kind="code" name="plan/SKILL.md" />
+      <File kind="code" name="work/SKILL.md" />
+      <File kind="code" name="review/SKILL.md" />
+      <File kind="code" name="diagnose/SKILL.md" />
+      <File kind="code" name="commit/SKILL.md" />
+    </Dir>
+    <Dir name="agents/">
+      <File name="planner.md" />
+      <File name="worker.md" />
+      <File name="reviewer.md" />
+    </Dir>
+    <Dir name="hooks/">
+      <File kind="code" name="remind-tests.py" />
+    </Dir>
+    <File name="README.md" />
+  </Dir>
+</FileTree>
+
+<CodeBlock lang="json" kind="file">
+{`{
+  "name": "agentic-workflow",
+  "version": "0.1.0",
+  "description": "Reusable Plan -> Work -> Review workflow for Claude Code",
+  "author": "Your Team",
+  "homepage": "https://github.com/your-org/agentic-workflow-plugin"
+}`}
+</CodeBlock>
+
+<DataTable
+  headers={["Parça", "Plugin içinde neden var?"]}
+  rows={[
+    ["skills/", "Plan/Work/Review gibi tekrar kullanılabilir prosedürleri taşır."],
+    ["agents/", "Planner/worker/reviewer gibi rol tanımlarını paylaşır."],
+    ["hooks/", "Güvenli otomasyonları aynı standartla dağıtır."],
+    ["README.md", "Kurulum, kullanım ve hangi workflow'u sağladığını açıklar."],
+  ]}
+/>
+
+</Section>
+
+<Section id="context" num="12" title="context / token yönetimi">
+
+<FlowSteps>
+  <FlowStep num={1} title="Session'ı küçük tut.">
+    Bir session = bir faz veya bir küçük issue. Plan, Work ve Review uzun sürüyorsa ayrı session'lara böl.
+  </FlowStep>
+  <FlowStep num={2} title="Kararı dosyaya yaz.">
+    Önemli kararlar chat'te kalırsa kaybolur. Issue, ADR, README veya CONTEXT dosyasına al.
+  </FlowStep>
+  <FlowStep num={3} title="Context şişince compact/clear kullan.">
+    Önce aktif scope, kararlar, test sonuçları ve next step dosyaya yazılsın.
+  </FlowStep>
+  <FlowStep num={4} title="Model seçimini iş tipine göre yap.">
+    Plan ve review daha fazla reasoning ister; basit edit'ler daha düşük maliyetli modelle yapılabilir.
+  </FlowStep>
+</FlowSteps>
+
+</Section>
+
+<Section id="patterns" num="13" title="Yap / Yapma">
+
+<DoDontList>
+  <DoItem title="İşi küçük vertical slice'lara böl.">
+  </DoItem>
+  <DoItem title="Agent'a test komutlarını açık ver.">
+  </DoItem>
+  <DoItem title="Scope dışına çıkınca durdur.">
+  </DoItem>
+  <DoItem title="Review'u sürecin parçası yap.">
+  </DoItem>
+  <DoItem title="Tekrar eden prosedürü skill/plugin yap.">
+  </DoItem>
+  <DontItem title="Tek prompt ile komple feature yaptırma.">
+  </DontItem>
+  <DontItem title="Testsiz AI kodunu merge etme.">
+  </DontItem>
+  <DontItem title="CLAUDE.md'yi çöplüğe çevirme.">
+  </DontItem>
+  <DontItem title="Hook'lara karmaşık karar mantığı koyma.">
+  </DontItem>
+  <DontItem title="Agent'a sınırsız scope verme.">
+  </DontItem>
+</DoDontList>
+
+</Section>

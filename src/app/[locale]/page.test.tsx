@@ -36,7 +36,7 @@ describe("Index page", () => {
     render(ui);
 
     expect(screen.getByText("Best Practice'ler ve Takım Modeli")).toBeInTheDocument();
-    expect(screen.getAllByText("Dokümana Git")).toHaveLength(4);
+    expect(screen.getAllByText("Dokümana Git")).toHaveLength(5);
     expect(
       screen.getByText(/Tüm dokümanlar aynı klasörde olduğunda linklerin çalışır/),
     ).toBeInTheDocument();
@@ -66,6 +66,11 @@ describe("Index page", () => {
         title: "Building a Project with Matt Pocock Skills",
         href: "/en/matt-pocock-skills",
         variant: styles.c4,
+      },
+      {
+        title: "Agentic Development Cheat Sheet",
+        href: "/en/agentic-workflow-cheat-sheet",
+        variant: styles.c5,
       },
     ];
 

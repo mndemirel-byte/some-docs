@@ -313,6 +313,30 @@
   color: #fff;
 }
 
+.c5 {
+  --card-accent: var(--red-border);
+}
+.c5 .cardNum {
+  background: var(--red-bg);
+  color: var(--red-text);
+  border: 1px solid var(--red-border);
+}
+.c5 .cardIcon {
+  background: var(--red-bg);
+  color: var(--red-text);
+}
+.c5 .cardSubtitle {
+  color: var(--red-text);
+}
+.c5 .cardCta {
+  background: var(--red-bg);
+  color: var(--red-text);
+}
+.c5:hover .cardCta {
+  background: var(--card-cta-hover-red);
+  color: #fff;
+}
+
 .footer {
   text-align: center;
   padding: 24px 40px 40px;
