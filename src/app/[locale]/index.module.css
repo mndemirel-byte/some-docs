@@ -241,6 +241,30 @@
   color: #fff;
 }
 
+.c6 {
+  --card-accent: var(--accent-border);
+}
+.c6 .cardNum {
+  background: var(--accent-bg);
+  color: var(--accent-text);
+  border: 1px solid var(--accent-border);
+}
+.c6 .cardIcon {
+  background: var(--accent-bg);
+  color: var(--accent-text);
+}
+.c6 .cardSubtitle {
+  color: var(--accent-text);
+}
+.c6 .cardCta {
+  background: var(--accent-bg);
+  color: var(--accent-text);
+}
+.c6:hover .cardCta {
+  background: var(--card-cta-hover-accent);
+  color: #fff;
+}
+
 .c2 {
   --card-accent: var(--blue-border);
 }

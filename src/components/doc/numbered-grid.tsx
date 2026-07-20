@@ -7,16 +7,18 @@ export function NumberedGrid({ children }: { children: ReactNode }) {
 
 export function NumberedItem({
   num,
+  marker,
   wide,
   children,
 }: {
-  num: number;
+  num?: number;
+  marker?: ReactNode;
   wide?: boolean;
   children: ReactNode;
 }) {
   return (
     <div className={`${styles.item} ${wide ? styles.wide : ""}`}>
-      <span className={styles.num}>{num}</span>
+      <span className={styles.num}>{marker ?? num}</span>
       <span className={styles.text}>{children}</span>
     </div>
   );

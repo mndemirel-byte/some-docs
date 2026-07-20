@@ -1,0 +1,439 @@
+import { Hero, Accent } from "@/components/doc/hero";
+import { Toc } from "@/components/doc/toc";
+import { Section } from "@/components/doc/section";
+import { Callout } from "@/components/doc/callout";
+import { MentalModelDiagram } from "@/components/doc/mental-model-diagram";
+import { DataTable } from "@/components/doc/data-table";
+import { TwoBoxGrid, Box } from "@/components/doc/two-box-grid";
+import { FlowSteps, FlowStep } from "@/components/doc/flow-steps";
+import { CardGrid, InfoCard } from "@/components/doc/info-card";
+import { SequentialPipelineDiagram } from "@/components/doc/sequential-pipeline-diagram";
+import { IconCheck } from "@tabler/icons-react";
+import { NumberedGrid, NumberedItem } from "@/components/doc/numbered-grid";
+import { Disclosure } from "@/components/doc/disclosure";
+import { IconVolumeOff, IconClipboardList, IconLock, IconFlagCheck } from "@tabler/icons-react";
+import { DecisionTree, DecisionQuestion } from "@/components/doc/decision-tree";
+import { IconFileText, IconMessageCircle } from "@tabler/icons-react";
+import { CodeBlock } from "@/components/doc/code-block";
+import { DoDontList, DoItem, DontItem } from "@/components/doc/do-dont-list";
+import { IconBook, IconGitCompare, IconFlag } from "@tabler/icons-react";
+import { IconBolt, IconScale, IconBrain, IconArrowBackUp } from "@tabler/icons-react";
+import {
+  IconSearch,
+  IconMap,
+  IconShieldCheck,
+  IconNotebook,
+  IconPencil,
+  IconPalette,
+  IconWindow,
+} from "@tabler/icons-react";
+
+<Hero
+  badge="Claude Code · Workshop 02"
+  title={<>Subagents <Accent>Companion Guide</Accent></>}
+  description="Subagent'ları yalnızca “ikinci bir Claude” gibi değil; context'i koruyan, araçları sınırlayan ve odaklı işi izole eden execution environment'lar olarak tasarlamak için pratik rehber."
+  tags={["Main Thread ↔ Subagent", "Context Isolation", "Least Privilege", "Structured Output"]}
+/>
+
+<Toc
+  title="İçindekiler"
+  entries={[
+    { id: "mental", num: "01", label: "Mental Model" },
+    { id: "compare", num: "02", label: "Main vs Subagent" },
+    { id: "lifecycle", num: "03", label: "Lifecycle" },
+    { id: "anatomy", num: "04", label: "Anatomy" },
+    { id: "description", num: "05", label: "Descriptions" },
+    { id: "prompt", num: "06", label: "System Prompt" },
+    { id: "output", num: "07", label: "Structured Output" },
+    { id: "tools", num: "08", label: "Tool Permissions" },
+    { id: "models", num: "09", label: "Models" },
+    { id: "usecases", num: "10", label: "Use Cases" },
+    { id: "anti", num: "11", label: "Anti-patterns" },
+    { id: "tree", num: "12", label: "Decision Tree" },
+    { id: "best", num: "13", label: "Best Practices" },
+    { id: "tldr", num: "14", label: "TL;DR" },
+  ]}
+/>
+
+<Section id="mental" num="01" title="Mental Model">
+
+Subagent, ana konuşmadan ayrı bir context window içinde belirli bir işi yapan ve sonuç olarak yalnızca özet döndüren uzman worker'dır.
+
+<MentalModelDiagram />
+
+<Callout kind="tip">
+  <strong>Ana fikir:</strong> Subagent daha akıllı bir agent değildir. İzole bir execution environment'tır.
+</Callout>
+
+</Section>
+
+<Section id="compare" num="02" title="Main vs Subagent">
+
+<DataTable
+  headers={["Dimension", "Main Thread", "Subagent"]}
+  rows={[
+    ["Context", "Kullanıcı konuşması, kararlar ve devam eden iş.", "Ayrı context; görev prompt'u ve kendi sistem talimatı."],
+    ["Visibility", "Ara adımlar görünür ve konuşmada kalır.", "Ara çalışma izole kalır; özet geri döner."],
+    ["Tool calls", "Ana akışın izinleriyle çalışır.", "Özel allowlist / denylist ile sınırlandırılabilir."],
+    ["Context growth", "Search sonuçları ve log'lar ana context'i şişirir.", "Gürültülü veri kendi context'inde kalır."],
+    ["Return", "Tüm konuşma devam eder.", "Kısa sonuç, bulgular veya öneri döner."],
+  ]}
+/>
+
+<TwoBoxGrid>
+  <Box tone="green" label="YES — Main Thread">
+    Ara çalışma ileride alınacak kararları etkiliyorsa, kullanıcıyla tartışılacaksa veya debug sırasında adım adım görünürlük gerekiyorsa.
+  </Box>
+  <Box tone="neutral" label="NO — Subagent">
+    Ara çalışma yalnızca sonuca ulaşmak için gerekiyorsa ve sonrasında tekrar kullanılmayacaksa.
+  </Box>
+</TwoBoxGrid>
+
+<Callout>
+  <strong>Decision Rule:</strong> Does the intermediate work matter? <strong>YES → Main Thread</strong> · <strong>NO → Subagent</strong>
+</Callout>
+
+</Section>
+
+<Section id="lifecycle" num="03" title="Lifecycle">
+
+<FlowSteps>
+  <FlowStep num={1} title="User">
+    Bir hedef veya problem verir.
+  </FlowStep>
+  <FlowStep num={2} title="Main Agent">
+    Görevin izole edilip edilmeyeceğine karar verir.
+  </FlowStep>
+  <FlowStep num={3} title="Task Prompt">
+    Amaç, scope, beklenen çıktı ve gerekli context yazılır.
+  </FlowStep>
+  <FlowStep num={4} title="Launch Subagent">
+    Özel system prompt, model ve tool sınırları devreye girer.
+  </FlowStep>
+  <FlowStep num={5} title="Research / Work">
+    Dosyalar, aramalar, testler veya analiz kendi context'inde yürür.
+  </FlowStep>
+  <FlowStep num={6} title="Summary">
+    Yapılandırılmış ve kısa sonuç ana thread'e döner.
+  </FlowStep>
+  <FlowStep num={7} title="Destroy Context">
+    Ara çalışma ana context'e taşınmaz; yalnızca sonuç kalır.
+  </FlowStep>
+</FlowSteps>
+
+</Section>
+
+<Section id="anatomy" num="04" title="Anatomy">
+
+<CardGrid>
+  <InfoCard icon={IconFileText} title="YAML Frontmatter">
+    Kimlik, delegation açıklaması, tools, model ve UI rengi.
+  </InfoCard>
+  <InfoCard icon={IconMessageCircle} title="System Prompt">
+    Rol değil; scope, davranış, sınır ve çıktı kontratı.
+  </InfoCard>
+</CardGrid>
+
+<CodeBlock lang={<><IconFileText size={12} /> .claude/agents/code-reviewer.md</>} kind="file">
+{`---
+name: code-reviewer
+description: Reviews completed code changes for correctness, regressions, security risks, and missing tests. Use after implementation or before creating a PR.
+tools: Read, Grep, Glob, Bash
+model: sonnet
+color: purple
+---
+
+You review the current change set only.
+
+Focus on:
+- correctness and regressions
+- security and data-loss risks
+- missing or weak tests
+- violations of existing project conventions
+
+Do not edit files.
+Use Bash only to inspect diffs or run targeted checks.
+Stop after you have enough evidence to produce the report.
+
+Return:
+1. Verdict: PASS or NEEDS_CHANGES
+2. Findings ordered by severity
+3. Evidence with file paths and line references
+4. Recommended fixes
+5. Checks performed and any obstacles`}
+</CodeBlock>
+
+<Callout kind="tip">
+  <strong>Güncel not:</strong> Yalnızca <code>name</code> ve <code>description</code> zorunludur. <code>model</code> verilmezse <code>inherit</code>; <code>tools</code> verilmezse mevcut araçlar miras alınır.
+</Callout>
+
+</Section>
+
+<Section id="description" num="05" title="Descriptions">
+
+Description iki işi aynı anda yapar: Claude'un <strong>ne zaman</strong> delegate edeceğini söyler ve parent'ın subagent'a yazacağı task prompt'un yönünü etkiler.
+
+<DoDontList>
+  <DontItem title="Bad">
+    <CodeBlock lang="yaml">
+{`description: Expert reviewer for code.`}
+    </CodeBlock>
+    Belirsiz tetikleyici, belirsiz scope, belirsiz sonuç.
+  </DontItem>
+  <DoItem title="Good">
+    <CodeBlock lang="yaml">
+{`description: Reviews completed code changes for correctness, regressions, security risks, and missing tests. Use after implementation or before creating a PR.`}
+    </CodeBlock>
+    Ne yaptığı, ne zaman kullanılacağı ve neye bakacağı açık.
+  </DoItem>
+</DoDontList>
+
+<Callout>
+  <strong>Formula:</strong> <code>[What it does] + [What it inspects] + [When to use it]</code>
+</Callout>
+
+<p>
+Persona yerine davranış yaz. "Expert Flutter dev" gibi bir ifade; <strong>scope</strong> söylemez, <strong>ne zaman</strong> çağrılacağını söylemez ve parent'ın iyi task prompt yazmasına yardım etmez. Daha iyi yaklaşım: alanı ve işi açıkla — örn. <code>Reviews Flutter UI changes for state bugs, layout regressions, accessibility issues, and missing widget tests. Use before opening a PR.</code>
+</p>
+
+</Section>
+
+<Section id="prompt" num="06" title="System Prompt">
+
+<NumberedGrid>
+  <NumberedItem num={1}><strong>Scope</strong><br/>Tam olarak neyi kapsıyor?</NumberedItem>
+  <NumberedItem num={2}><strong>Focus</strong><br/>Hangi sinyalleri önceliklendirmeli?</NumberedItem>
+  <NumberedItem num={3}><strong>Stop condition</strong><br/>Ne zaman yeterli kanıt var?</NumberedItem>
+  <NumberedItem num={4}><strong>Structured output</strong><br/>Sonuç hangi şablonda dönmeli?</NumberedItem>
+  <NumberedItem num={5}><strong>Obstacle reporting</strong><br/>Neyi doğrulayamadı ve neden?</NumberedItem>
+  <NumberedItem num={6}><strong>Boundaries</strong><br/>Neyi yapmamalı?</NumberedItem>
+</NumberedGrid>
+
+<Callout kind="warning">
+  <strong>Kaçın:</strong> "Sen dünya çapında kıdemli bir uzmansın" gibi persona ağırlıklı prompt'lar yerine görev sınırı ve çıktı kontratı yaz.
+</Callout>
+
+</Section>
+
+<Section id="output" num="07" title="Structured Output">
+
+Yapılandırılmış çıktı yalnızca okunabilirlik sağlamaz. Agent'ın "işim ne zaman bitti?" sorusuna doğal bir cevap verir ve gereksiz araştırmayı durdurur.
+
+<CodeBlock lang="markdown" kind="file">
+{`## Verdict
+PASS | NEEDS_CHANGES | BLOCKED
+
+## Findings
+- [severity] finding
+  - Evidence: file:line or command output
+  - Impact: why it matters
+  - Recommendation: specific next step
+
+## Checks Performed
+- ...
+
+## Obstacles / Unknowns
+- What could not be verified
+- Why
+
+## Summary
+Maximum 5 bullets.`}
+</CodeBlock>
+
+<CardGrid>
+  <InfoCard icon={IconBook} title="Readable">
+    Parent sonuçları hızlı işler.
+  </InfoCard>
+  <InfoCard icon={IconGitCompare} title="Comparable">
+    Farklı run'lar aynı formatta karşılaştırılır.
+  </InfoCard>
+  <InfoCard icon={IconFlag} title="Finite">
+    Şablon tamamlandığında iş biter.
+  </InfoCard>
+</CardGrid>
+
+</Section>
+
+<Section id="tools" num="08" title="Tool Permissions">
+
+<Callout kind="tip">
+  <strong>Least Privilege:</strong> Agent'a "belki gerekir" diye araç verme. Görevi tamamlamak için gereken minimum araç setini ver.
+</Callout>
+
+<DataTable
+  headers={["Agent", "Recommended tools", "Why"]}
+  rows={[
+    ["Research Agent", <code key="ra">Read, Grep, Glob</code>, "Kod tabanını keşfeder; değişiklik yapmaz."],
+    ["Reviewer", <code key="rv">Read, Grep, Glob, Bash</code>, "Diff ve test çıktısı görür; dosya edit'lemez."],
+    ["Writer", <code key="w">Read, Write, Edit</code>, "Doküman üretir veya günceller."],
+    ["Styling Agent", <code key="s">Read, Grep, Glob, Edit</code>, "UI dosyalarını bulur ve kontrollü değişiklik yapar."],
+  ]}
+/>
+
+<Callout>
+  <strong>Reviewer neden Bash ister ama Edit istemez?</strong> Çünkü güvenilir review için <code>git diff</code>, test veya lint çalıştırması gerekebilir; fakat review ile implementasyonun birbirine karışmaması için dosya değiştirmemelidir.
+</Callout>
+
+</Section>
+
+<Section id="models" num="09" title="Models">
+
+<CardGrid>
+  <InfoCard icon={IconBolt} title="Haiku">
+    Hızlı arama, sınıflandırma, küçük ve net görevler.
+  </InfoCard>
+  <InfoCard icon={IconScale} title="Sonnet">
+    Çoğu research, review ve pratik coding görevi için dengeli varsayılan.
+  </InfoCard>
+  <InfoCard icon={IconBrain} title="Opus">
+    Yüksek belirsizlik, derin reasoning veya pahalı hataların olduğu işler.
+  </InfoCard>
+  <InfoCard icon={IconArrowBackUp} title="Inherit">
+    Parent ile aynı modeli kullanır; emin değilsen iyi başlangıç.
+  </InfoCard>
+</CardGrid>
+
+<Callout>
+  <strong>Basit kural:</strong> Görev ne kadar rutin ve doğrulanabilir ise o kadar küçük model; belirsizlik ve karar maliyeti arttıkça daha güçlü model.
+</Callout>
+
+</Section>
+
+<Section id="usecases" num="10" title="Use Cases">
+
+<CardGrid>
+  <InfoCard icon={IconSearch} title="Research">
+    Çok dosyalı araştırma ve kaynak taraması.
+  </InfoCard>
+  <InfoCard icon={IconMap} title="Exploration">
+    Kod tabanında nerede ne olduğunu bulma.
+  </InfoCard>
+  <InfoCard icon={IconShieldCheck} title="Code Review">
+    Ana implementasyondan bağımsız fresh perspective.
+  </InfoCard>
+  <InfoCard icon={IconNotebook} title="Documentation">
+    Dağınık bilgiyi belirli formatta dokümana dönüştürme.
+  </InfoCard>
+  <InfoCard icon={IconPencil} title="Copywriting">
+    Ton, format ve hedef kitleye odaklı metin üretimi.
+  </InfoCard>
+  <InfoCard icon={IconPalette} title="Design System">
+    UI tutarlılığı ve style token denetimi.
+  </InfoCard>
+  <InfoCard icon={IconWindow} title="Fresh Perspective">
+    Ana thread'in varsayımlarından bağımsız ikinci bakış.
+  </InfoCard>
+</CardGrid>
+
+</Section>
+
+<Section id="anti" num="11" title="Anti-patterns">
+
+<DoDontList>
+  <DontItem title="Expert Personas">
+    <p>"Senior architect agent" adı tek başına kalite getirmez. Scope, tool ve output kontratı yoksa sadece süslü bir rol olur.</p>
+    <p>Neden? Çünkü kıdem etiketi task tasarımı yerine kişilik vurgular. Claude'un ihtiyaç duyduğu şey "kim olduğu" değil, "ne yapacağı ve neye bakacağı"dır.</p>
+  </DontItem>
+  <DontItem title="Test Runner Agents">
+    Sadece deterministik bir komut çalıştırmak için agent kullanmak gereksiz maliyet ve context yaratır. Hook veya doğrudan Bash daha uygundur.
+  </DontItem>
+</DoDontList>
+
+<h3>Sequential Pipelines</h3>
+
+<SequentialPipelineDiagram />
+
+<p>
+Her handoff, bilgiyi sıkıştırır ve nüans kaybı yaratır. Bir pipeline gerekiyorsa kritik kararları yaşayan bir dosyada tut veya ana thread'in orchestration yapmasını sağla.
+</p>
+
+</Section>
+
+<Section id="tree" num="12" title="Decision Tree">
+
+<DecisionTree>
+  <DecisionQuestion>
+    <strong>1. Do I need the intermediate work later?</strong>
+    <TwoBoxGrid>
+      <Box tone="green" label="YES">Main Thread</Box>
+      <Box tone="neutral" label="NO">Continue</Box>
+    </TwoBoxGrid>
+  </DecisionQuestion>
+  <DecisionQuestion>
+    <strong>2. Will the task produce lots of logs, search results, or file content?</strong>
+    <TwoBoxGrid>
+      <Box tone="green" label="YES">Subagent</Box>
+      <Box tone="neutral" label="NO">Continue</Box>
+    </TwoBoxGrid>
+  </DecisionQuestion>
+  <DecisionQuestion>
+    <strong>3. Do I need a fresh perspective separated from implementation context?</strong>
+    <TwoBoxGrid>
+      <Box tone="green" label="YES">Subagent</Box>
+      <Box tone="neutral" label="NO">Continue</Box>
+    </TwoBoxGrid>
+  </DecisionQuestion>
+  <DecisionQuestion>
+    <strong>4. Do I need step-by-step debugging visibility?</strong>
+    <TwoBoxGrid>
+      <Box tone="green" label="YES">Main Thread</Box>
+      <Box tone="neutral" label="NO">Continue</Box>
+    </TwoBoxGrid>
+  </DecisionQuestion>
+  <DecisionQuestion>
+    <strong>5. Is the task only a deterministic command?</strong>
+    <TwoBoxGrid>
+      <Box tone="green" label="YES">Bash / Hook</Box>
+      <Box tone="neutral" label="NO">Subagent may help</Box>
+    </TwoBoxGrid>
+  </DecisionQuestion>
+</DecisionTree>
+
+</Section>
+
+<Section id="best" num="13" title="Best Practices">
+
+<NumberedGrid>
+  <NumberedItem marker={<IconCheck />}>Narrow scope</NumberedItem>
+  <NumberedItem marker={<IconCheck />}>Limited tools</NumberedItem>
+  <NumberedItem marker={<IconCheck />}>Structured output</NumberedItem>
+  <NumberedItem marker={<IconCheck />}>Report obstacles</NumberedItem>
+  <NumberedItem marker={<IconCheck />}>Custom system prompt</NumberedItem>
+  <NumberedItem marker={<IconCheck />}>Concise summaries</NumberedItem>
+  <NumberedItem marker={<IconCheck />}>Explicit stop condition</NumberedItem>
+  <NumberedItem marker={<IconCheck />}>Evidence-based findings</NumberedItem>
+</NumberedGrid>
+
+<Disclosure trigger="Workshop checklist — bir agent dosyasını değerlendirme">
+  <p>1. Description, <strong>when to use</strong> bilgisini içeriyor mu?</p>
+  <p>2. Tools minimum mu?</p>
+  <p>3. Prompt scope dışını açıkça yasaklıyor mu?</p>
+  <p>4. Output formatı var mı?</p>
+  <p>5. Stop condition anlaşılır mı?</p>
+  <p>6. Blocked olduğunda ne raporlayacağı belli mi?</p>
+</Disclosure>
+
+</Section>
+
+<Section id="tldr" num="14" title="TL;DR">
+
+<CardGrid columns="two">
+  <InfoCard icon={IconVolumeOff} title="Isolate noise.">
+    Search, logs ve geçici dosya içeriğini main thread'den uzak tut.
+  </InfoCard>
+  <InfoCard icon={IconClipboardList} title="Keep decisions.">
+    Gereksinimler, trade-off'lar ve kullanıcı kararları ana thread'de kalsın.
+  </InfoCard>
+  <InfoCard icon={IconLock} title="Constrain tools.">
+    Her agent'a yalnızca görevi için gereken araçları ver.
+  </InfoCard>
+  <InfoCard icon={IconFlagCheck} title={'Define "done."'}>
+    Structured output ve stop condition ile işi sonlu hale getir.
+  </InfoCard>
+</CardGrid>
+
+<Callout kind="tip">
+  <strong>Final rule:</strong> Ara iş önemliyse main thread. Ara iş gürültüyse subagent.
+</Callout>
+
+</Section>

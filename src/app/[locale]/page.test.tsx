@@ -36,7 +36,7 @@ describe("Index page", () => {
     render(ui);
 
     expect(screen.getByText("Best Practice'ler ve Takım Modeli")).toBeInTheDocument();
-    expect(screen.getAllByText("Dokümana Git")).toHaveLength(5);
+    expect(screen.getAllByText("Dokümana Git")).toHaveLength(6);
     expect(
       screen.getByText(/Tüm dokümanlar aynı klasörde olduğunda linklerin çalışır/),
     ).toBeInTheDocument();
@@ -81,6 +81,17 @@ describe("Index page", () => {
       expect(link).toHaveAttribute("href", card.href);
       expect(link).toHaveClass(styles.card, card.variant);
     }
+  });
+
+  it("links the 6th card to the subagents companion guide with the accent-reuse variant", async () => {
+    const ui = await Page({ params: Promise.resolve({ locale: "en" }) });
+    render(ui);
+
+    const heading = screen.getByText("Subagents Companion Guide");
+    const link = heading.closest("a");
+    expect(link).not.toBeNull();
+    expect(link).toHaveAttribute("href", "/en/subagents-companion-guide");
+    expect(link).toHaveClass(styles.card, styles.c6);
   });
 
   it("shows EN as active/non-clickable and links to /tr on the en page", async () => {

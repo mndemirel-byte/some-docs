@@ -1,0 +1,42 @@
+import { DecisionTree, DecisionQuestion } from "@/components/doc/decision-tree";
+import { TwoBoxGrid, Box } from "@/components/doc/two-box-grid";
+
+{/* Identical in both locales in the source doc — no tr-only/en-only split. */}
+
+<DecisionTree>
+  <DecisionQuestion>
+    <strong>1. Do I need the intermediate work later?</strong>
+    <TwoBoxGrid>
+      <Box tone="green" label="YES">Main Thread</Box>
+      <Box tone="neutral" label="NO">Continue</Box>
+    </TwoBoxGrid>
+  </DecisionQuestion>
+  <DecisionQuestion>
+    <strong>2. Will the task produce lots of logs, search results, or file content?</strong>
+    <TwoBoxGrid>
+      <Box tone="green" label="YES">Subagent</Box>
+      <Box tone="neutral" label="NO">Continue</Box>
+    </TwoBoxGrid>
+  </DecisionQuestion>
+  <DecisionQuestion>
+    <strong>3. Do I need a fresh perspective separated from implementation context?</strong>
+    <TwoBoxGrid>
+      <Box tone="green" label="YES">Subagent</Box>
+      <Box tone="neutral" label="NO">Continue</Box>
+    </TwoBoxGrid>
+  </DecisionQuestion>
+  <DecisionQuestion>
+    <strong>4. Do I need step-by-step debugging visibility?</strong>
+    <TwoBoxGrid>
+      <Box tone="green" label="YES">Main Thread</Box>
+      <Box tone="neutral" label="NO">Continue</Box>
+    </TwoBoxGrid>
+  </DecisionQuestion>
+  <DecisionQuestion>
+    <strong>5. Is the task only a deterministic command?</strong>
+    <TwoBoxGrid>
+      <Box tone="green" label="YES">Bash / Hook</Box>
+      <Box tone="neutral" label="NO">Subagent may help</Box>
+    </TwoBoxGrid>
+  </DecisionQuestion>
+</DecisionTree>

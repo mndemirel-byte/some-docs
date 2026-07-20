@@ -53,6 +53,15 @@
         "desc": "A practical after-session reference: the mental model behind rules/skills/agents/hooks, a copyable folder structure and setup commands, CLAUDE.md and settings.json templates, and full skill/agent definitions.",
         "tags": ["CLAUDE.md", "rules", "settings.json", "skills", "agents", "hooks", "plugin"],
         "cta": "Open Document"
+      },
+      {
+        "num": "06",
+        "type": "Workshop Companion · Part 02",
+        "title": "Subagents Companion Guide",
+        "subtitle": "Mental model · Lifecycle · Tool permissions",
+        "desc": "A practical guide to designing subagents as isolated execution environments: the main-thread vs. subagent mental model, lifecycle, system prompt design, structured output, tool permissions, model choice, and anti-patterns.",
+        "tags": ["subagents", "context-isolation", "least-privilege", "structured-output"],
+        "cta": "Open Document"
       }
     ],
     "footer": "Links work when all documents are in the same folder · Claude Code Agentic Development Series"

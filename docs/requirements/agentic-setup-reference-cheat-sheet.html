@@ -1,0 +1,726 @@
+<!doctype html><html lang="tr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Claude Code Agentic Setup Reference</title><style>
+:root{
+  --bg:#f8f3ea;--paper:#fffdf8;--paper-2:#fbf7ef;--ink:#171717;--muted:#706a61;--line:#e6d8c5;
+  --accent:#0f766e;--accent-2:#c2410c;--accent-3:#31572c;--soft:#e9f5f2;--warn:#fff0e6;--code:#f4efe7;
+  --shadow:0 18px 50px rgba(65,44,20,.10);--radius:24px;--mono:"JetBrains Mono","SFMono-Regular",Consolas,monospace;
+}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:radial-gradient(circle at 20% 0%,#fff9ef 0,#f8f3ea 38%,#f4ecdf 100%);color:var(--ink);font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;line-height:1.68;font-size:15.5px}.wrap{max-width:1060px;margin:0 auto;padding:42px 24px 88px}.hero{padding:38px 40px;border:1px solid var(--line);background:linear-gradient(135deg,#fffdf8,#faf2e8);border-radius:32px;box-shadow:var(--shadow);margin-bottom:24px}.eyebrow{display:inline-flex;gap:8px;align-items:center;font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);background:var(--soft);border:1px solid #b9d9d2;border-radius:999px;padding:6px 12px;margin-bottom:16px}.hero h1{font-size:38px;letter-spacing:-.04em;line-height:1.08;margin:0 0 14px}.hero p{max-width:780px;margin:0;color:var(--muted);font-size:16px}.topbar{display:flex;justify-content:space-between;gap:16px;align-items:center;margin:18px 0 28px}.lang{display:flex;gap:8px;align-items:center}.lang button,.copy{border:1px solid var(--line);background:var(--paper);color:var(--muted);border-radius:12px;padding:7px 11px;font:12px var(--mono);cursor:pointer}.lang button.active{background:var(--accent);color:white;border-color:var(--accent)}.toc{background:rgba(255,253,248,.82);border:1px solid var(--line);border-radius:22px;padding:20px 24px;margin-bottom:32px;backdrop-filter:blur(10px)}.toc-title{font:700 12px var(--mono);letter-spacing:.08em;color:var(--muted);text-transform:uppercase;margin-bottom:10px}.toc-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:6px 18px}.toc a{color:#3d3832;text-decoration:none;font-size:14px}.toc a:hover{color:var(--accent)}.toc .n{font-family:var(--mono);font-size:11px;color:var(--accent);margin-right:8px}.section{background:var(--paper);border:1px solid var(--line);border-radius:28px;box-shadow:0 12px 30px rgba(65,44,20,.06);padding:32px 36px;margin:28px 0;scroll-margin-top:20px}.sec-head{display:flex;align-items:center;gap:13px;border-bottom:1px solid var(--line);padding-bottom:14px;margin-bottom:20px}.sec-num{font:700 12px var(--mono);color:var(--accent);background:var(--soft);border:1px solid #b9d9d2;border-radius:8px;padding:4px 9px}.section h2{font-size:26px;margin:0;letter-spacing:-.03em}.section h3{font-size:18px;margin:24px 0 10px}.section h4{font-size:15px;margin:16px 0 8px}p{color:#48423b;margin:0 0 12px}ul,ol{margin:0 0 14px;padding-left:22px}li{margin:4px 0;color:#48423b}code,.pill{font-family:var(--mono);font-size:.92em;background:var(--code);border:1px solid var(--line);border-radius:7px;padding:2px 6px;color:#151515}.note{background:var(--warn);border:1px solid #f2c4a4;border-radius:18px;padding:16px 18px;margin:16px 0;color:#4b4037}.ok{background:var(--soft);border-color:#b9d9d2}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(245px,1fr));gap:14px;margin:16px 0}.card{background:var(--paper-2);border:1px solid var(--line);border-radius:18px;padding:18px}.card h4{margin-top:0;color:#111}.tbl{width:100%;border-collapse:separate;border-spacing:0;background:var(--paper-2);border:1px solid var(--line);border-radius:18px;overflow:hidden;margin:16px 0}.tbl th{font:700 11px var(--mono);letter-spacing:.08em;text-transform:uppercase;text-align:left;color:#706a61;background:#f7efe4;padding:12px 14px;border-bottom:1px solid var(--line)}.tbl td{padding:13px 14px;border-bottom:1px solid var(--line);vertical-align:top;color:#2d2a25}.tbl tr:last-child td{border-bottom:0}.cb{background:#fbf7ef;border:1px solid var(--line);border-radius:18px;overflow:hidden;margin:14px 0}.cb-head{display:flex;justify-content:space-between;align-items:center;gap:12px;background:#f3eadc;border-bottom:1px solid var(--line);padding:9px 13px}.cb-title{font:700 11px var(--mono);color:var(--muted);letter-spacing:.06em;text-transform:uppercase}.cb pre{margin:0;padding:16px 18px;overflow:auto;max-height:520px;font:13px/1.65 var(--mono);color:#24211e;white-space:pre}.accordion{border:1px solid var(--line);background:var(--paper-2);border-radius:18px;overflow:hidden;margin:12px 0}.acc-head{display:flex;justify-content:space-between;gap:12px;align-items:center;padding:15px 18px;cursor:pointer}.acc-head:hover{background:#f7efe4}.acc-title{font:700 14px var(--mono)}.acc-desc{font-size:13px;color:var(--muted);margin-top:2px}.acc-body{display:none;border-top:1px solid var(--line);padding:16px 18px}.accordion.open .acc-body{display:block}.badge{font:700 10px var(--mono);letter-spacing:.08em;text-transform:uppercase;border-radius:999px;padding:4px 8px;background:var(--soft);color:var(--accent);border:1px solid #b9d9d2}.flow{background:var(--paper-2);border:1px solid var(--line);border-radius:18px;padding:18px 20px;overflow:auto;font-family:inherit}.step{display:grid;grid-template-columns:52px 1fr;gap:14px;padding:12px 0;border-bottom:1px solid var(--line)}.step:last-child{border-bottom:0}.step .num{font:800 13px var(--mono);color:var(--accent)}.muted{color:var(--muted)}.tr-only,.en-only{display:none}body[data-lang="tr"] .tr-only{display:initial}body[data-lang="en"] .en-only{display:initial}body[data-lang="tr"] tr.tr-only,body[data-lang="en"] tr.en-only{display:table-row}body[data-lang="tr"] div.tr-only,body[data-lang="en"] div.en-only,body[data-lang="tr"] section.tr-only,body[data-lang="en"] section.en-only,body[data-lang="tr"] p.tr-only,body[data-lang="en"] p.en-only,body[data-lang="tr"] ul.tr-only,body[data-lang="en"] ul.en-only,body[data-lang="tr"] ol.tr-only,body[data-lang="en"] ol.en-only{display:block}@media(max-width:700px){.wrap{padding:22px 14px 64px}.hero,.section{padding:24px 20px;border-radius:22px}.hero h1{font-size:29px}.topbar{flex-direction:column;align-items:flex-start}.tbl{font-size:14px}.step{grid-template-columns:1fr}}
+</style></head><body data-lang="tr"><div class="wrap">
+<div class="hero"><div class="eyebrow">Claude Code · Agentic Setup Reference</div><h1><span class="tr-only">Agentic Development Cheat Sheet</span><span class="en-only">Agentic Development Cheat Sheet</span></h1><p class="tr-only">Oturumdan sonra tekrar bakılacak pratik referans: kavramlar, dosya yapısı, örnek <code>CLAUDE.md</code>, <code>rules</code>, <code>settings.json</code>, skills, agents, hooks ve plugin yapısı.</p><p class="en-only">A practical reference for after the session: concepts, file structure, example <code>CLAUDE.md</code>, <code>rules</code>, <code>settings.json</code>, skills, agents, hooks, and plugin structure.</p></div>
+<div class="topbar"><div class="muted tr-only">Oturumdan sonra kavramları hatırlamak, kendi agentic setup’ını kurmak ve örnek dosyaları uyarlamak için hazırlanmış cheat sheet.</div><div class="muted en-only">Use this cheat sheet after the session to recall the concepts, set up your own agentic workflow, and adapt the example files.</div><div class="lang"><button data-lang-btn="tr" onclick="setLang('tr')">TR</button><button data-lang-btn="en" onclick="setLang('en')">EN</button></div></div>
+<nav class="toc"><div class="toc-title tr-only">İçindekiler</div><div class="toc-title en-only">Contents</div><div class="toc-grid">
+<a href="#mental"><span class="n">01</span><span class="tr-only">Mental model</span><span class="en-only">Mental model</span></a>
+<a href="#structure"><span class="n">02</span><span class="tr-only">Dosya yapısı</span><span class="en-only">File structure</span></a>
+<a href="#setup"><span class="n">03</span><span class="tr-only">Setup komutları</span><span class="en-only">Setup commands</span></a>
+<a href="#claude"><span class="n">04</span>CLAUDE.md</a>
+<a href="#rules"><span class="n">05</span>rules</a>
+<a href="#settings"><span class="n">06</span>settings.json</a>
+<a href="#commands"><span class="n">07</span>commands</a>
+<a href="#skills"><span class="n">08</span>skills</a>
+<a href="#agents"><span class="n">09</span>agents</a>
+<a href="#hooks"><span class="n">10</span>hooks</a>
+<a href="#plugin"><span class="n">11</span>plugin</a>
+<a href="#context"><span class="n">12</span>context/token</a>
+<a href="#patterns"><span class="n">13</span>do / don't</a>
+</div></nav>
+
+<section class="section" id="mental"><div class="sec-head"><span class="sec-num">01</span><h2>Mental Model</h2></div>
+<table class="tbl"><thead><tr class="tr-only"><th>Kavram</th><th>Ne işe yarar?</th><th>Ne zaman tercih edilir?</th></tr><tr class="en-only"><th>Concept</th><th>Purpose</th><th>When to use</th></tr></thead><tbody>
+<tr class="tr-only"><td><code>rules</code></td><td>Kalıcı davranış standardı, kodlama prensipleri, workflow guardrail'leri.</td><td>Her projede tekrar eden kısa ve net davranış kuralları için.</td></tr>
+<tr class="tr-only"><td><code>CLAUDE.md</code></td><td>Repo seviyesinde proje hafızası: amaç, komutlar, kritik mimari notlar, test talimatları.</td><td>Projeye özgü ve agent'ın sık hatırlaması gereken bilgiler için.</td></tr>
+<tr class="tr-only"><td><code>settings.json</code></td><td>İzinler, hook tanımları, env/config, tool davranışı ve paylaşılan proje ayarları.</td><td>Davranış metni değil, gerçek yapılandırma gerektiğinde.</td></tr>
+<tr class="tr-only"><td><code>commands</code></td><td>Built-in slash command'lar Claude Code'un kendi oturum/araç komutlarıdır. Custom command workflow'ları artık pratikte <code>skills</code> üzerinden yönetilir.</td><td><code>/usage</code>, <code>/compact</code>, <code>/model</code> gibi built-in komutları anlat; yeni custom akışlar için skill yaz.</td></tr>
+<tr class="tr-only"><td><code>skills</code></td><td>Tekrar kullanılabilir prosedürler ve slash-command entrypoint'leri. Gerekirse bir agent içinde çalışabilir.</td><td>Bir workflow tekrar kullanılacaksa veya <code>/plan</code>, <code>/work</code>, <code>/review</code> gibi komutlaşacaksa.</td></tr>
+<tr class="tr-only"><td><code>agents</code></td><td>Kendi prompt'u, araçları ve odağı olan uzman roller.</td><td>Planner / worker / reviewer gibi ayrık sorumluluklar gerektiğinde.</td></tr>
+<tr class="tr-only"><td><code>hooks</code></td><td>Tool lifecycle otomasyonları: tool öncesi/sonrası, edit sonrası, stop anı vb.</td><td>Otomatik kontrol, güvenlik, format, test hatırlatma gibi deterministik işler için.</td></tr>
+<tr class="en-only"><td><code>rules</code></td><td>Persistent behavior standards, coding principles, workflow guardrails.</td><td>Short recurring behavior rules across projects.</td></tr>
+<tr class="en-only"><td><code>CLAUDE.md</code></td><td>Repository-level project memory: goal, commands, architecture notes, test instructions.</td><td>Project-specific facts the agent should frequently remember.</td></tr>
+<tr class="en-only"><td><code>settings.json</code></td><td>Permissions, hooks, env/config, tool behavior, shared project settings.</td><td>Use for configuration, not prose instructions.</td></tr>
+<tr class="en-only"><td><code>commands</code></td><td>Built-in slash commands are Claude Code's own session/tool commands. Custom command workflows are now effectively managed through <code>skills</code>.</td><td>Explain built-ins like <code>/usage</code>, <code>/compact</code>, <code>/model</code>; create new custom workflows as skills.</td></tr>
+<tr class="en-only"><td><code>skills</code></td><td>Reusable procedures and slash-command entrypoints. They can run inside an agent when needed.</td><td>When a workflow should be reused or exposed as <code>/plan</code>, <code>/work</code>, <code>/review</code>.</td></tr>
+<tr class="en-only"><td><code>agents</code></td><td>Specialized execution contexts: role, model, tools, permissions, and behavioral boundaries.</td><td>When planning, implementation, and review need different tools/permissions/models.</td></tr>
+<tr class="en-only"><td><code>hooks</code></td><td>Tool lifecycle automation: before/after tool use, after edit, on stop, etc.</td><td>Deterministic checks, safety, formatting, test reminders.</td></tr>
+</tbody></table><div class="note ok tr-only"><strong>Kısa ayrım:</strong> <code>rules</code> davranış standardıdır, <code>CLAUDE.md</code> proje manifestidir, <code>skills</code> prosedürdür, <code>agents</code> roldür, <code>hooks</code> otomasyondur.</div><div class="note ok en-only"><strong>Quick distinction:</strong> <code>rules</code> define behavior standards, <code>CLAUDE.md</code> is the project manifest, <code>skills</code> are procedures, <code>agents</code> are roles, <code>hooks</code> are automation.</div><div class="note tr-only"><strong>Skill ↔ Agent ilişkisi:</strong> Pratik kullanımda skill genellikle workflow entrypoint'idir: <code>/plan</code>, <code>/work</code>, <code>/review</code> gibi. Skill'in içinde agent dispatch edilebilir veya agent'lardan destek istenebilir. Agent ise rol, araç seti, model ve sınırları tanımlayan execution context'tir. Resmi dokümanda <code>context: fork</code> + <code>agent:</code> ile skill'i doğrudan forked subagent içinde çalıştırma desteği de var; ancak bu ileri seviye pattern'dir, ana akışta şart değildir.</div><div class="note en-only"><strong>Skill ↔ Agent relationship:</strong> In practical setups, a skill is usually the workflow entrypoint: <code>/plan</code>, <code>/work</code>, <code>/review</code>. The skill may dispatch agents or ask agents for focused work. An agent defines the role, tool set, model, and boundaries. Official docs also support running a skill directly in a forked subagent via <code>context: fork</code> + <code>agent:</code>, but that is an advanced pattern, not required for the main workflow.</div></section>
+
+<section class="section" id="structure"><div class="sec-head"><span class="sec-num">02</span><h2 class="tr-only">Önerilen Dosya Yapısı</h2><h2 class="en-only">Recommended File Structure</h2></div>
+<p class="tr-only">Bu bölüm sadece ana klasörleri ve temel dosyaları gösterir. Skill ve agent dosyalarının içerikleri ilerleyen bölümlerde ayrı ayrı anlatılır.</p><p class="en-only">This section only shows the main folders and base files. Skill and agent file contents are covered in later sections.</p>
+<div class="cb"><div class="cb-head"><span class="cb-title">your-project/ · file tree</span><button class="copy" onclick="copyCode(this)">Copy</button></div><pre>your-project/
+├─ CLAUDE.md
+├─ .claude/
+│  ├─ settings.json
+│  ├─ settings.local.json    # local/private, gitignored
+│  ├─ rules/
+│  ├─ skills/
+│  ├─ agents/
+│  ├─ hooks/
+│  └─ commands/              # optional legacy flat commands
+├─ docs/
+│  ├─ context/
+│  ├─ issues/
+│  ├─ adr/
+│  └─ decisions/
+├─ src/
+├─ tests/
+└─ README.md</pre></div>
+<table class="tbl"><thead><tr class="tr-only"><th>Dosya/Klasör</th><th>Sorumluluk</th></tr><tr class="en-only"><th>File/Folder</th><th>Responsibility</th></tr></thead><tbody>
+<tr class="tr-only"><td><code>CLAUDE.md</code></td><td>Proje manifesti. Projenin amacı, kritik komutlar, mimari sınırlar, test talimatları ve güvenlik guardrail'leri gibi az ama önemli bilgileri tutar.</td></tr>
+<tr class="tr-only"><td><code>.claude/</code></td><td>Claude Code'a özel proje ayarlarının ana klasörü. Skills, agents, hooks ve proje ayarları burada toplanır.</td></tr>
+<tr class="tr-only"><td><code>.claude/settings.json</code></td><td>Davranış metni değil, config dosyasıdır. İzinler, hook tanımları, plugin enablement, env/config ve proje seviyesinde paylaşılabilir ayarlar burada tutulur.</td></tr>
+<tr class="tr-only"><td><code>.claude/settings.local.json</code></td><td>Kişisel/lokal ayarlar. Makineye özel path, geçici izin veya deneysel ayarları burada tut; git'e sokma.</td></tr>
+<tr class="tr-only"><td><code>.claude/rules/</code></td><td>Modüler kalıcı talimatlar. Kod stili, test standardı, güvenlik veya path-specific kurallar gibi her session'da ya da ilgili dosya açıldığında bilinmesi gereken kurallar.</td></tr>
+<tr class="tr-only"><td><code>.claude/skills/</code></td><td>Tekrar kullanılabilir workflow prosedürleri. Yeni custom command/workflow yazmak için modern varsayılan yer burasıdır. Örn. <code>plan</code>, <code>work</code>, <code>review</code>.</td></tr>
+<tr class="tr-only"><td><code>.claude/agents/</code></td><td>Uzman agent tanımları. Agent; rol, araçlar, model tercihi, izin sınırları ve çıktı beklentisini taşır.</td></tr>
+<tr class="tr-only"><td><code>.claude/hooks/</code></td><td>LLM'in hatırlamasına bırakılmayacak deterministik otomasyonlar. Örn. edit sonrası test hatırlatma veya riskli komut kontrolü.</td></tr>
+<tr class="tr-only"><td><code>.claude/commands/</code></td><td>Eski/uyumluluk yolu. Flat markdown custom command'lar hâlâ çalışır; yeni workflow'lar için çoğunlukla <code>skills/</code> tercih edilir.</td></tr>
+<tr class="tr-only"><td><code>docs/</code></td><td>Agent'ların ve insanların ortak okuyacağı proje dokümantasyonu. Kararlar, context, issue'lar ve mimari notlar burada tutulur.</td></tr>
+<tr class="tr-only"><td><code>docs/context/</code></td><td>Yaşayan proje bağlamı. Domain dili, sistem sınırları, modül sorumlulukları, önemli kabuller ve proje özel notlar.</td></tr>
+<tr class="tr-only"><td><code>docs/issues/</code></td><td>Agent-ready küçük iş parçaları. Her issue acceptance criteria, test beklentisi, out-of-scope ve done checklist içermelidir.</td></tr>
+<tr class="tr-only"><td><code>docs/adr/</code></td><td>Architecture Decision Record klasörü. Framework, persistence, module boundary gibi geri dönmesi maliyetli teknik kararların gerekçesini tutar.</td></tr>
+<tr class="tr-only"><td><code>docs/decisions/</code></td><td>ADR seviyesinde olmayan ama unutulmaması gereken küçük ürün, teknik veya süreç kararları.</td></tr>
+<tr class="tr-only"><td><code>src/</code></td><td>Uygulama kaynak kodu. Agent'ın rahat çalışması için modül sınırları, isimlendirme ve test edilebilir yapı önemlidir.</td></tr>
+<tr class="tr-only"><td><code>tests/</code></td><td>Unit/integration testleri. Agentic workflow'da güvenlik ağıdır; özellikle <code>work</code> ve <code>review</code> aşamalarında merkezi rol oynar.</td></tr>
+<tr class="tr-only"><td><code>README.md</code></td><td>Projeyi çalıştırma, test etme ve temel komutları gösteren insan + agent başlangıç noktası.</td></tr>
+<tr class="en-only"><td><code>CLAUDE.md</code></td><td>Project manifest. Keep a small set of important facts: goal, critical commands, architecture boundaries, test instructions, and safety guardrails.</td></tr>
+<tr class="en-only"><td><code>.claude/</code></td><td>Main project folder for Claude Code-specific setup. Skills, agents, hooks, and project settings live here.</td></tr>
+<tr class="en-only"><td><code>.claude/settings.json</code></td><td>Configuration, not prose instructions. Use for permissions, hooks, plugin enablement, env/config, and shared project settings.</td></tr>
+<tr class="en-only"><td><code>.claude/settings.local.json</code></td><td>Personal/local settings. Keep machine-specific paths, temporary permissions, or experiments here; do not commit it.</td></tr>
+<tr class="en-only"><td><code>.claude/rules/</code></td><td>Modular persistent instructions: style, testing, security, or path-specific rules that should load every session or when matching files are opened.</td></tr>
+<tr class="en-only"><td><code>.claude/skills/</code></td><td>Reusable workflow procedures. This is the modern default location for new custom commands/workflows, such as <code>plan</code>, <code>work</code>, and <code>review</code>.</td></tr>
+<tr class="en-only"><td><code>.claude/agents/</code></td><td>Specialized agent definitions. An agent defines role, tools, model preference, permission boundaries, and expected output.</td></tr>
+<tr class="en-only"><td><code>.claude/hooks/</code></td><td>Deterministic automation that should not depend on the LLM remembering it, such as test reminders or risky command checks.</td></tr>
+<tr class="en-only"><td><code>.claude/commands/</code></td><td>Legacy/compatibility path. Flat markdown custom commands still work; prefer <code>skills/</code> for new reusable workflows.</td></tr>
+<tr class="en-only"><td><code>docs/</code></td><td>Shared project documentation for humans and agents: decisions, context, issues, and architecture notes.</td></tr>
+<tr class="en-only"><td><code>docs/context/</code></td><td>Living project context: domain language, system boundaries, module responsibilities, assumptions, and project-specific notes.</td></tr>
+<tr class="en-only"><td><code>docs/issues/</code></td><td>Agent-ready small work items with acceptance criteria, test expectations, out-of-scope notes, and done checklist.</td></tr>
+<tr class="en-only"><td><code>docs/adr/</code></td><td>Architecture Decision Records for costly-to-reverse decisions such as frameworks, persistence, and module boundaries.</td></tr>
+<tr class="en-only"><td><code>docs/decisions/</code></td><td>Small product/technical/process decisions that should be remembered but do not deserve a full ADR.</td></tr>
+<tr class="en-only"><td><code>src/</code></td><td>Application source code. Clear module boundaries, naming, and testability matter for agent reliability.</td></tr>
+<tr class="en-only"><td><code>tests/</code></td><td>Unit/integration tests. The safety net for agentic workflow, especially during Work and Review.</td></tr>
+<tr class="en-only"><td><code>README.md</code></td><td>Human + agent entrypoint for running, testing, and understanding the project.</td></tr>
+</tbody></table></section>
+<section class="section" id="setup"><div class="sec-head"><span class="sec-num">03</span><h2 class="tr-only">Setup Komutları</h2><h2 class="en-only">Setup Commands</h2></div><p class="tr-only">Boş bir projeye temel agentic setup iskeleti eklemek için kullanılabilir.</p><p class="en-only">Use these to add a basic agentic setup skeleton to a new project.</p><div class="cb"><div class="cb-head"><span class="cb-title">bash · macOS/Linux</span><button class="copy" onclick="copyCode(this)">Copy</button></div><pre>mkdir -p .claude/skills/{plan,work,review,diagnose,commit}
+mkdir -p .claude/rules/{frontend,backend}
+mkdir -p .claude/agents
+mkdir -p .claude/hooks
+mkdir -p docs/{context,issues,adr,decisions}
+
+touch CLAUDE.md
+touch .claude/settings.json
+touch .claude/settings.local.json
+# Add .claude/settings.local.json to .gitignore if Claude did not create it.
+touch .claude/rules/code-style.md
+touch .claude/rules/testing.md
+touch .claude/rules/backend/api.md
+touch .claude/skills/plan/SKILL.md
+touch .claude/skills/work/SKILL.md
+touch .claude/skills/review/SKILL.md
+touch .claude/skills/diagnose/SKILL.md
+touch .claude/skills/commit/SKILL.md
+touch .claude/agents/planner.md
+touch .claude/agents/worker.md
+touch .claude/agents/reviewer.md
+touch docs/context/PROJECT.md</pre></div><div class="cb"><div class="cb-head"><span class="cb-title">powershell · Windows</span><button class="copy" onclick="copyCode(this)">Copy</button></div><pre>$dirs = @(
+  &quot;.claude\skills\plan&quot;,
+  &quot;.claude\skills\work&quot;,
+  &quot;.claude\skills\review&quot;,
+  &quot;.claude\skills\diagnose&quot;,
+  &quot;.claude\skills\commit&quot;,
+  &quot;.claude\rules\frontend&quot;,
+  &quot;.claude\rules\backend&quot;,
+  &quot;.claude\agents&quot;,
+  &quot;.claude\hooks&quot;,
+  &quot;docs\context&quot;,
+  &quot;docs\issues&quot;,
+  &quot;docs\adr&quot;,
+  &quot;docs\decisions&quot;
+)
+$dirs | ForEach-Object { New-Item -ItemType Directory -Force $_ | Out-Null }
+
+$files = @(
+  &quot;CLAUDE.md&quot;,
+  &quot;.claude\settings.json&quot;,
+  &quot;.claude\settings.local.json&quot;,
+  &quot;.claude\rules\code-style.md&quot;,
+  &quot;.claude\rules\testing.md&quot;,
+  &quot;.claude\rules\backend\api.md&quot;,
+  &quot;.claude\skills\plan\SKILL.md&quot;,
+  &quot;.claude\skills\work\SKILL.md&quot;,
+  &quot;.claude\skills\review\SKILL.md&quot;,
+  &quot;.claude\skills\diagnose\SKILL.md&quot;,
+  &quot;.claude\skills\commit\SKILL.md&quot;,
+  &quot;.claude\agents\planner.md&quot;,
+  &quot;.claude\agents\worker.md&quot;,
+  &quot;.claude\agents\reviewer.md&quot;,
+  &quot;docs\context\PROJECT.md&quot;
+)
+$files | ForEach-Object { New-Item -ItemType File -Force $_ | Out-Null }</pre></div></section>
+
+<section class="section" id="claude"><div class="sec-head"><span class="sec-num">04</span><h2>CLAUDE.md</h2></div><p class="tr-only"><code>CLAUDE.md</code>, repo seviyesinde Claude'un projeyi anlamasına yardım eden ana manifesttir. Çok uzun prosedürleri buraya gömmek yerine skill dosyalarına taşımak daha sürdürülebilirdir.</p><p class="en-only"><code>CLAUDE.md</code> is the repository-level manifest that helps Claude understand the project. Long procedures should usually live in skills instead.</p><div class="grid"><div class="card tr-only"><h4>İyi içerikler</h4><ul><li>Proje amacı</li><li>Setup/test/build komutları</li><li>Mimari sınırlar</li><li>Güvenlik ve scope kuralları</li><li>Önemli dosya/klasör açıklamaları</li></ul></div><div class="card tr-only"><h4>Kaçınılacak şeyler</h4><ul><li>Çok uzun prompt metinleri</li><li>Her feature'ın geçici detayı</li><li>Güncel tutulmayacak roadmap'ler</li><li>Plugin/skill ile paylaşılması gereken prosedürler</li></ul></div><div class="card en-only"><h4>Good content</h4><ul><li>Project goal</li><li>Setup/test/build commands</li><li>Architecture boundaries</li><li>Safety and scope rules</li><li>Important file/folder notes</li></ul></div><div class="card en-only"><h4>Avoid</h4><ul><li>Very long prompt bodies</li><li>Temporary feature details</li><li>Roadmaps that will not be maintained</li><li>Procedures that should live in a plugin/skill</li></ul></div></div><div class="cb"><div class="cb-head"><span class="cb-title">CLAUDE.md · template</span><button class="copy" onclick="copyCode(this)">Copy</button></div><pre># Project Instructions
+
+## Project Context
+- Project type: TODO
+- Primary language/framework: TODO
+- Main entry points: TODO
+- Important commands: TODO
+
+## Workflow
+Default development flow is Plan -&gt; Work -&gt; Review.
+
+1. Plan first when requirements are unclear or the task is larger than one small change.
+2. Work on one scoped issue/change at a time.
+3. Review the diff before considering the task complete.
+4. Keep changes small, reversible, and testable.
+
+## Architecture Rules
+- Keep business logic separate from UI/framework glue.
+- Prefer small public interfaces and deep modules.
+- Do not introduce new dependencies without explaining why.
+- Do not perform unrelated refactors while implementing an issue.
+- Document meaningful architecture decisions in docs/adr/.
+
+## Test Commands
+- Unit tests: TODO
+- Typecheck: TODO
+- Lint: TODO
+- Build: TODO
+
+## Safety
+- Do not delete files without explicit instruction.
+- Do not change public behavior outside the active task.
+- Ask before large rewrites, schema migrations, or dependency changes.
+- If scope grows, stop and propose a new issue.</pre></div></section>
+
+<section class="section" id="rules"><div class="sec-head"><span class="sec-num">05</span><h2>rules</h2></div>
+<p class="tr-only"><code>.claude/rules/</code>, <code>CLAUDE.md</code>'yi şişirmeden kalıcı talimatları modüler dosyalara bölmek için kullanılır. Rules, Claude'un bilmesi gereken davranış/proje kurallarıdır. Ama önemli nüans şu: <strong>path verilmemiş rule dosyaları session başında context'e girer</strong>; <code>paths</code> frontmatter kullanılan rule dosyaları ise Claude ilgili dosyalarla çalışırken yüklenir. Bu yüzden rules klasörü iyi bölünmezse session/context şişirebilir.</p>
+<p class="en-only"><code>.claude/rules/</code> lets you split persistent instructions into modular files instead of growing one huge <code>CLAUDE.md</code>. Rules are behavior/project instructions Claude should know. The important nuance: <strong>rules without path scoping load at session start</strong>; rules with <code>paths</code> frontmatter load when Claude works with matching files. If you do not split and scope rules, they can bloat the session context.</p>
+<div class="cb"><div class="cb-head"><span class="cb-title">.claude/rules/ · context-friendly example tree</span><button class="copy" onclick="copyCode(this)">Copy</button></div><pre>.claude/
+└─ rules/
+   ├─ always.md              # tiny global rules; loads every session
+   ├─ testing.md             # general test rules; loads every session if no paths
+   ├─ frontend/
+   │  └─ react.md            # path-scoped to React/TSX files
+   └─ backend/
+      └─ api.md              # path-scoped to API files</pre></div>
+<div class="note tr-only"><strong>Frontmatter neden önemli?</strong> Rule dosyası markdown'dır; başına YAML frontmatter koyabilirsin. En pratik alan <code>paths</code>. <code>paths</code> yoksa rule genel kabul edilir ve session başında yüklenebilir. <code>paths</code> varsa Claude bu rule'u sadece eşleşen dosyalarla çalışırken context'e alır. Amaç: her şeyi baştan okutmak yerine Claude'un o an ihtiyaç duyduğu kuralı okutmak.</div>
+<div class="note en-only"><strong>Why frontmatter matters:</strong> Rule files are markdown files with optional YAML frontmatter. The most useful field is <code>paths</code>. Without <code>paths</code>, the rule is global and may load at session start. With <code>paths</code>, Claude loads the rule when working with matching files. The goal is to avoid reading every rule up front and instead load the rule Claude needs for the current files.</div>
+<div class="cb"><div class="cb-head"><span class="cb-title">.claude/rules/backend/api.md · path-scoped rule</span><button class="copy" onclick="copyCode(this)">Copy</button></div><pre>---
+paths:
+  - "src/api/**/*.ts"
+  - "app/api/**/*.ts"
+  - "server/**/*.ts"
+---
+
+# API Rules
+
+- Validate request input at the boundary.
+- Return the shared error response shape.
+- Keep database access behind the repository/service layer.
+- Add or update tests for behavior changes.</pre></div>
+<div class="cb"><div class="cb-head"><span class="cb-title">.claude/rules/frontend/react.md · path-scoped UI rule</span><button class="copy" onclick="copyCode(this)">Copy</button></div><pre>---
+paths:
+  - "src/**/*.tsx"
+  - "app/**/*.tsx"
+  - "components/**/*.tsx"
+---
+
+# React / UI Rules
+
+- Prefer small, focused components.
+- Keep server/client boundaries explicit.
+- Do not introduce a new UI library without approval.
+- Add accessible labels for interactive elements.</pre></div>
+<table class="tbl"><thead><tr class="tr-only"><th>Rule tipi</th><th>Nasıl yüklenir?</th><th>Ne koymalı?</th></tr><tr class="en-only"><th>Rule type</th><th>How it loads</th><th>What to put there</th></tr></thead><tbody>
+<tr class="tr-only"><td>Global rule<br><code>.claude/rules/always.md</code></td><td><code>paths</code> yoksa session başında yüklenebilir.</td><td>Çok kısa, her zaman gerekli kurallar: güvenlik, genel review standardı, commit disiplini.</td></tr>
+<tr class="tr-only"><td>Path-scoped rule<br><code>paths:</code> frontmatter</td><td>Claude eşleşen dosyaları okuduğunda/üzerinde çalıştığında yüklenir.</td><td>API, frontend, test, database, mobile gibi sadece belirli alanlarda geçerli kurallar.</td></tr>
+<tr class="tr-only"><td>Skill</td><td>Kullanıcı çağırdığında veya Claude ilgili gördüğünde yüklenir.</td><td>Çok adımlı prosedür: planla, implement et, review et, diagnose et, commit hazırla.</td></tr>
+<tr class="tr-only"><td>Hook / settings</td><td>Modelin hatırlamasına bağlı değildir; config/lifecycle olarak çalışır.</td><td>Kesin uygulanması gereken permission, komut kontrolü, otomatik hatırlatma veya policy.</td></tr>
+<tr class="en-only"><td>Global rule<br><code>.claude/rules/always.md</code></td><td>Without <code>paths</code>, it can load at session start.</td><td>Tiny always-needed rules: safety, general review standard, commit discipline.</td></tr>
+<tr class="en-only"><td>Path-scoped rule<br><code>paths:</code> frontmatter</td><td>Loads when Claude reads or works on matching files.</td><td>API, frontend, test, database, mobile, or other area-specific rules.</td></tr>
+<tr class="en-only"><td>Skill</td><td>Loads when invoked by the user or when Claude decides it is relevant.</td><td>Multi-step procedures: plan, implement, review, diagnose, prepare commit.</td></tr>
+<tr class="en-only"><td>Hook / settings</td><td>Runs as config/lifecycle behavior, not as something the model remembers.</td><td>Permissions, command checks, automatic reminders, or policy enforcement.</td></tr>
+</tbody></table>
+<div class="note tr-only"><strong>Pratik rule stratejisi:</strong> <code>CLAUDE.md</code> ve global rules minimumda kalsın. “Her işte bilmesi şart mı?” sorusunun cevabı hayırsa rule'u path-scoped yap veya skill'e taşı. Büyük checklist'leri global rule'a koyma; ilgili alana böl. Örneğin API standardı sadece <code>src/api/**</code>, UI standardı sadece <code>**/*.tsx</code>, test standardı sadece <code>**/*.test.ts</code> için yüklensin.</div>
+<div class="note en-only"><strong>Practical rule strategy:</strong> Keep <code>CLAUDE.md</code> and global rules minimal. If the answer to “must Claude know this in every task?” is no, make the rule path-scoped or move it into a skill. Do not put large checklists into global rules. Split them by area: API rules for <code>src/api/**</code>, UI rules for <code>**/*.tsx</code>, test rules for <code>**/*.test.ts</code>.</div>
+</section>
+
+<section class="section" id="settings"><div class="sec-head"><span class="sec-num">06</span><h2>settings.json</h2></div><p class="tr-only"><code>settings.json</code> metinsel talimat değil, yapılandırmadır. İzinler, hook'lar, env bilgileri ve proje seviyesinde paylaşılması gereken teknik ayarlar burada durabilir.</p><p class="en-only"><code>settings.json</code> is configuration, not prose instructions. Use it for permissions, hooks, env values, and shareable technical settings.</p><table class="tbl"><thead><tr class="tr-only"><th>Scope</th><th>Ne için?</th><th>Paylaşılır mı?</th></tr><tr class="en-only"><th>Scope</th><th>Purpose</th><th>Shared?</th></tr></thead><tbody><tr class="tr-only"><td>User</td><td>Kişisel tercih ve global ayarlar.</td><td>Hayır</td></tr><tr class="tr-only"><td>Project</td><td>Takım/repo için ortak ayarlar.</td><td>Evet</td></tr><tr class="tr-only"><td>Local</td><td>Makineye özel, gizli veya kişisel ayarlar.</td><td>Hayır</td></tr><tr class="en-only"><td>User</td><td>Personal preferences and global settings.</td><td>No</td></tr><tr class="en-only"><td>Project</td><td>Shared team/repository settings.</td><td>Yes</td></tr><tr class="en-only"><td>Local</td><td>Machine-specific, private, or personal settings.</td><td>No</td></tr></tbody></table><div class="cb"><div class="cb-head"><span class="cb-title">.claude/settings.json · example</span><button class="copy" onclick="copyCode(this)">Copy</button></div><pre>{
+  &quot;permissions&quot;: {
+    &quot;allow&quot;: [
+      &quot;Bash(npm test)&quot;,
+      &quot;Bash(npm run lint)&quot;,
+      &quot;Bash(npm run typecheck)&quot;,
+      &quot;Bash(npm run build)&quot;
+    ],
+    &quot;deny&quot;: [
+      &quot;Bash(rm -rf /)&quot;,
+      &quot;Bash(git push --force*)&quot;
+    ]
+  },
+  &quot;hooks&quot;: {
+    &quot;PostToolUse&quot;: [
+      {
+        &quot;matcher&quot;: &quot;Edit|Write|MultiEdit&quot;,
+        &quot;hooks&quot;: [
+          {
+            &quot;type&quot;: &quot;command&quot;,
+            &quot;command&quot;: &quot;echo &#x27;File changed. Consider running tests.&#x27;&quot;
+          }
+        ]
+      }
+    ]
+  }
+}</pre></div><div class="note tr-only"><strong>Best practice:</strong> Takımca paylaşılacak ayarlar <code>.claude/settings.json</code> içinde project scope'ta, kişisel izinler ve lokal path/env bilgileri <code>.claude/settings.local.json</code> içinde tutulmalıdır. <code>settings.local.json</code> git'e girmemeli; dosyayı Claude oluşturduysa gitignore'a ekler, elle oluşturduysan sen ekle.</div><div class="note en-only"><strong>Best practice:</strong> Shared team settings belong in project scope at <code>.claude/settings.json</code>; personal permissions and local paths/env values belong in <code>.claude/settings.local.json</code>. Keep <code>settings.local.json</code> out of git; Claude adds it to gitignore when it creates the file, but add it yourself if you create it manually.</div></section>
+
+<section class="section" id="commands"><div class="sec-head"><span class="sec-num">07</span><h2>commands</h2></div>
+<p class="tr-only">Claude Code'da <strong>commands</strong> derken iki farklı şeyi ayırmak gerekir: Claude Code'un kendi built-in slash command'ları ve eskiden <code>.claude/commands/</code> altında tutulan custom command workflow'ları. Güncel setup anlatımında custom workflow'lar için tercih edilen yer <code>skills</code>'tir.</p>
+<p class="en-only">In Claude Code, <strong>commands</strong> means two different things: Claude Code's built-in slash commands and older custom command workflows that used to live under <code>.claude/commands/</code>. In a modern setup, custom reusable workflows should generally be implemented as <code>skills</code>.</p>
+<div class="note ok tr-only"><strong>Güncel ayrım:</strong> <code>/usage</code>, <code>/context</code>, <code>/compact</code>, <code>/clear</code>, <code>/model</code> gibi built-in command'lar hâlâ ayrı kavramdır. Fakat yeni bir custom workflow yazacaksan <code>.claude/skills/&lt;name&gt;/SKILL.md</code> kullanmak daha doğru anlatımdır. <code>.claude/commands/</code> varsa backward compatibility/legacy olarak düşünülebilir.</div>
+<div class="note ok en-only"><strong>Current distinction:</strong> Built-in commands such as <code>/usage</code>, <code>/context</code>, <code>/compact</code>, <code>/clear</code>, and <code>/model</code> are still separate. But for new custom workflows, prefer <code>.claude/skills/&lt;name&gt;/SKILL.md</code>. Treat <code>.claude/commands/</code> as legacy/backward-compatible.</div>
+<div class="note tr-only"><strong>İsim çakışması notu:</strong> Bu dokümanda okunabilirlik için skill-backed command örnekleri <code>/plan</code>, <code>/work</code>, <code>/review</code> olarak gösterilir. Claude Code sürümünde aynı isimli built-in komutlarla çakışma yaşanırsa plugin namespace kullanmak (<code>/agentic:plan</code>) veya ekip standardına göre farklı bir isim seçmek daha güvenlidir.</div>
+<div class="note en-only"><strong>Name collision note:</strong> For readability, this document shows skill-backed command examples as <code>/plan</code>, <code>/work</code>, and <code>/review</code>. If those names collide with built-in commands in your Claude Code version, use a plugin namespace such as <code>/agentic:plan</code> or choose a team-specific name.</div>
+<table class="tbl"><thead><tr class="tr-only"><th>Tür</th><th>Nerede yaşar?</th><th>Ne için kullanılır?</th><th>Öneri</th></tr><tr class="en-only"><th>Type</th><th>Where does it live?</th><th>Purpose</th><th>Recommendation</th></tr></thead><tbody>
+<tr class="tr-only"><td>Built-in slash commands</td><td>Claude Code içinde gelir</td><td>Session yönetimi, context, model, usage, tool durumları</td><td>Ayrı anlat; bunlar skill dosyası değildir.</td></tr>
+<tr class="tr-only"><td>Skill-backed commands</td><td><code>.claude/skills/&lt;name&gt;/SKILL.md</code></td><td>Planlama, implementasyon, review, diagnose, commit gibi tekrar kullanılabilir prosedürler</td><td>Yeni custom workflow için bunu kullan.</td></tr>
+<tr class="tr-only"><td>Legacy custom commands</td><td><code>.claude/commands/*.md</code></td><td>Eski command-style custom prompt/workflow dosyaları</td><td>Varsa çalışabilir; yeni setup'ta skills'e taşımayı tercih et.</td></tr>
+<tr class="en-only"><td>Built-in slash commands</td><td>Built into Claude Code</td><td>Session management, context, model, usage, tool state</td><td>Explain separately; these are not skill files.</td></tr>
+<tr class="en-only"><td>Skill-backed commands</td><td><code>.claude/skills/&lt;name&gt;/SKILL.md</code></td><td>Reusable procedures such as planning, implementation, review, diagnose, commit</td><td>Use this for new custom workflows.</td></tr>
+<tr class="en-only"><td>Legacy custom commands</td><td><code>.claude/commands/*.md</code></td><td>Older command-style custom prompt/workflow files</td><td>They may still work; prefer moving new setup to skills.</td></tr>
+</tbody></table>
+<table class="tbl"><thead><tr class="tr-only"><th>Built-in komut</th><th>Amaç</th><th>Ne zaman gösterilir?</th></tr><tr class="en-only"><th>Built-in command</th><th>Purpose</th><th>When to show it?</th></tr></thead><tbody>
+<tr class="tr-only"><td><code>/usage</code></td><td>Kullanım, maliyet veya limit durumunu görmek.</td><td>Uzun demo/session sırasında kontrol noktası olarak.</td></tr>
+<tr class="tr-only"><td><code>/context</code></td><td>Context kullanımını görmek.</td><td>Context şiştiğinde kalite düşüşünü konuşurken.</td></tr>
+<tr class="tr-only"><td><code>/compact</code></td><td>Konuşmayı özetleyip context'i küçültmek.</td><td>Kararları dosyaya yazdırdıktan sonra session'ı toparlamak için.</td></tr>
+<tr class="tr-only"><td><code>/clear</code></td><td>Yeni temiz session başlatmak.</td><td>Büyük faz geçişlerinde veya context çok kirlendiğinde.</td></tr>
+<tr class="tr-only"><td><code>/model</code></td><td>Aktif modeli değiştirmek.</td><td>Plan/review için güçlü model, basit işler için daha ekonomik model seçimini anlatırken.</td></tr>
+<tr class="tr-only"><td><code>/skills</code></td><td>Yüklü skill'leri görmek/yönetmek.</td><td>Plugin veya proje içindeki skill'lerin geldiğini doğrulamak için.</td></tr>
+<tr class="en-only"><td><code>/usage</code></td><td>Inspect usage, cost, or limits.</td><td>As a checkpoint during long demos/sessions.</td></tr>
+<tr class="en-only"><td><code>/context</code></td><td>Inspect context usage.</td><td>When discussing quality degradation from bloated context.</td></tr>
+<tr class="en-only"><td><code>/compact</code></td><td>Summarize the conversation and reduce context.</td><td>After writing key decisions into files.</td></tr>
+<tr class="en-only"><td><code>/clear</code></td><td>Start a clean session.</td><td>Between large workflow phases or when context is polluted.</td></tr>
+<tr class="en-only"><td><code>/model</code></td><td>Change the active model.</td><td>When explaining stronger models for plan/review and cheaper models for simple work.</td></tr>
+<tr class="en-only"><td><code>/skills</code></td><td>View/manage installed skills.</td><td>To verify plugin/project skills are available.</td></tr>
+</tbody></table>
+<div class="cb"><div class="cb-head"><span class="cb-title">modern custom workflow · use a skill</span><button class="copy" onclick="copyCode(this)">Copy</button></div><pre>.claude/
+└─ skills/
+   └─ plan/
+      └─ SKILL.md</pre></div>
+<div class="cb"><div class="cb-head"><span class="cb-title">legacy custom command · avoid for new setup</span><button class="copy" onclick="copyCode(this)">Copy</button></div><pre>.claude/
+└─ commands/
+   └─ plan.md</pre></div>
+</section>
+
+<section class="section" id="skills"><div class="sec-head"><span class="sec-num">08</span><h2>skills</h2></div>
+<p class="tr-only">Skill, tekrar kullanılabilir prosedürdür ve slash-command entrypoint gibi çalışabilir. Güncel custom workflow'lar için önerilen ana yer <code>.claude/skills/&lt;name&gt;/SKILL.md</code>'dir. Bu dokümanda skill'leri ana kullanıcı arayüzü gibi ele alıyoruz: <code>/plan</code>, <code>/work</code>, <code>/review</code>.</p>
+<p class="en-only">A skill is a reusable procedure and can act as a slash-command entrypoint. The recommended place for modern custom workflows is <code>.claude/skills/&lt;name&gt;/SKILL.md</code>. In this reference, skills are the main user-facing workflow surface: <code>/plan</code>, <code>/work</code>, <code>/review</code>.</p>
+<div class="note tr-only"><strong>Discovery/path notu:</strong> Project/personal skill için beklenen yapı <code>.claude/skills/plan/SKILL.md</code> şeklindedir; <code>.claude/skills/plan.md</code> düz dosyası skill olarak yüklenmez. Komut olarak yazdığın ad klasör adından gelir: <code>.claude/skills/plan/SKILL.md</code> → <code>/plan</code>. Frontmatter’daki <code>name</code> alanı slash menüsündeki görüntü/display adını değiştirebilir; çoğu skill konumunda yazdığın komut adını değiştirmez. İstisna: plugin root <code>SKILL.md</code> kullanımı.</div>
+<div class="note en-only"><strong>Discovery/path note:</strong> For project/personal skills, the expected layout is <code>.claude/skills/plan/SKILL.md</code>; a flat file like <code>.claude/skills/plan.md</code> is not loaded as a skill. The command you type comes from the directory name: <code>.claude/skills/plan/SKILL.md</code> → <code>/plan</code>. The frontmatter <code>name</code> field can change the display label shown in the slash menu, but in most skill locations it does not change the command you type. Exception: plugin root <code>SKILL.md</code>.</div>
+<div class="note tr-only"><strong>Küçük discovery notları:</strong> Aynı isimde hem <code>.claude/commands/plan.md</code> hem <code>.claude/skills/plan/SKILL.md</code> varsa skill önceliklidir. Claude mevcut skill klasörlerindeki değişiklikleri canlı yakalar; ama session başlarken <code>.claude/skills/</code> hiç yoksa yeni klasörün izlenmesi için Claude'u restart etmek gerekebilir. Monorepo'da alt klasörlerdeki <code>.claude/skills/</code> yapıları da ilgili dosyalarla çalışırken devreye girebilir.</div>
+<div class="note en-only"><strong>Small discovery notes:</strong> If <code>.claude/commands/plan.md</code> and <code>.claude/skills/plan/SKILL.md</code> both exist, the skill takes precedence. Claude live-detects changes inside skill directories that existed when the session started; if <code>.claude/skills/</code> did not exist at startup, restart Claude so it can watch the new directory. In monorepos, nested <code>.claude/skills/</code> folders can become available when Claude works in those subdirectories.</div>
+<table class="tbl"><thead><tr class="tr-only"><th>Pattern</th><th>Nasıl çalışır?</th><th>Ne zaman kullanılır?</th></tr><tr class="en-only"><th>Pattern</th><th>How it works</th><th>When to use</th></tr></thead><tbody>
+<tr class="tr-only"><td>Inline skill</td><td><code>/skill-name</code> skill içeriğini ana session context'ine yükler.</td><td>Kısa checklist, style guide, küçük prosedür.</td></tr>
+<tr class="tr-only"><td>Skill-driven orchestration</td><td>Skill, ana procedure olur; gerektiğinde ilgili agent'ı dispatch etmeyi veya agent'lardan focused review/research istemeyi tarif eder.</td><td><code>/plan</code>, <code>/work</code>, <code>/review</code> gibi workflow entrypoint'leri.</td></tr>
+<tr class="tr-only"><td>Agent → Skill preload</td><td>Agent frontmatter içinde <code>skills:</code> yazılır; bu skill içerikleri agent context'ine başlangıçta inject edilir.</td><td>Agent'ın sürekli bilmesi gereken domain convention veya reference skill'leri.</td></tr>
+<tr class="tr-only"><td>Advanced: <code>context: fork</code></td><td>Skill, resmi olarak belirli bir subagent context'inde izole çalıştırılabilir.</td><td>Context izolasyonu çok önemliyse; workshop ana akışında şart değildir.</td></tr>
+<tr class="en-only"><td>Inline skill</td><td><code>/skill-name</code> loads the skill body into the main session context.</td><td>Short checklist, style guide, small procedure.</td></tr>
+<tr class="en-only"><td>Skill-driven orchestration</td><td>The skill is the main procedure; it describes when to dispatch the relevant agent or request focused review/research from agents.</td><td>Workflow entrypoints such as <code>/plan</code>, <code>/work</code>, and <code>/review</code>.</td></tr>
+<tr class="en-only"><td>Agent → Skill preload</td><td>The agent frontmatter includes <code>skills:</code>; those skill bodies are injected into the agent context at startup.</td><td>Domain conventions or reference skills the agent should always know.</td></tr>
+<tr class="en-only"><td>Advanced: <code>context: fork</code></td><td>A skill can officially run inside an isolated subagent context.</td><td>When context isolation is critical; not required for the workshop's main path.</td></tr>
+</tbody></table>
+<div class="note tr-only"><strong>Skill ↔ agent çağrı mantığı:</strong> Skill'ler gerektiğinde agent'lardan yardım isteyebilir; örn. <code>/review</code> skill'i non-trivial diff için <code>reviewer</code> agent'a focused review yaptırır. Agent'lar da <code>Skill</code> tool erişimine sahipse çalışma sırasında ilgili skill'i keşfedip çağırabilir. Best practice: kullanıcıya görünen ana workflow'u skill'de tut, uzman rol ve tool sınırını agent'ta tut.</div>
+<div class="note en-only"><strong>Skill ↔ agent invocation model:</strong> Skills can request help from agents when useful; for example, the <code>/review</code> skill can delegate a non-trivial diff to the <code>reviewer</code> agent. Agents can also discover and invoke relevant skills during execution if they have access to the <code>Skill</code> tool. Best practice: keep the user-facing workflow in the skill, and keep role, tool, model, and permission boundaries in the agent.</div>
+<table class="tbl"><thead><tr class="tr-only"><th>Parça</th><th>İyi olduğu şeyler</th><th>Kaçın</th></tr><tr class="en-only"><th>Piece</th><th>Good for</th><th>Avoid</th></tr></thead><tbody>
+<tr class="tr-only"><td>Skill</td><td>Slash entrypoint, checklist, prosedür, output formatı, issue/PR/review akışı, gerektiğinde agent dispatch yönergesi.</td><td>Uzun role prompt'u, her şeyi context'e preload etmek, tool/permission politikasını sadece metinle yönetmek.</td></tr>
+<tr class="tr-only"><td>Agent</td><td>Uzman rol, isolated/focused execution, model/tool/permission sınırı, planner/worker/reviewer gibi farklı davranış profili.</td><td>Her işi tek mega-agent'a vermek, kullanıcı-facing prosedürü agent prompt'una gömmek, gereksiz skill preload etmek.</td></tr>
+<tr class="tr-only"><td>Rule</td><td>Her zaman veya path-specific bilinmesi gereken kısa standartlar: test, API, style, security.</td><td>Çok adımlı prosedür veya nadiren gereken uzun referans metni.</td></tr>
+<tr class="tr-only"><td>Hook/settings</td><td>Model unutsa bile çalışması gereken enforcement, permission ve lifecycle otomasyonu.</td><td>Yaratıcı karar, product reasoning veya insan onayı gerektiren şeyleri tamamen otomatikleştirmek.</td></tr>
+<tr class="en-only"><td>Skill</td><td>Slash entrypoint, checklist, procedure, output format, issue/PR/review workflow, and instructions to dispatch agents when useful.</td><td>Long role prompts, preloading everything into context, or managing tool/permission policy only through prose.</td></tr>
+<tr class="en-only"><td>Agent</td><td>Specialized role, isolated/focused execution, model/tool/permission boundary, and different behavior profiles like planner/worker/reviewer.</td><td>One mega-agent for everything, hiding the user-facing procedure inside the agent prompt, or unnecessary skill preload.</td></tr>
+<tr class="en-only"><td>Rule</td><td>Short always-on or path-specific standards: tests, API, style, security.</td><td>Multi-step procedures or rarely needed long reference material.</td></tr>
+<tr class="en-only"><td>Hook/settings</td><td>Enforcement, permissions, and lifecycle automation that must work even if the model forgets.</td><td>Fully automating creative judgment, product reasoning, or steps that need human approval.</td></tr>
+</tbody></table>
+<div class="note ok tr-only"><strong>Bu setup için önerilen model:</strong> <code>/plan</code>, <code>/work</code>, <code>/review</code> birer skill-backed command olsun. Agent'lar ise bu skill'lerin gerektiğinde başvuracağı uzman worker'lar olsun. Böylece katılımcı önce skill'i kopyalayıp kullanabilir; agent kısmını sonra detaylandırabilir.</div>
+<div class="note ok en-only"><strong>Recommended model for this setup:</strong> Make <code>/plan</code>, <code>/work</code>, and <code>/review</code> skill-backed commands. Agents are specialized workers those skills can call when useful. This lets participants start by copying skills and add agents as the workflow matures.</div>
+<div class="note tr-only"><strong>Invocation kontrolü:</strong> Skill'ler iki şekilde devreye girebilir: kullanıcı doğrudan <code>/skill-name</code> ile çağırabilir veya Claude, skill açıklamasını uygun bulursa otomatik kullanabilir. Varsayılan davranış ikisine de izin verir. Sadece manuel çağrı istiyorsan <code>disable-model-invocation: true</code> kullan. Kullanıcının slash menüsünde görmesini istemediğin, sadece modelin gerektiğinde kullanacağı arka plan bilgisi için <code>user-invocable: false</code> kullan.</div>
+<div class="note en-only"><strong>Invocation control:</strong> Skills can be invoked in two ways: the user can call them directly with <code>/skill-name</code>, or Claude can invoke them automatically when their description matches the task. The default allows both. Use <code>disable-model-invocation: true</code> for manual-only workflows. Use <code>user-invocable: false</code> for background knowledge that should not appear as a user-facing slash command.</div>
+<table class="tbl"><thead><tr class="tr-only"><th>Frontmatter</th><th>Kullanıcı çağırabilir mi?</th><th>Claude otomatik çağırabilir mi?</th><th>Ne zaman?</th></tr><tr class="en-only"><th>Frontmatter</th><th>User can invoke?</th><th>Claude can invoke?</th><th>When?</th></tr></thead><tbody>
+<tr class="tr-only"><td><code>default</code></td><td>Evet</td><td>Evet</td><td>Hem slash command hem model-driven yardımcı skill için.</td></tr>
+<tr class="tr-only"><td><code>disable-model-invocation: true</code></td><td>Evet</td><td>Hayır</td><td><code>/commit</code>, <code>/deploy</code>, <code>/send-slack-message</code> gibi yan etkisi veya timing hassasiyeti olan işler.</td></tr>
+<tr class="tr-only"><td><code>user-invocable: false</code></td><td>Hayır</td><td>Evet</td><td>Legacy sistem bilgisi, domain context, style guide gibi kullanıcının command olarak çalıştırması anlamlı olmayan arka plan bilgisi.</td></tr>
+<tr class="en-only"><td><code>default</code></td><td>Yes</td><td>Yes</td><td>For skills that can be both slash commands and model-driven helpers.</td></tr>
+<tr class="en-only"><td><code>disable-model-invocation: true</code></td><td>Yes</td><td>No</td><td>For side-effect or timing-sensitive workflows such as <code>/commit</code>, <code>/deploy</code>, or <code>/send-slack-message</code>.</td></tr>
+<tr class="en-only"><td><code>user-invocable: false</code></td><td>No</td><td>Yes</td><td>For background knowledge such as legacy system context, domain context, or style guides that are not meaningful as user-facing commands.</td></tr>
+</tbody></table>
+<div class="note tr-only"><strong>Frontmatter mini reference:</strong> Bunları tek tek ezberletme; Plan/Work/Review skill örneklerinde gösterip geç.</div>
+<div class="note en-only"><strong>Frontmatter mini reference:</strong> Do not turn this into a lecture; point at these fields in the Plan/Work/Review skill examples and move on.</div>
+<table class="tbl"><thead><tr class="tr-only"><th>Alan</th><th>Kısa anlamı</th></tr><tr class="en-only"><th>Field</th><th>Quick meaning</th></tr></thead><tbody>
+<tr class="tr-only"><td><code>description</code></td><td>Skill ne yapar ve Claude ne zaman otomatik düşünsün? En önemli discovery alanı.</td></tr>
+<tr class="tr-only"><td><code>when_to_use</code></td><td>Ek tetikleme ipuçları veya örnek kullanıcı istekleri. Çok uzatma.</td></tr>
+<tr class="tr-only"><td><code>argument-hint</code></td><td>Slash autocomplete'ta görünen kısa argüman ipucu: <code>[issue-number]</code>, <code>[file]</code> gibi.</td></tr>
+<tr class="tr-only"><td><code>arguments</code></td><td>Pozisyonel argümanları isimlendirir; skill içinde <code>$name</code> gibi kullanmayı kolaylaştırır.</td></tr>
+<tr class="tr-only"><td><code>model</code> / <code>effort</code></td><td>Bu skill çalışırken model veya düşünme eforunu geçici override eder. Sonraki kullanıcı mesajında session ayarına döner.</td></tr>
+<tr class="tr-only"><td><code>allowed-tools</code></td><td>Skill aktifken bazı tool'ları ön onaylı hale getirmek için. Yan etkili işlerde dikkatli kullan.</td></tr>
+<tr class="tr-only"><td><code>paths</code></td><td>Skill'in sadece belirli dosya pattern'leriyle çalışırken otomatik devreye girmesini sınırlar.</td></tr>
+<tr class="en-only"><td><code>description</code></td><td>What the skill does and when Claude should consider it. The main discovery field.</td></tr>
+<tr class="en-only"><td><code>when_to_use</code></td><td>Extra trigger guidance or example user requests. Keep it short.</td></tr>
+<tr class="en-only"><td><code>argument-hint</code></td><td>Autocomplete hint for slash arguments, such as <code>[issue-number]</code> or <code>[file]</code>.</td></tr>
+<tr class="en-only"><td><code>arguments</code></td><td>Names positional arguments so the skill can use values like <code>$name</code>.</td></tr>
+<tr class="en-only"><td><code>model</code> / <code>effort</code></td><td>Temporarily override the model or effort while this skill runs; the session setting resumes on the next user message.</td></tr>
+<tr class="en-only"><td><code>allowed-tools</code></td><td>Pre-approve selected tools while the skill is active. Use carefully for side-effecting workflows.</td></tr>
+<tr class="en-only"><td><code>paths</code></td><td>Limit automatic activation to specific file patterns.</td></tr>
+</tbody></table>
+<table class="tbl"><thead><tr class="tr-only"><th>Skill</th><th>İlgili agent</th><th>Amaç</th></tr><tr class="en-only"><th>Skill</th><th>Related agent</th><th>Purpose</th></tr></thead><tbody>
+<tr><td><code>plan</code></td><td><code>planner</code></td><td class="tr-only">Belirsiz işi netleştirir, küçük issue'lara böler.</td><td class="en-only">Clarifies unclear work and splits it into small issues.</td></tr>
+<tr><td><code>work</code></td><td><code>worker</code></td><td class="tr-only">Tek scoped issue'yu testli ve sınırlı şekilde uygular.</td><td class="en-only">Implements one scoped issue with tests and minimal unrelated changes.</td></tr>
+<tr><td><code>review</code></td><td><code>reviewer</code></td><td class="tr-only">Diff'i correctness, scope, test ve mimari açısından kontrol eder.</td><td class="en-only">Reviews a diff for correctness, scope, tests, and architecture.</td></tr>
+<tr><td><code>diagnose</code></td><td><span class="muted">worker / debugging agent</span></td><td class="tr-only">Hata/failed test durumunda sistematik teşhis yapar.</td><td class="en-only">Diagnoses failures systematically before fixing.</td></tr>
+<tr><td><code>commit</code></td><td><span class="muted">inline</span></td><td class="tr-only">Commit öncesi diff/test kontrolü ve commit mesajı hazırlar.</td><td class="en-only">Prepares diff/test checks and a commit message.</td></tr>
+</tbody></table>
+<div class="accordion open" id="sk-plan"><div class="acc-head" onclick="tog('sk-plan')"><div><div class="acc-title">plan/SKILL.md</div><div class="acc-desc tr-only">Gereksinim netleştirme ve issue çıkarma</div><div class="acc-desc en-only">Clarify requirements and create issues</div></div><span class="badge">skill</span></div><div class="acc-body"><div class="cb"><div class="cb-head"><span class="cb-title">markdown</span><button class="copy" onclick="copyCode(this)">Copy</button></div><pre>---
+name: plan
+description: Clarify requirements and turn broad work into small implementation issues.
+disable-model-invocation: true
+argument-hint: "&lt;feature idea or task&gt;"
+---
+
+# Plan Skill
+
+Use this skill when the request is unclear, broad, risky, or larger than one small implementation step.
+
+## User Request
+$ARGUMENTS
+
+## Inputs
+- User request or feature idea
+- Existing README / docs / issues / ADRs
+- Relevant source files when needed
+
+## Procedure
+1. Read existing project context before proposing a plan.
+2. Identify the goal, users, constraints, non-goals, and unknowns.
+3. Ask only the most important clarification questions.
+4. If deeper isolated research is useful, dispatch or ask for help from the planner agent.
+5. Convert the work into small vertical-slice issues.
+6. For each issue, include:
+   - title
+   - user story or behavior
+   - acceptance criteria
+   - test expectations
+   - out of scope
+   - suggested owner/agent
+
+## Rules
+- Do not implement code while planning.
+- Do not create horizontal tasks like &quot;create database layer&quot; unless explicitly required.
+- Prefer tracer-bullet issues that produce visible behavior.
+- Separate facts, assumptions, and open questions.</pre></div></div></div>
+<div class="accordion" id="sk-work"><div class="acc-head" onclick="tog('sk-work')"><div><div class="acc-title">work/SKILL.md</div><div class="acc-desc tr-only">Tek scoped işi uygula</div><div class="acc-desc en-only">Implement one scoped task</div></div><span class="badge">skill</span></div><div class="acc-body"><div class="cb"><div class="cb-head"><span class="cb-title">markdown</span><button class="copy" onclick="copyCode(this)">Copy</button></div><pre>---
+name: work
+description: Implement one scoped issue with tests and minimal unrelated changes.
+disable-model-invocation: true
+argument-hint: "&lt;issue file or task&gt;"
+---
+
+# Work Skill
+
+Use this skill when an issue is clear enough to implement.
+
+## Active Issue / Task
+$ARGUMENTS
+
+## Inputs
+- One issue or task
+- Acceptance criteria
+- Test commands
+- Relevant source files
+
+## Procedure
+1. Restate the active scope in one short paragraph.
+2. Inspect the relevant files.
+3. Choose the smallest behavior to implement first.
+4. Write or update a failing test when practical.
+5. Implement the smallest change that makes the test pass.
+6. Repeat until acceptance criteria are covered.
+7. Use the worker agent for isolated implementation when the task is large enough to benefit from a fresh context.
+8. Run relevant checks.
+9. Summarize changed files, tests run, and remaining risks.
+
+## Rules
+- Work on one issue at a time.
+- Do not perform unrelated refactors.
+- Do not silently add dependencies.
+- Do not broaden scope without stopping and asking.
+- Keep changes reviewable.</pre></div></div></div>
+<div class="accordion" id="sk-review"><div class="acc-head" onclick="tog('sk-review')"><div><div class="acc-title">review/SKILL.md</div><div class="acc-desc tr-only">Diff review prosedürü</div><div class="acc-desc en-only">Diff review procedure</div></div><span class="badge">skill</span></div><div class="acc-body"><div class="cb"><div class="cb-head"><span class="cb-title">markdown</span><button class="copy" onclick="copyCode(this)">Copy</button></div><pre>---
+name: review
+description: Review a diff for correctness, scope, tests, architecture, and documentation.
+disable-model-invocation: true
+argument-hint: "&lt;base branch, diff, issue, or PR URL&gt;"
+---
+
+# Review Skill
+
+Use this skill before marking work complete or before commit/PR.
+
+## Inputs
+- Git diff
+- Active issue / acceptance criteria
+- Test results
+- Relevant docs
+
+## Review Checklist
+1. Does the diff satisfy the acceptance criteria?
+2. Are there unrelated changes?
+3. Are tests meaningful and behavior-focused?
+4. Did typecheck/lint/build pass?
+5. Is business logic placed in the right module?
+6. Were docs updated when behavior, commands, or architecture changed?
+7. Are there security, data, or migration risks?
+8. If the diff is non-trivial, dispatch or ask for help from the reviewer agent.
+
+## Output Format
+- Summary
+- Must fix
+- Should fix
+- Nice to have
+- Tests run
+- Final recommendation: approve / request changes / blocked
+
+## Rules
+- Be stricter with correctness than style.
+- Do not approve untested behavior.
+- Do not hide uncertainty.</pre></div></div></div>
+<div class="accordion" id="sk-diagnose"><div class="acc-head" onclick="tog('sk-diagnose')"><div><div class="acc-title">diagnose/SKILL.md</div><div class="acc-desc tr-only">Debugging prosedürü</div><div class="acc-desc en-only">Debugging procedure</div></div><span class="badge">skill</span></div><div class="acc-body"><div class="cb"><div class="cb-head"><span class="cb-title">markdown</span><button class="copy" onclick="copyCode(this)">Copy</button></div><pre>---
+name: diagnose
+description: Diagnose failed tests, runtime errors, and surprising behavior before attempting a fix.
+disable-model-invocation: true
+argument-hint: "&lt;error, failing command, or symptom&gt;"
+---
+
+# Diagnose Skill
+
+## Procedure
+1. Reproduce the failure or identify the smallest failing command.
+2. Capture the exact error output.
+3. List the most likely hypotheses.
+4. Test one hypothesis at a time.
+5. Add a regression test when possible.
+6. Apply the smallest safe fix.
+7. Run the nearest relevant tests, then broader checks if needed.
+
+## Rules
+- Do not rewrite large areas before understanding the failure.
+- Do not suppress errors to make tests pass.
+- Do not fix unrelated issues in the same pass.</pre></div></div></div>
+<div class="accordion" id="sk-commit"><div class="acc-head" onclick="tog('sk-commit')"><div><div class="acc-title">commit/SKILL.md</div><div class="acc-desc tr-only">Commit hazırlığı</div><div class="acc-desc en-only">Commit preparation</div></div><span class="badge">skill</span></div><div class="acc-body"><div class="cb"><div class="cb-head"><span class="cb-title">markdown</span><button class="copy" onclick="copyCode(this)">Copy</button></div><pre>---
+name: commit
+description: Review current changes, verify checks, and prepare a Conventional Commit message.
+disable-model-invocation: true
+argument-hint: "&lt;optional scope or push flag&gt;"
+---
+
+# Commit Skill
+
+## Procedure
+1. Inspect git status and diff.
+2. Summarize what changed.
+3. Confirm relevant tests/checks were run, or clearly list what was not run.
+4. Identify risks or unrelated changes.
+5. Propose a Conventional Commit message.
+6. Commit only when the user explicitly approves or the workflow already permits it.
+
+## Rules
+- Do not commit secrets or unrelated files.
+- Do not invent test results.
+- Prefer small commits that map to a coherent change.</pre></div></div></div>
+<div class="note tr-only"><strong>Advanced not:</strong> <code>context: fork</code> resmi olarak desteklenir ve skill içeriğini seçilen subagent'a task prompt olarak verir. Bu dokümanın ana örneklerinde daha yaygın ve anlaşılır olduğu için skill-first orchestration gösteriliyor.</div><div class="note en-only"><strong>Advanced note:</strong> <code>context: fork</code> is officially supported and sends the skill body as the task prompt to the selected subagent. The main examples here use skill-first orchestration because it is easier to explain and common in real plugins.</div>
+</section><section class="section" id="agents"><div class="sec-head"><span class="sec-num">09</span><h2>agents</h2></div>
+<p class="tr-only">Agent, belirli bir role ait execution context'tir: system prompt, model, tool set, permission mode ve çıktı beklentisi burada tanımlanır. Bu setup'ta agent'lar tek başına da çağrılabilir; ama daha pratik model, <code>/plan</code>, <code>/work</code>, <code>/review</code> gibi skill'lerin gerektiğinde ilgili agent'lardan destek istemesidir.</p>
+<p class="en-only">An agent is an execution context for a role: system prompt, model, tool set, permission mode, and output expectations live here. In this setup, agents can be invoked directly, but the more practical model is for skills such as <code>/plan</code>, <code>/work</code>, and <code>/review</code> to request help from the relevant agents when useful.</p>
+<div class="note tr-only"><strong>Önemli:</strong> <code>skills:</code> alanı agent'ın bazı skill içeriklerini başlangıçta preload etmesi içindir. Yani agent daha işe başlamadan o skill'in tam içeriği context'ine eklenir. Bu, agent'ın sürekli bilmesi gereken convention/reference bilgileri için iyidir; her agent'a her şeyi preload etmek context'i şişirir. <code>disable-model-invocation: true</code> olan manuel-only skill'ler preload edilemez. Preload etmesen bile agent, Skill tool erişimi varsa ilgili project/user/plugin skill'lerini çalışma sırasında yine keşfedip çağırabilir.</div>
+<div class="note en-only"><strong>Important:</strong> The <code>skills:</code> field preloads selected skill content into the agent at startup. In plain terms, the agent receives that skill's full text before it starts working. This is useful for conventions/reference knowledge the agent must always know, but preloading everything bloats context. Skills with <code>disable-model-invocation: true</code> cannot be preloaded. Even without preload, an agent can still discover and invoke relevant project/user/plugin skills during execution if it has access to the Skill tool.</div>
+<div class="cb"><div class="cb-head"><span class="cb-title">agent skill preload · optional pattern</span><button class="copy" onclick="copyCode(this)">Copy</button></div><pre>---
+name: api-worker
+description: Implements API changes using team conventions.
+tools: Read, Write, Edit, Bash, Glob, Grep, Skill
+model: sonnet
+skills:
+  - api-conventions
+  - error-handling-patterns
+---
+
+You implement one scoped API task. Follow the preloaded conventions.</pre></div>
+<table class="tbl"><thead><tr class="tr-only"><th>Agent skill kullanımı</th><th>Ne anlama gelir?</th></tr><tr class="en-only"><th>Agent skill usage</th><th>What it means</th></tr></thead><tbody>
+<tr class="tr-only"><td><code>skills:</code> preload</td><td>Agent başlamadan önce listelenen skill'lerin tam içeriği context'e eklenir. Convention/reference için iyi, context maliyeti vardır.</td></tr>
+<tr class="tr-only"><td>On-demand <code>Skill</code> tool</td><td>Agent çalışırken ihtiyacı olursa project/user/plugin skill'lerini keşfedip çağırabilir. Genelde daha hafif ve esnektir.</td></tr>
+<tr class="tr-only"><td><code>disallowedTools: Skill</code></td><td>Agent'ın skill çağırmasını istemiyorsan Skill tool'u kapatabilirsin.</td></tr>
+<tr class="en-only"><td><code>skills:</code> preload</td><td>The listed skill bodies are injected before the agent starts. Good for conventions/reference knowledge, but it costs context.</td></tr>
+<tr class="en-only"><td>On-demand <code>Skill</code> tool</td><td>During execution, the agent can discover and invoke project/user/plugin skills when needed. Usually lighter and more flexible.</td></tr>
+<tr class="en-only"><td><code>disallowedTools: Skill</code></td><td>If you do not want an agent to call skills, remove or disallow the Skill tool.</td></tr>
+</tbody></table>
+<div class="accordion open" id="ag-plan"><div class="acc-head" onclick="tog('ag-plan')"><div><div class="acc-title">planner.md</div><div class="acc-desc tr-only">Kod yazmadan plan/issue üretir</div><div class="acc-desc en-only">Creates plans/issues without writing production code</div></div><span class="badge">agent</span></div><div class="acc-body"><div class="cb"><div class="cb-head"><span class="cb-title">markdown</span><button class="copy" onclick="copyCode(this)">Copy</button></div><pre>---
+name: planner
+description: Clarifies requirements, creates PRDs/issues, and does not write production code.
+tools: Read, Write, Edit, Glob, Grep
+model: sonnet
+---
+
+You are a planning agent.
+
+Typical invocation:
+- The `/plan` skill may dispatch this agent for isolated planning or codebase research.
+- The skill defines the procedure; this file defines the role, tools, and boundaries.
+
+Responsibilities:
+- Understand the request and project context.
+- Ask clarification questions when important information is missing.
+- Update context docs when domain language or assumptions become clear.
+- Produce small vertical-slice issues with acceptance criteria and test expectations.
+- Flag architectural decisions that may need ADRs.
+
+Rules:
+- Do not write production code unless explicitly instructed.
+- Do not create broad horizontal implementation phases.
+- Separate facts, assumptions, and open questions.
+- Prefer implementation issues that can be completed and reviewed independently.</pre></div></div></div>
+<div class="accordion" id="ag-work"><div class="acc-head" onclick="tog('ag-work')"><div><div class="acc-title">worker.md</div><div class="acc-desc tr-only">Tek işi uygular</div><div class="acc-desc en-only">Implements one task</div></div><span class="badge">agent</span></div><div class="acc-body"><div class="cb"><div class="cb-head"><span class="cb-title">markdown</span><button class="copy" onclick="copyCode(this)">Copy</button></div><pre>---
+name: worker
+description: Implements one scoped issue using the project rules and relevant skills.
+tools: Read, Write, Edit, MultiEdit, Bash, Glob, Grep
+model: sonnet
+---
+
+You are an implementation agent.
+
+Typical invocation:
+- The `/work` skill may dispatch this agent to implement a scoped issue in a fresh context.
+- The skill defines the work procedure; this file defines implementation boundaries.
+
+Responsibilities:
+- Read the active issue and relevant project context.
+- Implement one scoped change at a time.
+- Use tests to guide implementation when practical.
+- Run relevant checks and report results.
+- Update docs when behavior, commands, or architecture changes.
+
+Rules:
+- Stay inside the active issue.
+- Do not do unrelated refactors.
+- Do not add dependencies without explaining the reason.
+- Do not mark work complete until tests/checks have been run or the blocker is documented.</pre></div></div></div>
+<div class="accordion" id="ag-review"><div class="acc-head" onclick="tog('ag-review')"><div><div class="acc-title">reviewer.md</div><div class="acc-desc tr-only">Diff'i inceler</div><div class="acc-desc en-only">Reviews the diff</div></div><span class="badge">agent</span></div><div class="acc-body"><div class="cb"><div class="cb-head"><span class="cb-title">markdown</span><button class="copy" onclick="copyCode(this)">Copy</button></div><pre>---
+name: reviewer
+description: Reviews a completed diff for correctness, scope, quality, tests, and documentation.
+tools: Read, Bash, Glob, Grep
+model: sonnet
+---
+
+You are a review agent.
+
+Typical invocation:
+- The `/review` skill may dispatch this agent to review a specific diff or PR.
+- The skill defines the review procedure; this file defines the review lens.
+
+Responsibilities:
+- Compare the diff against the issue and acceptance criteria.
+- Identify correctness problems, missing tests, scope leakage, and architecture risks.
+- Verify that relevant commands were run.
+- Produce a review summary with actionable findings.
+
+Output:
+- Summary
+- Must fix
+- Should fix
+- Nice to have
+- Tests/checks observed
+- Recommendation
+
+Rules:
+- Do not approve untested risky changes.
+- Do not rewrite code during review unless explicitly asked.
+- Be specific: point to files, behaviors, and risks.</pre></div></div></div>
+<div class="note tr-only"><strong>Agent best practice:</strong> Agent'a geniş yetki vermek yerine, net görev + sınırlı tool set + açık çıktı formatı ver. Review agent'ı genelde kod yazmamalı; worker agent review yapmadan işi tamamlanmış saymamalı.</div><div class="note en-only"><strong>Agent best practice:</strong> Give clear tasks, limited tools, and explicit output formats rather than broad authority. A reviewer usually should not write code; a worker should not consider work complete without review.</div>
+<div class="cb"><div class="cb-head"><span class="cb-title">agent → skill preload pattern · optional</span><button class="copy" onclick="copyCode(this)">Copy</button></div><pre>---
+name: api-worker
+description: Implements API changes using project conventions.
+tools: Read, Write, Edit, Bash, Glob, Grep
+model: sonnet
+skills:
+  - api-conventions
+  - error-handling-patterns
+---
+
+You are an API implementation agent.
+Follow the preloaded conventions and implement only the scoped task.</pre></div></section>
+
+<section class="section" id="hooks"><div class="sec-head"><span class="sec-num">10</span><h2>hooks</h2></div><p class="tr-only">Hook, belirli Claude Code lifecycle noktalarında otomatik çalışan komut/script'tir. Hook'lar LLM kararına bırakılmaması gereken küçük deterministik kontroller için iyidir.</p><p class="en-only">A hook is a command/script that runs automatically at specific Claude Code lifecycle points. Hooks are good for small deterministic checks that should not depend on the LLM remembering them.</p><table class="tbl"><thead><tr class="tr-only"><th>Hook tipi</th><th>Örnek kullanım</th></tr><tr class="en-only"><th>Hook type</th><th>Example use</th></tr></thead><tbody><tr class="tr-only"><td><code>PreToolUse</code></td><td>Riskli bash komutunu engellemek veya onay istemek.</td></tr><tr class="tr-only"><td><code>PostToolUse</code></td><td>Edit sonrası test/format hatırlatmak veya otomatik kontrol çalıştırmak.</td></tr><tr class="tr-only"><td><code>Stop</code></td><td>Session sonunda özet/checklist üretmek.</td></tr><tr class="tr-only"><td><code>Notification</code></td><td>Kullanıcı onayı veya dikkat gerektiren olayları bildirmek.</td></tr><tr class="en-only"><td><code>PreToolUse</code></td><td>Block risky bash commands or require approval.</td></tr><tr class="en-only"><td><code>PostToolUse</code></td><td>Remind/run tests or formatting after edits.</td></tr><tr class="en-only"><td><code>Stop</code></td><td>Produce an end-of-session summary/checklist.</td></tr><tr class="en-only"><td><code>Notification</code></td><td>Notify when user attention/approval is needed.</td></tr></tbody></table><div class="cb"><div class="cb-head"><span class="cb-title">hooks/remind-tests.py</span><button class="copy" onclick="copyCode(this)">Copy</button></div><pre>#!/usr/bin/env python3
+import json
+import sys
+
+payload = json.load(sys.stdin)
+tool_name = payload.get(&quot;tool_name&quot;, &quot;&quot;)
+
+if tool_name in {&quot;Write&quot;, &quot;Edit&quot;, &quot;MultiEdit&quot;}:
+    print(&quot;Reminder: file changed. Run the smallest relevant test before continuing.&quot;)
+
+sys.exit(0)</pre></div><div class="cb"><div class="cb-head"><span class="cb-title">settings.json · hook registration</span><button class="copy" onclick="copyCode(this)">Copy</button></div><pre>{
+  &quot;permissions&quot;: {
+    &quot;allow&quot;: [
+      &quot;Bash(npm test)&quot;,
+      &quot;Bash(npm run lint)&quot;,
+      &quot;Bash(npm run typecheck)&quot;,
+      &quot;Bash(npm run build)&quot;
+    ],
+    &quot;deny&quot;: [
+      &quot;Bash(rm -rf /)&quot;,
+      &quot;Bash(git push --force*)&quot;
+    ]
+  },
+  &quot;hooks&quot;: {
+    &quot;PostToolUse&quot;: [
+      {
+        &quot;matcher&quot;: &quot;Edit|Write|MultiEdit&quot;,
+        &quot;hooks&quot;: [
+          {
+            &quot;type&quot;: &quot;command&quot;,
+            &quot;command&quot;: &quot;echo &#x27;File changed. Consider running tests.&#x27;&quot;
+          }
+        ]
+      }
+    ]
+  }
+}</pre></div><div class="note tr-only"><strong>Hook best practice:</strong> Hook'ları sıkıcı ve güvenli tut. Büyük iş mantığı, karmaşık kararlar veya sık false-positive üretecek kontroller hook için iyi aday değildir.</div><div class="note en-only"><strong>Hook best practice:</strong> Keep hooks boring and safe. Big business logic, complex decisions, or noisy checks are poor hook candidates.</div></section>
+
+<section class="section" id="plugin"><div class="sec-head"><span class="sec-num">11</span><h2>plugin</h2></div><p class="tr-only">Plugin, skills/agents/hooks gibi tekrar kullanılabilir setup parçalarını tek projeden çıkarıp lokal veya GitHub üzerinde versiyonlanabilir hale getirir. Böylece her repo için baştan kopyalamak yerine aynı workflow tekrar kullanılabilir.</p><p class="en-only">A plugin packages reusable setup pieces such as skills, agents, and hooks so they can be versioned locally or on GitHub and reused across projects.</p><div class="grid"><div class="card tr-only"><h4>Ne zaman lokal?</h4><ul><li>Kişisel workflow denemesi</li><li>Hızlı iterasyon</li><li>Henüz takıma hazır olmayan yapı</li></ul></div><div class="card tr-only"><h4>Ne zaman GitHub?</h4><ul><li>Takımca paylaşılacaksa</li><li>Versiyonlama gerekiyorsa</li><li>Review/PR sürecinden geçecekse</li></ul></div><div class="card en-only"><h4>When local?</h4><ul><li>Personal workflow experiments</li><li>Fast iteration</li><li>Not ready for team adoption yet</li></ul></div><div class="card en-only"><h4>When GitHub?</h4><ul><li>Shared with the team</li><li>Versioned releases are needed</li><li>Review/PR process is needed</li></ul></div></div><div class="cb"><div class="cb-head"><span class="cb-title">agentic-workflow-plugin/ · file tree</span><button class="copy" onclick="copyCode(this)">Copy</button></div><pre>agentic-workflow-plugin/
+├─ .claude-plugin/
+│  └─ plugin.json
+├─ skills/
+│  ├─ plan/SKILL.md
+│  ├─ work/SKILL.md
+│  ├─ review/SKILL.md
+│  ├─ diagnose/SKILL.md
+│  └─ commit/SKILL.md
+├─ agents/
+│  ├─ planner.md
+│  ├─ worker.md
+│  └─ reviewer.md
+├─ hooks/
+│  └─ remind-tests.py
+└─ README.md</pre></div><div class="cb"><div class="cb-head"><span class="cb-title">.claude-plugin/plugin.json</span><button class="copy" onclick="copyCode(this)">Copy</button></div><pre>{
+  &quot;name&quot;: &quot;agentic-workflow&quot;,
+  &quot;version&quot;: &quot;0.1.0&quot;,
+  &quot;description&quot;: &quot;Reusable Plan -&gt; Work -&gt; Review workflow for Claude Code&quot;,
+  &quot;author&quot;: &quot;Your Team&quot;,
+  &quot;homepage&quot;: &quot;https://github.com/your-org/agentic-workflow-plugin&quot;
+}</pre></div><table class="tbl"><thead><tr class="tr-only"><th>Parça</th><th>Plugin içinde neden var?</th></tr><tr class="en-only"><th>Part</th><th>Why include in a plugin?</th></tr></thead><tbody><tr class="tr-only"><td><code>skills/</code></td><td>Plan/Work/Review gibi tekrar kullanılabilir prosedürleri taşır.</td></tr><tr class="tr-only"><td><code>agents/</code></td><td>Planner/worker/reviewer gibi rol tanımlarını paylaşır.</td></tr><tr class="tr-only"><td><code>hooks/</code></td><td>Güvenli otomasyonları aynı standartla dağıtır.</td></tr><tr class="tr-only"><td><code>README.md</code></td><td>Kurulum, kullanım ve hangi workflow'u sağladığını açıklar.</td></tr><tr class="en-only"><td><code>skills/</code></td><td>Reusable procedures such as Plan/Work/Review.</td></tr><tr class="en-only"><td><code>agents/</code></td><td>Shared role definitions such as planner/worker/reviewer.</td></tr><tr class="en-only"><td><code>hooks/</code></td><td>Distributes safe automation with the same standard.</td></tr><tr class="en-only"><td><code>README.md</code></td><td>Explains installation, usage, and the workflow provided.</td></tr></tbody></table></section>
+
+<section class="section" id="context"><div class="sec-head"><span class="sec-num">12</span><h2>context / token management</h2></div><div class="flow"><div class="step"><div class="num">01</div><div class="tr-only"><strong>Session'ı küçük tut.</strong><br>Bir session = bir faz veya bir küçük issue. Plan, Work ve Review uzun sürüyorsa ayrı session'lara böl.</div><div class="en-only"><strong>Keep sessions small.</strong><br>One session = one phase or one small issue. Split Plan, Work, and Review when they get long.</div></div><div class="step"><div class="num">02</div><div class="tr-only"><strong>Kararı dosyaya yaz.</strong><br>Önemli kararlar chat'te kalırsa kaybolur. Issue, ADR, README veya CONTEXT dosyasına al.</div><div class="en-only"><strong>Write decisions to files.</strong><br>Important decisions are lost if they only live in chat. Put them in issues, ADRs, README, or context docs.</div></div><div class="step"><div class="num">03</div><div class="tr-only"><strong>Context şişince compact/clear kullan.</strong><br>Önce aktif scope, kararlar, test sonuçları ve next step dosyaya yazılsın.</div><div class="en-only"><strong>Use compact/clear when context grows.</strong><br>First write active scope, decisions, test results, and next step into files.</div></div><div class="step"><div class="num">04</div><div class="tr-only"><strong>Model seçimini iş tipine göre yap.</strong><br>Plan ve review daha fazla reasoning ister; basit edit'ler daha düşük maliyetli modelle yapılabilir.</div><div class="en-only"><strong>Choose models by task type.</strong><br>Planning and review require more reasoning; simple edits may use cheaper models.</div></div></div></section>
+
+<section class="section" id="patterns"><div class="sec-head"><span class="sec-num">13</span><h2>Do / Don't</h2></div><div class="grid"><div class="card"><h4 class="tr-only">Yap</h4><h4 class="en-only">Do</h4><ul class="tr-only"><li>İşi küçük vertical slice'lara böl.</li><li>Agent'a test komutlarını açık ver.</li><li>Scope dışına çıkınca durdur.</li><li>Review'u sürecin parçası yap.</li><li>Tekrar eden prosedürü skill/plugin yap.</li></ul><ul class="en-only"><li>Split work into small vertical slices.</li><li>Give explicit test commands.</li><li>Stop when scope expands.</li><li>Make review part of the process.</li><li>Move repeated procedures into skills/plugins.</li></ul></div><div class="card"><h4 class="tr-only">Yapma</h4><h4 class="en-only">Don't</h4><ul class="tr-only"><li>Tek prompt ile komple feature yaptırma.</li><li>Testsiz AI kodunu merge etme.</li><li>CLAUDE.md'yi çöplüğe çevirme.</li><li>Hook'lara karmaşık karar mantığı koyma.</li><li>Agent'a sınırsız scope verme.</li></ul><ul class="en-only"><li>Do not ask for a complete feature in one prompt.</li><li>Do not merge untested AI-written code.</li><li>Do not turn CLAUDE.md into a junk drawer.</li><li>Do not put complex decision logic into hooks.</li><li>Do not give agents unlimited scope.</li></ul></div></div></section>
+</div>
+<script>
+function setLang(lang){document.body.setAttribute('data-lang',lang);localStorage.setItem('agenticLang',lang);document.querySelectorAll('[data-lang-btn]').forEach(b=>b.classList.toggle('active',b.dataset.langBtn===lang));}
+function copyCode(btn){const pre=btn.closest('.cb').querySelector('pre');navigator.clipboard.writeText(pre.innerText);const old=btn.innerText;btn.innerText='Copied';setTimeout(()=>btn.innerText=old,900)}
+function tog(id){document.getElementById(id).classList.toggle('open')}
+window.addEventListener('DOMContentLoaded',()=>setLang(localStorage.getItem('agenticLang')||'tr'));
+</script>
+</body></html>

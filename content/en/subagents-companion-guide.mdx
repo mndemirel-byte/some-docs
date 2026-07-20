@@ -1,0 +1,439 @@
+import { Hero, Accent } from "@/components/doc/hero";
+import { Toc } from "@/components/doc/toc";
+import { Section } from "@/components/doc/section";
+import { Callout } from "@/components/doc/callout";
+import { MentalModelDiagram } from "@/components/doc/mental-model-diagram";
+import { DataTable } from "@/components/doc/data-table";
+import { TwoBoxGrid, Box } from "@/components/doc/two-box-grid";
+import { FlowSteps, FlowStep } from "@/components/doc/flow-steps";
+import { CardGrid, InfoCard } from "@/components/doc/info-card";
+import { SequentialPipelineDiagram } from "@/components/doc/sequential-pipeline-diagram";
+import { IconCheck } from "@tabler/icons-react";
+import { NumberedGrid, NumberedItem } from "@/components/doc/numbered-grid";
+import { Disclosure } from "@/components/doc/disclosure";
+import { IconVolumeOff, IconClipboardList, IconLock, IconFlagCheck } from "@tabler/icons-react";
+import { DecisionTree, DecisionQuestion } from "@/components/doc/decision-tree";
+import { IconFileText, IconMessageCircle } from "@tabler/icons-react";
+import { CodeBlock } from "@/components/doc/code-block";
+import { DoDontList, DoItem, DontItem } from "@/components/doc/do-dont-list";
+import { IconBook, IconGitCompare, IconFlag } from "@tabler/icons-react";
+import { IconBolt, IconScale, IconBrain, IconArrowBackUp } from "@tabler/icons-react";
+import {
+  IconSearch,
+  IconMap,
+  IconShieldCheck,
+  IconNotebook,
+  IconPencil,
+  IconPalette,
+  IconWindow,
+} from "@tabler/icons-react";
+
+<Hero
+  badge="Claude Code · Workshop 02"
+  title={<>Subagents <Accent>Companion Guide</Accent></>}
+  description="A practical guide to designing subagents not as “another Claude,” but as isolated execution environments that protect context, constrain tools, and handle focused work."
+  tags={["Main Thread ↔ Subagent", "Context Isolation", "Least Privilege", "Structured Output"]}
+/>
+
+<Toc
+  title="Contents"
+  entries={[
+    { id: "mental", num: "01", label: "Mental Model" },
+    { id: "compare", num: "02", label: "Main vs Subagent" },
+    { id: "lifecycle", num: "03", label: "Lifecycle" },
+    { id: "anatomy", num: "04", label: "Anatomy" },
+    { id: "description", num: "05", label: "Descriptions" },
+    { id: "prompt", num: "06", label: "System Prompt" },
+    { id: "output", num: "07", label: "Structured Output" },
+    { id: "tools", num: "08", label: "Tool Permissions" },
+    { id: "models", num: "09", label: "Models" },
+    { id: "usecases", num: "10", label: "Use Cases" },
+    { id: "anti", num: "11", label: "Anti-patterns" },
+    { id: "tree", num: "12", label: "Decision Tree" },
+    { id: "best", num: "13", label: "Best Practices" },
+    { id: "tldr", num: "14", label: "TL;DR" },
+  ]}
+/>
+
+<Section id="mental" num="01" title="Mental Model">
+
+A subagent is a specialized worker that performs a specific task in a separate context window and returns only a summary.
+
+<MentalModelDiagram />
+
+<Callout kind="tip">
+  <strong>Key takeaway:</strong> A subagent is not a smarter agent. It is an isolated execution environment.
+</Callout>
+
+</Section>
+
+<Section id="compare" num="02" title="Main vs Subagent">
+
+<DataTable
+  headers={["Dimension", "Main Thread", "Subagent"]}
+  rows={[
+    ["Context", "User conversation, decisions, and ongoing work.", "Separate context with task prompt and custom system instructions."],
+    ["Visibility", "Intermediate work stays visible in the conversation.", "Intermediate work stays isolated; a summary returns."],
+    ["Tool calls", "Uses the main session's permissions.", "Can be constrained with a dedicated allowlist or denylist."],
+    ["Context growth", "Search results and logs grow the main context.", "Noisy data stays inside its own context."],
+    ["Return", "The whole conversation continues.", "Returns a concise result, findings, or recommendation."],
+  ]}
+/>
+
+<TwoBoxGrid>
+  <Box tone="green" label="YES — Main Thread">
+    Use it when intermediate work affects later decisions, needs user discussion, or must stay visible during debugging.
+  </Box>
+  <Box tone="neutral" label="NO — Subagent">
+    Use it when intermediate work is only needed to reach the result and will not be referenced again.
+  </Box>
+</TwoBoxGrid>
+
+<Callout>
+  <strong>Decision Rule:</strong> Does the intermediate work matter? <strong>YES → Main Thread</strong> · <strong>NO → Subagent</strong>
+</Callout>
+
+</Section>
+
+<Section id="lifecycle" num="03" title="Lifecycle">
+
+<FlowSteps>
+  <FlowStep num={1} title="User">
+    Provides a goal or problem.
+  </FlowStep>
+  <FlowStep num={2} title="Main Agent">
+    Decides whether the work should be isolated.
+  </FlowStep>
+  <FlowStep num={3} title="Task Prompt">
+    Defines goal, scope, expected output, and required context.
+  </FlowStep>
+  <FlowStep num={4} title="Launch Subagent">
+    Custom system prompt, model, and tool boundaries become active.
+  </FlowStep>
+  <FlowStep num={5} title="Research / Work">
+    Files, searches, tests, or analysis run inside its own context.
+  </FlowStep>
+  <FlowStep num={6} title="Summary">
+    A concise, structured result returns to the main thread.
+  </FlowStep>
+  <FlowStep num={7} title="Destroy Context">
+    Intermediate work is not copied into the main context; only the result remains.
+  </FlowStep>
+</FlowSteps>
+
+</Section>
+
+<Section id="anatomy" num="04" title="Anatomy">
+
+<CardGrid>
+  <InfoCard icon={IconFileText} title="YAML Frontmatter">
+    Identity, delegation description, tools, model, and UI color.
+  </InfoCard>
+  <InfoCard icon={IconMessageCircle} title="System Prompt">
+    Not just a role; it defines scope, behavior, boundaries, and output contract.
+  </InfoCard>
+</CardGrid>
+
+<CodeBlock lang={<><IconFileText size={12} /> .claude/agents/code-reviewer.md</>} kind="file">
+{`---
+name: code-reviewer
+description: Reviews completed code changes for correctness, regressions, security risks, and missing tests. Use after implementation or before creating a PR.
+tools: Read, Grep, Glob, Bash
+model: sonnet
+color: purple
+---
+
+You review the current change set only.
+
+Focus on:
+- correctness and regressions
+- security and data-loss risks
+- missing or weak tests
+- violations of existing project conventions
+
+Do not edit files.
+Use Bash only to inspect diffs or run targeted checks.
+Stop after you have enough evidence to produce the report.
+
+Return:
+1. Verdict: PASS or NEEDS_CHANGES
+2. Findings ordered by severity
+3. Evidence with file paths and line references
+4. Recommended fixes
+5. Checks performed and any obstacles`}
+</CodeBlock>
+
+<Callout kind="tip">
+  <strong>Current note:</strong> Only <code>name</code> and <code>description</code> are required. Omitting <code>model</code> defaults to <code>inherit</code>; omitting <code>tools</code> inherits available tools.
+</Callout>
+
+</Section>
+
+<Section id="description" num="05" title="Descriptions">
+
+The description has two jobs: it tells Claude <strong>when</strong> to delegate and influences how the parent frames the task prompt.
+
+<DoDontList>
+  <DontItem title="Bad">
+    <CodeBlock lang="yaml">
+{`description: Expert reviewer for code.`}
+    </CodeBlock>
+    Vague trigger, vague scope, vague outcome.
+  </DontItem>
+  <DoItem title="Good">
+    <CodeBlock lang="yaml">
+{`description: Reviews completed code changes for correctness, regressions, security risks, and missing tests. Use after implementation or before creating a PR.`}
+    </CodeBlock>
+    Clear job, trigger, and focus areas.
+  </DoItem>
+</DoDontList>
+
+<Callout>
+  <strong>Formula:</strong> <code>[What it does] + [What it inspects] + [When to use it]</code>
+</Callout>
+
+<p>
+Prefer behavior over persona. A label like "expert Flutter dev" does not define <strong>scope</strong>, does not tell Claude <strong>when</strong> to invoke the agent, and does not help the parent write a good task prompt. A better pattern is to name the domain and the job explicitly — for example: <code>Reviews Flutter UI changes for state bugs, layout regressions, accessibility issues, and missing widget tests. Use before opening a PR.</code>
+</p>
+
+</Section>
+
+<Section id="prompt" num="06" title="System Prompt">
+
+<NumberedGrid>
+  <NumberedItem num={1}><strong>Scope</strong><br/>What exactly is in scope?</NumberedItem>
+  <NumberedItem num={2}><strong>Focus</strong><br/>Which signals matter most?</NumberedItem>
+  <NumberedItem num={3}><strong>Stop condition</strong><br/>When is there enough evidence?</NumberedItem>
+  <NumberedItem num={4}><strong>Structured output</strong><br/>What shape should the result take?</NumberedItem>
+  <NumberedItem num={5}><strong>Obstacle reporting</strong><br/>What could not be verified, and why?</NumberedItem>
+  <NumberedItem num={6}><strong>Boundaries</strong><br/>What must it not do?</NumberedItem>
+</NumberedGrid>
+
+<Callout kind="warning">
+  <strong>Avoid:</strong> Replace persona-heavy prompts like "You are a world-class senior expert" with task boundaries and an output contract.
+</Callout>
+
+</Section>
+
+<Section id="output" num="07" title="Structured Output">
+
+Structured output is not only about readability. It gives the agent a natural answer to "when am I done?" and prevents endless exploration.
+
+<CodeBlock lang="markdown" kind="file">
+{`## Verdict
+PASS | NEEDS_CHANGES | BLOCKED
+
+## Findings
+- [severity] finding
+  - Evidence: file:line or command output
+  - Impact: why it matters
+  - Recommendation: specific next step
+
+## Checks Performed
+- ...
+
+## Obstacles / Unknowns
+- What could not be verified
+- Why
+
+## Summary
+Maximum 5 bullets.`}
+</CodeBlock>
+
+<CardGrid>
+  <InfoCard icon={IconBook} title="Readable">
+    The parent can process results quickly.
+  </InfoCard>
+  <InfoCard icon={IconGitCompare} title="Comparable">
+    Different runs can be compared consistently.
+  </InfoCard>
+  <InfoCard icon={IconFlag} title="Finite">
+    The task ends when the contract is filled.
+  </InfoCard>
+</CardGrid>
+
+</Section>
+
+<Section id="tools" num="08" title="Tool Permissions">
+
+<Callout kind="tip">
+  <strong>Least Privilege:</strong> Do not grant tools "just in case." Grant the minimum set required to complete the task.
+</Callout>
+
+<DataTable
+  headers={["Agent", "Recommended tools", "Why"]}
+  rows={[
+    ["Research Agent", <code key="ra">Read, Grep, Glob</code>, "Explores the codebase without changing it."],
+    ["Reviewer", <code key="rv">Read, Grep, Glob, Bash</code>, "Inspects diffs and targeted checks without editing files."],
+    ["Writer", <code key="w">Read, Write, Edit</code>, "Creates or updates documentation."],
+    ["Styling Agent", <code key="s">Read, Grep, Glob, Edit</code>, "Finds UI files and makes scoped changes."],
+  ]}
+/>
+
+<Callout>
+  <strong>Why does a reviewer need Bash but not Edit?</strong> Reliable review may require <code>git diff</code>, tests, or linting, but it should not modify files because review and implementation must remain separate.
+</Callout>
+
+</Section>
+
+<Section id="models" num="09" title="Models">
+
+<CardGrid>
+  <InfoCard icon={IconBolt} title="Haiku">
+    Fast lookup, classification, and small well-defined tasks.
+  </InfoCard>
+  <InfoCard icon={IconScale} title="Sonnet">
+    Balanced default for most research, review, and practical coding tasks.
+  </InfoCard>
+  <InfoCard icon={IconBrain} title="Opus">
+    High ambiguity, deep reasoning, or tasks where mistakes are costly.
+  </InfoCard>
+  <InfoCard icon={IconArrowBackUp} title="Inherit">
+    Uses the parent model; a sensible starting point when unsure.
+  </InfoCard>
+</CardGrid>
+
+<Callout>
+  <strong>Simple rule:</strong> The more routine and verifiable the task, the smaller the model can be. Increase capability as ambiguity and decision cost rise.
+</Callout>
+
+</Section>
+
+<Section id="usecases" num="10" title="Use Cases">
+
+<CardGrid>
+  <InfoCard icon={IconSearch} title="Research">
+    Multi-file exploration and source gathering.
+  </InfoCard>
+  <InfoCard icon={IconMap} title="Exploration">
+    Mapping where things live in a codebase.
+  </InfoCard>
+  <InfoCard icon={IconShieldCheck} title="Code Review">
+    Fresh perspective independent from implementation.
+  </InfoCard>
+  <InfoCard icon={IconNotebook} title="Documentation">
+    Turning scattered information into structured documentation.
+  </InfoCard>
+  <InfoCard icon={IconPencil} title="Copywriting">
+    Copy focused on tone, format, and audience.
+  </InfoCard>
+  <InfoCard icon={IconPalette} title="Design System">
+    UI consistency and style-token inspection.
+  </InfoCard>
+  <InfoCard icon={IconWindow} title="Fresh Perspective">
+    A second view isolated from the main thread's assumptions.
+  </InfoCard>
+</CardGrid>
+
+</Section>
+
+<Section id="anti" num="11" title="Anti-patterns">
+
+<DoDontList>
+  <DontItem title="Expert Personas">
+    <p>A "senior architect agent" label does not create quality. Without scope, tools, and an output contract, it is only a fancy persona.</p>
+    <p>Why? Because a seniority label emphasizes persona instead of task design. Claude needs to know not who it "is," but what it should do and inspect.</p>
+  </DontItem>
+  <DontItem title="Test Runner Agents">
+    Using an agent only to run a deterministic command adds unnecessary cost and context. Prefer a hook or direct Bash.
+  </DontItem>
+</DoDontList>
+
+<h3>Sequential Pipelines</h3>
+
+<SequentialPipelineDiagram />
+
+<p>
+Every handoff compresses information and loses nuance. When a pipeline is necessary, keep critical decisions in a living file or let the main thread orchestrate the work.
+</p>
+
+</Section>
+
+<Section id="tree" num="12" title="Decision Tree">
+
+<DecisionTree>
+  <DecisionQuestion>
+    <strong>1. Do I need the intermediate work later?</strong>
+    <TwoBoxGrid>
+      <Box tone="green" label="YES">Main Thread</Box>
+      <Box tone="neutral" label="NO">Continue</Box>
+    </TwoBoxGrid>
+  </DecisionQuestion>
+  <DecisionQuestion>
+    <strong>2. Will the task produce lots of logs, search results, or file content?</strong>
+    <TwoBoxGrid>
+      <Box tone="green" label="YES">Subagent</Box>
+      <Box tone="neutral" label="NO">Continue</Box>
+    </TwoBoxGrid>
+  </DecisionQuestion>
+  <DecisionQuestion>
+    <strong>3. Do I need a fresh perspective separated from implementation context?</strong>
+    <TwoBoxGrid>
+      <Box tone="green" label="YES">Subagent</Box>
+      <Box tone="neutral" label="NO">Continue</Box>
+    </TwoBoxGrid>
+  </DecisionQuestion>
+  <DecisionQuestion>
+    <strong>4. Do I need step-by-step debugging visibility?</strong>
+    <TwoBoxGrid>
+      <Box tone="green" label="YES">Main Thread</Box>
+      <Box tone="neutral" label="NO">Continue</Box>
+    </TwoBoxGrid>
+  </DecisionQuestion>
+  <DecisionQuestion>
+    <strong>5. Is the task only a deterministic command?</strong>
+    <TwoBoxGrid>
+      <Box tone="green" label="YES">Bash / Hook</Box>
+      <Box tone="neutral" label="NO">Subagent may help</Box>
+    </TwoBoxGrid>
+  </DecisionQuestion>
+</DecisionTree>
+
+</Section>
+
+<Section id="best" num="13" title="Best Practices">
+
+<NumberedGrid>
+  <NumberedItem marker={<IconCheck />}>Narrow scope</NumberedItem>
+  <NumberedItem marker={<IconCheck />}>Limited tools</NumberedItem>
+  <NumberedItem marker={<IconCheck />}>Structured output</NumberedItem>
+  <NumberedItem marker={<IconCheck />}>Report obstacles</NumberedItem>
+  <NumberedItem marker={<IconCheck />}>Custom system prompt</NumberedItem>
+  <NumberedItem marker={<IconCheck />}>Concise summaries</NumberedItem>
+  <NumberedItem marker={<IconCheck />}>Explicit stop condition</NumberedItem>
+  <NumberedItem marker={<IconCheck />}>Evidence-based findings</NumberedItem>
+</NumberedGrid>
+
+<Disclosure trigger="Workshop checklist — evaluating an agent file">
+  <p>1. Description, <strong>when to use</strong> bilgisini içeriyor mu?</p>
+  <p>2. Tools minimum mu?</p>
+  <p>3. Prompt scope dışını açıkça yasaklıyor mu?</p>
+  <p>4. Output formatı var mı?</p>
+  <p>5. Stop condition anlaşılır mı?</p>
+  <p>6. Blocked olduğunda ne raporlayacağı belli mi?</p>
+</Disclosure>
+
+</Section>
+
+<Section id="tldr" num="14" title="TL;DR">
+
+<CardGrid columns="two">
+  <InfoCard icon={IconVolumeOff} title="Isolate noise.">
+    Keep search results, logs, and temporary file content out of the main thread.
+  </InfoCard>
+  <InfoCard icon={IconClipboardList} title="Keep decisions.">
+    Keep requirements, trade-offs, and user decisions in the main thread.
+  </InfoCard>
+  <InfoCard icon={IconLock} title="Constrain tools.">
+    Give each agent only the tools required for its task.
+  </InfoCard>
+  <InfoCard icon={IconFlagCheck} title={'Define "done."'}>
+    Use structured output and a stop condition to make the task finite.
+  </InfoCard>
+</CardGrid>
+
+<Callout kind="tip">
+  <strong>Final rule:</strong> If intermediate work matters, use the main thread. If it is noise, use a subagent.
+</Callout>
+
+</Section>

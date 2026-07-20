@@ -1,0 +1,17 @@
+.tree {
+  display: grid;
+  gap: 11px;
+  margin: 18px 0;
+}
+
+.question {
+  padding: 15px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface);
+}
+
+.question > strong {
+  display: block;
+  margin-bottom: 8px;
+}

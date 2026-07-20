@@ -53,6 +53,15 @@
         "desc": "Oturum sonrası pratik referans: rules/skills/agents/hooks arkasındaki mental model, kopyalanabilir klasör yapısı ve setup komutları, CLAUDE.md ve settings.json şablonları, tam skill/agent tanımları.",
         "tags": ["CLAUDE.md", "rules", "settings.json", "skills", "agents", "hooks", "plugin"],
         "cta": "Dokümana Git"
+      },
+      {
+        "num": "06",
+        "type": "Workshop Companion · Bölüm 02",
+        "title": "Subagents Companion Guide",
+        "subtitle": "Mental model · Lifecycle · Tool permissions",
+        "desc": "Subagent'ları izole execution environment'lar olarak tasarlamak için pratik rehber: main-thread vs subagent mental model, lifecycle, system prompt tasarımı, structured output, tool permissions, model seçimi ve anti-pattern'ler.",
+        "tags": ["subagents", "context-isolation", "least-privilege", "structured-output"],
+        "cta": "Dokümana Git"
       }
     ],
     "footer": "Tüm dokümanlar aynı klasörde olduğunda linklerin çalışır · Claude Code Agentic Development Serisi"

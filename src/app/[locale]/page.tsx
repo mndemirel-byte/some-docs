@@ -6,6 +6,7 @@ import {
   IconFolderCog,
   IconMap,
   IconRoute,
+  IconSitemap,
   IconStack2,
   IconTerminal,
   IconTerminal2,
@@ -33,6 +34,7 @@ const cardChrome = [
   { variant: "c3", href: "ai-coding-b2", icon: IconMap },
   { variant: "c4", href: "matt-pocock-skills", icon: IconTerminal2 },
   { variant: "c5", href: "agentic-workflow-cheat-sheet", icon: IconStack2 },
+  { variant: "c6", href: "subagents-companion-guide", icon: IconSitemap },
 ] as const;
 
 export default async function Page({
