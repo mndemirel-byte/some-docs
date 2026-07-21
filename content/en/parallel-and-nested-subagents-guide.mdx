@@ -1,0 +1,407 @@
+import { Hero, Accent } from "@/components/doc/hero";
+import { Toc } from "@/components/doc/toc";
+import { Section } from "@/components/doc/section";
+import { Callout } from "@/components/doc/callout";
+import { FanOutDiagram } from "@/components/doc/fan-out-diagram";
+import { DataTable } from "@/components/doc/data-table";
+import { CardGrid, InfoCard } from "@/components/doc/info-card";
+import { CodeBlock } from "@/components/doc/code-block";
+import { IconPrompt, IconGitCompare, IconMessage, IconStack2 } from "@tabler/icons-react";
+import { IconPuzzle, IconBooks, IconEye, IconTree } from "@tabler/icons-react";
+import { DoDontList, DoItem, DontItem } from "@/components/doc/do-dont-list";
+import { NestedTreeDiagram } from "@/components/doc/nested-tree-diagram";
+import { NumberedGrid, NumberedItem } from "@/components/doc/numbered-grid";
+import { IconSitemap, IconRoute, IconRecycle } from "@tabler/icons-react";
+import { IconCoin, IconWall } from "@tabler/icons-react";
+import { IconFileText } from "@tabler/icons-react";
+import { DecisionTree, DecisionQuestion } from "@/components/doc/decision-tree";
+import { TwoBoxGrid, Box } from "@/components/doc/two-box-grid";
+import { IconCheck } from "@tabler/icons-react";
+import { IconMessage2, IconLock, IconFileStack, IconGauge } from "@tabler/icons-react";
+
+<Hero
+  badge="Claude Code · Workshop 03"
+  title={<>Parallel &amp; <Accent>Nested Subagents</Accent></>}
+  description="Workshop 02 established the subagent as an isolated execution environment. This session adds two layers: running independent subagents at the same time (parallel), and a subagent spawning its own subagent (nested) — when it helps, and when it quietly removes control from your hands."
+  tags={["Fan-out", "Depth ≤ 5", "Agent Tool Gate"]}
+/>
+
+<Toc
+  title="Contents"
+  entries={[
+    { id: "bridge", num: "01", label: "Where We're Coming From" },
+    { id: "pmodel", num: "02", label: "Parallel: Mental Model" },
+    { id: "pbenefit", num: "03", label: "Parallel: Benefit" },
+    { id: "ptrigger", num: "04", label: "Parallel: How to Trigger" },
+    { id: "puse", num: "05", label: "Parallel: Use Cases" },
+    { id: "pcaution", num: "06", label: "Parallel: Caution" },
+    { id: "nmodel", num: "07", label: "Nested: Mental Model" },
+    { id: "nmech", num: "08", label: "Nested: Mechanism" },
+    { id: "npro", num: "09", label: "Nested: Advantages" },
+    { id: "ncon", num: "10", label: "Nested: Disadvantages" },
+    { id: "nhow", num: "11", label: "Nested: How to Enable" },
+    { id: "nmodelres", num: "12", label: "Nested: Model Resolution" },
+    { id: "tree", num: "13", label: "Decision Tree" },
+    { id: "best", num: "14", label: "Best Practices" },
+    { id: "tldr", num: "15", label: "TL;DR" },
+  ]}
+/>
+
+<Section id="bridge" num="01" title="Where We're Coming From">
+
+Workshop 02's rule was simple: **a subagent is not a smarter agent, it is an isolated execution environment.** The main thread keeps decisions and requirements; the subagent absorbs noisy work (search, logs, file scans) in its own context and returns only a summary.
+
+Today we extend that single-subagent model in two directions: **horizontally** (running several subagents at once) and **vertically** (a subagent spawning its own subagent). Both reshape the same underlying mechanism — isolation, constrained tools, summarized return.
+
+<Callout kind="tip">
+  <strong>Today's question:</strong> How do we do more work in parallel without losing isolation, and when is layering that isolation (nesting) worth the risk?
+</Callout>
+
+</Section>
+
+<Section id="pmodel" num="02" title="Parallel Subagents — Mental Model">
+
+Parallel execution means sending independent tasks as multiple subagent calls **within the same message**. Each subagent runs concurrently in its own isolated context. Since Claude Code v2.1.198, the default behavior is **background**: each subagent — success or failure — reports back to the main thread independently as it finishes, without waiting for the others. Results only truly arrive together, in one batch, when synchronous (foreground) mode is forced with `run_in_background: false`.
+
+<FanOutDiagram />
+
+<Callout kind="tip">
+  <strong>Key idea:</strong> Three independent lookups done sequentially take three rounds; done in parallel (if you wait for all of them), they take one round — as long as the slowest. But you don't have to wait: in the default background mode you can see and act on an agent that finishes early or fails, without waiting for the rest.
+</Callout>
+
+<Callout kind="info">
+  <strong>Source — version note:</strong> "Subagents run in the background by default. An Agent tool call that omits run_in_background launches a background subagent... Before v2.1.198, omitting run_in_background ran the subagent synchronously." <code>code.claude.com/docs/en/agent-sdk/subagents</code>
+</Callout>
+
+</Section>
+
+<Section id="pbenefit" num="03" title="Parallel: What's the Benefit">
+
+<DataTable
+  headers={["Benefit", "Explanation"]}
+  rows={[
+    ["Time", "Independent subtasks complete in the time of the slowest one — far more efficient than processing them sequentially."],
+    ["Context isolation", "Each subagent runs in its own context; A's noise never leaks into B's."],
+    ["Independent perspectives", "Multiple \"fresh eyes\" can inspect the same codebase at once, without biasing each other."],
+    ["Worktree isolation", "Parallel tasks that modify files can run in separate git worktrees, preventing conflicts."],
+  ]}
+/>
+
+<Callout kind="info">
+  <strong>Source:</strong> "Multiple subagents can execute concurrently, allowing independent subtasks to be completed in the time it takes for the slowest individual task." — <code>code.claude.com/docs/en/agent-sdk/subagents</code>
+</Callout>
+
+</Section>
+
+<Section id="ptrigger" num="04" title="Parallel: How to Trigger It">
+
+The mechanic is simple: parallelism comes from sending **multiple Agent tool calls in a single message**. Calls sent across separate messages run sequentially, not in parallel.
+
+<CardGrid columns="three">
+  <InfoCard icon={IconGitCompare} title="1. Check for dependencies">
+    Does B need A's output? If so, it cannot run in parallel.
+  </InfoCard>
+  <InfoCard icon={IconMessage} title="2. Ask explicitly">
+    Claude is conservative about parallelism by default; explicitly say "run N of these in parallel."
+  </InfoCard>
+  <InfoCard icon={IconStack2} title="3. Single message, multiple blocks">
+    All Agent calls must be part of the same response.
+  </InfoCard>
+</CardGrid>
+
+<Callout kind="warning">
+  <strong>Common mistake:</strong> Requesting two subagents back to back without saying "in parallel" — the second call ends up waiting for the first, running sequentially.
+</Callout>
+
+Try it in this repo: `frontend-dev` and `data-dev` are already defined under `.claude/agents/`, neither writes files — two independent reviews, a safe pair to test parallelism with.
+
+<CodeBlock lang={<><IconPrompt size={12} /> trial prompt · parallel</>} kind="prompt">
+{`Run the frontend-dev and data-dev subagents in parallel: have one review only
+the model filter UI in sessions-grid.tsx, and the other review only the
+model-matching function in models.ts, at the same time.`}
+</CodeBlock>
+
+</Section>
+
+<Section id="puse" num="05" title="Parallel: Use Cases">
+
+<CardGrid>
+  <InfoCard icon={IconPuzzle} title="Independent module review">
+    UI files and the data layer get reviewed at the same time by different subagents.
+  </InfoCard>
+  <InfoCard icon={IconBooks} title="Multi-source research">
+    Several libraries or docs get scanned simultaneously.
+  </InfoCard>
+  <InfoCard icon={IconEye} title="Gathering multiple opinions">
+    Several reviewers look from different angles; results get compared.
+  </InfoCard>
+  <InfoCard icon={IconTree} title="Splitting work with /batch and worktrees">
+    A large change is split across parallel subagents each isolated in its own worktree, each opening its own PR.
+  </InfoCard>
+</CardGrid>
+
+</Section>
+
+<Section id="pcaution" num="06" title="Parallel: Things to Watch">
+
+<DoDontList>
+  <DoItem title="✓ Do">
+    <ul>
+      <li>Only parallelize tasks that are independent of each other.</li>
+      <li>Use worktrees for parallel agents that write files.</li>
+      <li>State explicitly how many parallel agents you want.</li>
+    </ul>
+  </DoItem>
+  <DontItem title="✕ Don't">
+    <ul>
+      <li>Don't send dependent tasks in parallel (if B waits on A, keep it sequential).</li>
+      <li>Don't fan out to dozens of subagents at once — combined results still return to and inflate the main context.</li>
+    </ul>
+  </DontItem>
+</DoDontList>
+
+<Callout kind="info">
+  <strong>Source:</strong> "While parallel subagents increase efficiency, be mindful that their combined results return to the main conversation and can impact context limits." — <code>code.claude.com/docs/en/sub-agents</code>
+</Callout>
+
+</Section>
+
+<Section id="nmodel" num="07" title="Nested Subagents — Mental Model">
+
+Nesting means a subagent uses its own `Agent` tool to call another subagent. The main thread only sees the top-level subagent — whatever happens beneath it never surfaces to the main thread.
+
+<NestedTreeDiagram />
+
+</Section>
+
+<Section id="nmech" num="08" title="Nested: Mechanism">
+
+The single switch that enables nesting: whether a subagent's own `tools` list includes `Agent` (formerly `Task`, still a working alias). Without it, that subagent cannot spawn anything.
+
+<NumberedGrid>
+  <NumberedItem marker="📏" wide><strong>Depth limit: 5</strong> — Max 5 levels below the main agent; a subagent at the limit cannot spawn further.</NumberedItem>
+  <NumberedItem marker="📦" wide><strong>Only the top summary returns</strong> — Only the top-level subagent's summary reaches the main thread; intermediate layers stay invisible.</NumberedItem>
+  <NumberedItem marker="🔁" wide><strong>Resumed agents keep their depth</strong> — Resuming a background subagent does not change its initial depth level.</NumberedItem>
+</NumberedGrid>
+
+<Callout kind="info">
+  <strong>Source:</strong> <code>code.claude.com/docs/en/sub-agents</code>, <code>code.claude.com/docs/en/agent-sdk/subagents</code>
+</Callout>
+
+</Section>
+
+<Section id="npro" num="09" title="Nested: Advantages">
+
+<CardGrid columns="three">
+  <InfoCard icon={IconSitemap} title="Hierarchical delegation">
+    A team-lead manages its own subtasks; complex work gets broken down without occupying the main thread.
+  </InfoCard>
+  <InfoCard icon={IconRoute} title="Dynamic orchestration">
+    The lead decides which sub-agent to call and when; the main thread doesn't need to plan it upfront.
+  </InfoCard>
+  <InfoCard icon={IconRecycle} title="Reusable pieces">
+    Small agents like developer can be reused by other leads too.
+  </InfoCard>
+</CardGrid>
+
+</Section>
+
+<Section id="ncon" num="10" title="Nested: Disadvantages &amp; Risks">
+
+<DoDontList>
+  <DontItem title="Intermediate steps are invisible">
+    What the team-lead actually told the developer never reaches the main thread — debugging gets harder.
+  </DontItem>
+  <DontItem title="Type restriction weakens when nested">
+    An allowlist like <code>Agent(developer)</code> only applies to the first call from the main thread; that restriction is ignored at the nested level.
+  </DontItem>
+</DoDontList>
+
+<CardGrid columns="two">
+  <InfoCard icon={IconCoin} title="Cost & latency compound">
+    Every level adds an LLM round-trip; team-lead + 2 nested calls = at least 3 rounds.
+  </InfoCard>
+  <InfoCard icon={IconWall} title="Hard depth wall">
+    A carelessly designed lead prompt can silently hit the depth-5 wall when it didn't need to.
+  </InfoCard>
+</CardGrid>
+
+<Callout kind="warning">
+  <strong>Source:</strong> <code>code.claude.com/docs/en/sub-agents</code> — "type-specific restrictions in the Agent tool definition are ignored for nested spawns."
+</Callout>
+
+</Section>
+
+<Section id="nhow" num="11" title="Nested: How to Enable It">
+
+Grant `Agent` only to the lead; withhold it from the agents beneath it.
+
+<CodeBlock lang={<><IconFileText size={12} /> .claude/agents/team-lead.md</>} kind="file">
+{`---
+name: team-lead
+description: Has the developer do the work, verifies it against the acceptance criteria itself, and merges the result into a single report.
+tools: Read, Grep, Glob, Agent
+model: sonnet
+---
+
+Your job: have the developer do the assigned task, verify the result
+yourself against the acceptance criteria, then return to the main thread
+with a single report. Don't edit files, don't run commands — only
+delegate, verify, summarize.
+
+1. Read the task description and acceptance criteria, summarize in one sentence.
+2. Call the developer subagent with the Agent tool: pass along the task,
+   the acceptance criteria, and which files are expected to change, verbatim.
+3. Read the diff summary the developer returns. Check the changed files
+   with your own Read/Grep tools, verify whether the acceptance criteria are met.
+4. If not met, call the developer again pointing out what's missing; try at
+   most 2 rounds. If still unresolved, report as BLOCKED and explain why.
+
+Return:
+## Verdict
+PASS | NEEDS_CHANGES | BLOCKED
+
+## Changed Files
+the file list the developer reported
+
+## Verification
+the result of your own check, with evidence
+
+## Rounds
+how many attempts were made, and the reason if still open`}
+</CodeBlock>
+
+<Callout kind="tip">
+  <strong>The difference is here:</strong> Existing agents in this project like <code>worker.md</code>/<code>reviewer.md</code> omit <code>Agent</code> from their tools list — nesting is deliberately kept off.
+</Callout>
+
+Test the same mechanic with this repo's real agents: <code>tech-lead</code>'s <code>tools</code> list includes <code>Agent</code>, the <code>frontend-dev</code> and <code>data-dev</code> it calls don't — nesting is open only top-down, never the reverse.
+
+The model assignment is deliberate too: <code>tech-lead → opus, frontend-dev → haiku, data-dev → inherit</code> — to test §12's model-resolution question on a real chain. The first two are already known; the real question is which model <code>data-dev</code>'s <code>inherit</code> resolves to.
+
+<CodeBlock lang={<><IconPrompt size={12} /> trial prompt · nested</>} kind="prompt">
+{`Run the tech-lead subagent: ask it to evaluate not the whole codebase, just
+the session/chat analysis flow (log reading, token aggregation, the
+dashboard display) in a bit more detail.`}
+</CodeBlock>
+
+<Callout kind="tip">
+  <strong>Watch it live:</strong> While it runs, only tech-lead's summary returns to the main thread; the two calls beneath it (<code>main → tech-lead → frontend-dev/data-dev</code>) never surface. If you set up §12's <code>resolvedModel</code> hook, the <code>data-dev</code> line in <code>tail -f /tmp/subagent-models.log</code> gives you the real answer once it lands.
+</Callout>
+
+</Section>
+
+<Section id="nmodelres" num="12" title={<>Nested: Model Resolution — Who Does <code>inherit</code> Resolve To?</>}>
+
+Scenario: the main chat runs `fable`. A team-lead subagent is explicitly invoked with `model: opus`. The team-lead itself calls another subagent whose `model` field is `inherit`. Which model does that third layer get — the main chat's `fable`, or the calling team-lead's `opus`?
+
+<DataTable
+  headers={["Level", "Definition", "Actual model"]}
+  rows={[
+    ["Main chat", <>fable (user's choice)</>, "fable"],
+    ["team-lead subagent", <><code>model: opus</code> (explicit in frontmatter)</>, "opus"],
+    ["nested subagent", <><code>model: inherit</code></>, "❓ undocumented"],
+  ]}
+/>
+
+<Callout kind="info">
+  <strong>What the official docs say:</strong> "If no specific model is defined, it defaults to the main conversation's model." — clear, but written for the single-level case (main chat → subagent). <code>code.claude.com/docs/en/sub-agents#choose-a-model</code>
+</Callout>
+
+<Callout kind="warning">
+  <strong>Ambiguous for multi-level chains:</strong> Even in Anthropic's own documentation-fix process, "main conversation" and "parent session" get used interchangeably — which are not the same thing three levels deep. This is explicitly acknowledged in a GitHub issue that remains open. <code>github.com/anthropics/claude-code/issues/19174</code>
+</Callout>
+
+<Callout kind="tip">
+  <strong>Practical answer — don't guess, verify:</strong> <code>resolvedModel</code> is an Agent SDK field, but it's also catchable in an interactive CLI session — a <code>PostToolUse</code> hook on the <code>Agent</code> tool exposes it in <code>tool_response.resolvedModel</code>. Runnable recipe below.
+</Callout>
+
+<CodeBlock lang={<><IconFileText size={12} /> .claude/settings.json — live model logger</>} kind="file">
+{`{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Agent",
+        "hooks": [
+          { "type": "command", "command": "jq -c '{caller: (.agent_type // \\"main\\"), subagent: .tool_input.subagent_type, model: .tool_response.resolvedModel}' >> /tmp/subagent-models.log" }
+        ]
+      }
+    ]
+  }
+}`}
+</CodeBlock>
+
+Open a second terminal with `tail -f /tmp/subagent-models.log`, then run tech-lead in the normal chat. Since the hook input's `agent_type` field is "present when the hook fires inside a subagent," the log also shows which agent triggered the nested call: first `{"caller":"main","subagent":"tech-lead","model":"opus"}`, then tech-lead's own nested call `{"caller":"tech-lead","subagent":"frontend-dev","model":"…"}`.
+
+<Callout kind="warning">
+  <strong>Two prerequisites:</strong> <code>resolvedModel</code> requires Claude Code ≥2.1.174 (check with <code>claude --version</code>). If <code>CLAUDE_CODE_SUBAGENT_MODEL</code> is set, it silently pins every result to one model with no signal in the transcript — verify it's empty with <code>echo $CLAUDE_CODE_SUBAGENT_MODEL</code> before the demo.
+</Callout>
+
+<Callout kind="info">
+  <strong>To remove the ambiguity entirely:</strong> Set the <code>CLAUDE_CODE_SUBAGENT_MODEL</code> environment variable — it forces one model across every level of the chain regardless of what "main conversation" resolves to.
+</Callout>
+
+</Section>
+
+<Section id="tree" num="13" title="Decision Tree">
+
+<DecisionTree>
+  <DecisionQuestion>
+    <strong>1. Are the subtasks independent of each other?</strong>
+    <TwoBoxGrid>
+      <Box tone="green" label="YES">Parallel</Box>
+      <Box tone="neutral" label="NO">Sequential (main thread or a single subagent)</Box>
+    </TwoBoxGrid>
+  </DecisionQuestion>
+  <DecisionQuestion>
+    <strong>2. Does the work need a decision tree that branches on its own while running?</strong>
+    <TwoBoxGrid>
+      <Box tone="green" label="YES">Nested (the lead orchestrates)</Box>
+      <Box tone="neutral" label="NO">Call directly in parallel from the main thread</Box>
+    </TwoBoxGrid>
+  </DecisionQuestion>
+  <DecisionQuestion>
+    <strong>3. Will you need to debug the intermediate steps?</strong>
+    <TwoBoxGrid>
+      <Box tone="red" label="YES">Avoid nesting, keep it in the main thread</Box>
+      <Box tone="neutral" label="NO">Nesting is safe</Box>
+    </TwoBoxGrid>
+  </DecisionQuestion>
+</DecisionTree>
+
+</Section>
+
+<Section id="best" num="14" title="Best Practices">
+
+<NumberedGrid>
+  <NumberedItem marker={<IconCheck />}>Verify independence before parallelizing</NumberedItem>
+  <NumberedItem marker={<IconCheck />}>State explicitly when you want parallelism</NumberedItem>
+  <NumberedItem marker={<IconCheck />}>Grant the Agent tool only to the lead</NumberedItem>
+  <NumberedItem marker={<IconCheck />}>Use worktrees for parallel work that writes files</NumberedItem>
+  <NumberedItem marker={<IconCheck />}>Treat depth 5 as a warning sign, not a target</NumberedItem>
+</NumberedGrid>
+
+</Section>
+
+<Section id="tldr" num="15" title="TL;DR">
+
+<CardGrid columns="two">
+  <InfoCard icon={IconMessage2} title="Parallel = one message.">
+    Send independent tasks as multiple Agent calls within the same message.
+  </InfoCard>
+  <InfoCard icon={IconLock} title="Nested = grant or withhold the Agent tool.">
+    Whether a subagent can nest is decided entirely by its <code>tools</code> list.
+  </InfoCard>
+  <InfoCard icon={IconFileStack} title="Results always get summarized.">
+    No matter how parallel or deep, only a summary returns to the main thread.
+  </InfoCard>
+  <InfoCard icon={IconGauge} title="Remember the limits.">
+    Depth 5, combined context bloat, and compounding cost — all real limits.
+  </InfoCard>
+</CardGrid>
+
+<Callout kind="tip">
+  <strong>Final rule:</strong> If intermediate work must stay visible, use the main thread. If it's noise, use a subagent. If the noise is layered (lead + workers), nest.
+</Callout>
+
+</Section>

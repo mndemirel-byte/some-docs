@@ -1,0 +1,407 @@
+import { Hero, Accent } from "@/components/doc/hero";
+import { Toc } from "@/components/doc/toc";
+import { Section } from "@/components/doc/section";
+import { Callout } from "@/components/doc/callout";
+import { FanOutDiagram } from "@/components/doc/fan-out-diagram";
+import { DataTable } from "@/components/doc/data-table";
+import { CardGrid, InfoCard } from "@/components/doc/info-card";
+import { CodeBlock } from "@/components/doc/code-block";
+import { IconPrompt, IconGitCompare, IconMessage, IconStack2 } from "@tabler/icons-react";
+import { IconPuzzle, IconBooks, IconEye, IconTree } from "@tabler/icons-react";
+import { DoDontList, DoItem, DontItem } from "@/components/doc/do-dont-list";
+import { NestedTreeDiagram } from "@/components/doc/nested-tree-diagram";
+import { NumberedGrid, NumberedItem } from "@/components/doc/numbered-grid";
+import { IconSitemap, IconRoute, IconRecycle } from "@tabler/icons-react";
+import { IconCoin, IconWall } from "@tabler/icons-react";
+import { IconFileText } from "@tabler/icons-react";
+import { DecisionTree, DecisionQuestion } from "@/components/doc/decision-tree";
+import { TwoBoxGrid, Box } from "@/components/doc/two-box-grid";
+import { IconCheck } from "@tabler/icons-react";
+import { IconMessage2, IconLock, IconFileStack, IconGauge } from "@tabler/icons-react";
+
+<Hero
+  badge="Claude Code · Workshop 03"
+  title={<>Paralel &amp; <Accent>Nested Subagents</Accent></>}
+  description="Workshop 02'de subagent'ı izole bir execution environment olarak kurmuştuk. Bu bölümde iki yeni katman ekliyoruz: bağımsız subagent'ları aynı anda çalıştırmak (paralel) ve bir subagent'ın kendi subagent'ını çağırması (nested) — ne zaman işe yarar, ne zaman kontrolü elden kaçırır."
+  tags={["Fan-out", "Depth ≤ 5", "Agent Tool Gate"]}
+/>
+
+<Toc
+  title="İçindekiler"
+  entries={[
+    { id: "bridge", num: "01", label: "Nereden Geliyoruz" },
+    { id: "pmodel", num: "02", label: "Paralel: Mental Model" },
+    { id: "pbenefit", num: "03", label: "Paralel: Fayda" },
+    { id: "ptrigger", num: "04", label: "Paralel: Nasıl Tetiklenir" },
+    { id: "puse", num: "05", label: "Paralel: Kullanım Alanları" },
+    { id: "pcaution", num: "06", label: "Paralel: Dikkat" },
+    { id: "nmodel", num: "07", label: "Nested: Mental Model" },
+    { id: "nmech", num: "08", label: "Nested: Mekanizma" },
+    { id: "npro", num: "09", label: "Nested: Avantaj" },
+    { id: "ncon", num: "10", label: "Nested: Dezavantaj" },
+    { id: "nhow", num: "11", label: "Nested: Nasıl Açılır" },
+    { id: "nmodelres", num: "12", label: "Nested: Model Çözümleme" },
+    { id: "tree", num: "13", label: "Karar Ağacı" },
+    { id: "best", num: "14", label: "Best Practices" },
+    { id: "tldr", num: "15", label: "TL;DR" },
+  ]}
+/>
+
+<Section id="bridge" num="01" title="Nereden Geliyoruz">
+
+Workshop 02'nin kuralı basitti: **subagent daha akıllı bir agent değildir, izole bir execution environment'tır.** Ana thread kararları ve gereksinimleri tutar; subagent gürültülü işi (arama, log, dosya taraması) kendi context'inde yapar ve yalnızca özetle geri döner.
+
+Bugün bu tek subagent modelini iki yönde genişletiyoruz: **yatayda** (birden fazla subagent'ı aynı anda çalıştırmak) ve **dikeyde** (bir subagent'ın kendi subagent'ını çağırması). İkisi de aynı temel mekanizmayı — izolasyon, sınırlı araç, özetlenmiş dönüş — farklı bir şekle sokuyor.
+
+<Callout kind="tip">
+  <strong>Bugünün sorusu:</strong> İzolasyonu koruyarak nasıl daha fazla iş paralelde yapabiliriz, ve ne zaman bu izolasyonu katmanlayıp (nested) riske değer?
+</Callout>
+
+</Section>
+
+<Section id="pmodel" num="02" title="Paralel Subagents — Mental Model">
+
+Paralel çalıştırma, birbirine bağımlı olmayan görevleri **aynı mesaj içinde** birden fazla subagent çağrısı olarak göndermektir. Her subagent kendi izole context'inde aynı anda çalışır. Claude Code v2.1.198'den beri varsayılan davranış **arka plan (background)**: her subagent — başarılı ya da hatalı — kendi bitişinde main thread'e bağımsız bir bildirim döner, diğerlerini beklemez. Sonuçların gerçekten tek seferde, hep birlikte gelmesi sadece `run_in_background: false` ile zorlanan senkron (foreground) modda geçerli.
+
+<FanOutDiagram />
+
+<Callout kind="tip">
+  <strong>Ana fikir:</strong> 3 bağımsız araştırmayı sırayla yapmak 3 tur sürer; paralel yaparsan (hepsini beklersen) 1 tur sürer — en yavaş olan kadar. Ama beklemek zorunda değilsin: varsayılan arka plan modunda erken biten/hata veren agent'ı görüp ona göre hareket edebilirsin, geri kalanları beklemeden.
+</Callout>
+
+<Callout kind="info">
+  <strong>Kaynak — versiyon notu:</strong> "Subagent'lar artık varsayılan olarak arka planda çalışır. <code>run_in_background</code> belirtilmeden yapılan bir <code>Agent</code> çağrısı arka plan subagent'ı başlatır... v2.1.198'den önce, <code>run_in_background</code> belirtilmeden yapılan çağrı subagent'ı senkron çalıştırırdı." (çeviri) <code>code.claude.com/docs/en/agent-sdk/subagents</code>
+</Callout>
+
+</Section>
+
+<Section id="pbenefit" num="03" title="Paralel: Fayda Nedir">
+
+<DataTable
+  headers={["Fayda", "Açıklama"]}
+  rows={[
+    ["Zaman", "Bağımsız alt görevler, en yavaş görevin süresinde tamamlanır; sıralı işlemekten çok daha verimli."],
+    ["Context izolasyonu", "Her subagent kendi context'inde çalışır; A'nın gürültüsü B'nin context'ine karışmaz."],
+    ["Bağımsız bakış açıları", "Aynı kod tabanına birden fazla \"taze göz\" aynı anda bakabilir, birbirini önyargılamadan."],
+    ["Worktree izolasyonu", "Dosya değiştiren paralel görevler ayrı git worktree'lerde çalışabilir, çakışma önlenir."],
+  ]}
+/>
+
+<Callout kind="info">
+  <strong>Kaynak:</strong> "Multiple subagents can execute concurrently, allowing independent subtasks to be completed in the time it takes for the slowest individual task." — <code>code.claude.com/docs/en/agent-sdk/subagents</code>
+</Callout>
+
+</Section>
+
+<Section id="ptrigger" num="04" title="Paralel: Nasıl Tetiklenir">
+
+Mekanik basit: paralellik, **tek bir mesajda birden fazla Agent tool çağrısı** göndermekten gelir. Ayrı mesajlarda art arda gönderilen çağrılar sıralı çalışır — paralel değil.
+
+<CardGrid columns="three">
+  <InfoCard icon={IconGitCompare} title="1. Bağımlılık kontrolü">
+    B, A'nın çıktısına ihtiyaç duymuyor mu? Duyuyorsa paralel olamaz.
+  </InfoCard>
+  <InfoCard icon={IconMessage} title="2. Açıkça iste">
+    Claude paralellik konusunda temkinlidir; "N tanesini paralel çalıştır" de.
+  </InfoCard>
+  <InfoCard icon={IconStack2} title="3. Tek mesaj, çoklu blok">
+    Tüm Agent çağrıları aynı yanıtta yer almalı.
+  </InfoCard>
+</CardGrid>
+
+<Callout kind="warning">
+  <strong>Sık hata:</strong> "Şunu ve şunu paralel yap" demeden art arda iki subagent istemek — ikinci çağrı ilkinin sonucunu bekleyeceği için sıralı çalışır.
+</Callout>
+
+Bu repoda dene: `frontend-dev` ve `data-dev` zaten `.claude/agents/` altında tanımlı, ikisi de dosya değiştirmiyor — bağımsız iki inceleme, paralel denemek için güvenli bir çift.
+
+<CodeBlock lang={<><IconPrompt size={12} /> deneme promptu · paralel</>} kind="prompt">
+{`frontend-dev ve data-dev subagent'larını paralel çalıştır: biri sadece
+sessions-grid.tsx'teki model filtre UI'ını, diğeri sadece models.ts'teki
+model eşleştirme fonksiyonunu aynı anda incelesin.`}
+</CodeBlock>
+
+</Section>
+
+<Section id="puse" num="05" title="Paralel: Kullanım Alanları">
+
+<CardGrid>
+  <InfoCard icon={IconPuzzle} title="Bağımsız modül review">
+    UI dosyaları ve veri katmanı aynı anda, farklı subagent'larla incelenir.
+  </InfoCard>
+  <InfoCard icon={IconBooks} title="Çoklu kaynak araştırması">
+    Birden fazla kütüphane/dokümantasyon aynı anda taranır.
+  </InfoCard>
+  <InfoCard icon={IconEye} title="Çoklu görüş toplama">
+    Birden fazla reviewer farklı açıdan bakar, sonuçlar karşılaştırılır.
+  </InfoCard>
+  <InfoCard icon={IconTree} title="/batch ile worktree'li iş bölme">
+    Büyük bir değişiklik, her biri ayrı worktree'de çalışan paralel subagent'lara bölünür, her biri kendi PR'ını açar.
+  </InfoCard>
+</CardGrid>
+
+</Section>
+
+<Section id="pcaution" num="06" title="Paralel: Dikkat Edilecekler">
+
+<DoDontList>
+  <DoItem title="✓ Yap">
+    <ul>
+      <li>Sadece birbirinden bağımsız görevleri paralelleştir.</li>
+      <li>Dosya yazan paralel agent'lar için worktree kullan.</li>
+      <li>Kaç tane paralel istediğini açıkça söyle.</li>
+    </ul>
+  </DoItem>
+  <DontItem title="✕ Yapma">
+    <ul>
+      <li>Bağımlı görevleri paralel gönderme (B, A'yı bekliyorsa sıralı kalsın).</li>
+      <li>Onlarca subagent'ı aynı anda açma — sonuçlar toplu döner ve ana context'i şişirir.</li>
+    </ul>
+  </DontItem>
+</DoDontList>
+
+<Callout kind="info">
+  <strong>Kaynak:</strong> "While parallel subagents increase efficiency, be mindful that their combined results return to the main conversation and can impact context limits." — <code>code.claude.com/docs/en/sub-agents</code>
+</Callout>
+
+</Section>
+
+<Section id="nmodel" num="07" title="Nested Subagents — Mental Model">
+
+Nested, bir subagent'ın kendi `Agent` tool'unu kullanarak başka bir subagent çağırmasıdır. Ana thread yalnızca en üstteki subagent'ı görür; onun altında kaç katman olduğu ana thread'e hiç yansımaz.
+
+<NestedTreeDiagram />
+
+</Section>
+
+<Section id="nmech" num="08" title="Nested: Mekanizma">
+
+Nesting'i açan tek şey: bir subagent'ın kendi `tools` listesinde `Agent` (eski adıyla `Task`, alias hâlâ çalışıyor) olması. Yoksa o subagent hiçbir şey spawn edemez.
+
+<NumberedGrid>
+  <NumberedItem marker="📏" wide><strong>Derinlik limiti: 5</strong> — Ana thread'in altında en fazla 5 seviye; limitte olan subagent daha fazla nest edemez.</NumberedItem>
+  <NumberedItem marker="📦" wide><strong>Sadece üst özet döner</strong> — Ana thread'e sadece en üstteki subagent'ın özeti ulaşır, ara katmanlar görünmez.</NumberedItem>
+  <NumberedItem marker="🔁" wide><strong>Devam eden agent derinliği korur</strong> — Arka planda devam eden bir subagent'ı resume etmek başlangıç derinliğini değiştirmez.</NumberedItem>
+</NumberedGrid>
+
+<Callout kind="info">
+  <strong>Kaynak:</strong> <code>code.claude.com/docs/en/sub-agents</code>, <code>code.claude.com/docs/en/agent-sdk/subagents</code>
+</Callout>
+
+</Section>
+
+<Section id="npro" num="09" title="Nested: Avantajlar">
+
+<CardGrid columns="three">
+  <InfoCard icon={IconSitemap} title="Hiyerarşik iş bölümü">
+    Team-lead kendi alt görevlerini kendi yönetir; ana thread'i meşgul etmeden karmaşık işi bölebilir.
+  </InfoCard>
+  <InfoCard icon={IconRoute} title="Dinamik orkestrasyon">
+    Hangi alt-agent'ın ne zaman çağrılacağına lead karar verir; ana thread önceden planlamak zorunda kalmaz.
+  </InfoCard>
+  <InfoCard icon={IconRecycle} title="Yeniden kullanılabilir parçalar">
+    developer gibi küçük agent'lar başka lead'ler tarafından da çağrılabilir.
+  </InfoCard>
+</CardGrid>
+
+</Section>
+
+<Section id="ncon" num="10" title="Nested: Dezavantajlar &amp; Riskler">
+
+<DoDontList>
+  <DontItem title="Ara adımlar görünmez">
+    Team-lead'in developer'a tam olarak ne söylediği ana thread'e hiç düşmez — debug etmek zorlaşır.
+  </DontItem>
+  <DontItem title="Tip kısıtlaması nested'de zayıflar">
+    <code>Agent(developer)</code> gibi bir allowlist sadece ana thread'den yapılan ilk çağrıda geçerlidir; nested seviyede bu kısıtlama görmezden gelinir.
+  </DontItem>
+</DoDontList>
+
+<CardGrid columns="two">
+  <InfoCard icon={IconCoin} title="Maliyet & gecikme katlanır">
+    Her seviye ek bir LLM turu; team-lead + 2 nested çağrı = en az 3 tur.
+  </InfoCard>
+  <InfoCard icon={IconWall} title="Sert derinlik duvarı">
+    Dikkatsiz tasarlanmış bir lead prompt'u, gerekmediği halde derinlik 5'e çarpıp sessizce durabilir.
+  </InfoCard>
+</CardGrid>
+
+<Callout kind="warning">
+  <strong>Kaynak:</strong> <code>code.claude.com/docs/en/sub-agents</code> — "type-specific restrictions in the Agent tool definition are ignored for nested spawns."
+</Callout>
+
+</Section>
+
+<Section id="nhow" num="11" title="Nested: Nasıl Açılır">
+
+Sadece lead'e `Agent` tool'unu ver; altındaki agent'lara verme.
+
+<CodeBlock lang={<><IconFileText size={12} /> .claude/agents/team-lead.md</>} kind="file">
+{`---
+name: team-lead
+description: Bir işi developer'a yaptırır, kabul kriterlerine göre kendisi doğrular, sonucu tek raporda birleştirir.
+tools: Read, Grep, Glob, Agent
+model: sonnet
+---
+
+Görevin: sana verilen işi developer'a yaptırmak, sonucu kabul kriterlerine
+göre kendin doğrulamak, sonra tek bir raporla main thread'e dönmek. Dosya
+değiştirme, komut çalıştırma — sadece delege et, doğrula, özetle.
+
+1. Görev tanımını ve kabul kriterlerini oku, tek cümlede özetle.
+2. developer subagent'ını Agent tool ile çağır: görevi, kabul kriterlerini
+   ve hangi dosyaların değişmesi beklendiğini aynen ilet.
+3. developer'ın döndürdüğü diff özetini oku. Kendi Read/Grep araçlarınla
+   değişen dosyaları kontrol et, kabul kriterini karşılayıp karşılamadığını
+   doğrula.
+4. Karşılamıyorsa eksik olanı belirterek developer'ı tekrar çağır; en fazla
+   2 tur dene. Hâlâ çözülmediyse BLOCKED olarak raporla, nedenini yaz.
+
+Dön:
+## Verdict
+PASS | NEEDS_CHANGES | BLOCKED
+
+## Değişen Dosyalar
+developer'ın raporladığı dosya listesi
+
+## Doğrulama
+kendi kontrolünün sonucu, kanıtla birlikte
+
+## Turlar
+Kaç deneme yapıldığı, hâlâ açık olan varsa nedeni`}
+</CodeBlock>
+
+<Callout kind="tip">
+  <strong>Fark burada:</strong> <code>worker.md</code>/<code>reviewer.md</code> gibi bu projedeki mevcut agent'larda <code>tools</code> listesinde <code>Agent</code> yok — bilerek nesting kapalı tutulmuş.
+</Callout>
+
+Aynı mantığı bu repodaki gerçek agent'larla dene: <code>tech-lead</code>'in <code>tools</code> listesinde <code>Agent</code> var, çağırdığı <code>frontend-dev</code> ve <code>data-dev</code>'de yok — nesting sadece yukarıdan aşağı açık, tersi mümkün değil.
+
+Model ataması da bilinçli: <code>tech-lead → opus, frontend-dev → haiku, data-dev → inherit</code> — §12'deki model çözümleme sorusunu gerçek bir zincirde test etmek için. İlk ikisi zaten belli, asıl soru <code>data-dev</code>'in <code>inherit</code>'inin hangi modeli alacağı.
+
+<CodeBlock lang={<><IconPrompt size={12} /> deneme promptu · nested</>} kind="prompt">
+{`tech-lead subagent'ını çalıştır: tüm kod tabanını değil, sadece session/chat
+analiz akışını (log okuma, token toplama, dashboard'daki gösterimi) biraz
+daha detaylı değerlendirmesini iste.`}
+</CodeBlock>
+
+<Callout kind="tip">
+  <strong>Canlı izle:</strong> Çalışırken ana thread'e yalnızca tech-lead'in özeti döner, altındaki iki çağrı (<code>main → tech-lead → frontend-dev/data-dev</code>) hiç görünmez. §12'deki <code>resolvedModel</code> hook'unu kurduysan, <code>tail -f /tmp/subagent-models.log</code>'da <code>data-dev</code> satırı gelince gerçek cevabı görürsün.
+</Callout>
+
+</Section>
+
+<Section id="nmodelres" num="12" title={<>Nested: Model Çözümleme — <code>inherit</code> Kimin Modelini Alır?</>}>
+
+Senaryo: ana sohbet `fable` modelinde. Bir team-lead subagent `model: opus` ile açıkça çağrılıyor. Team-lead kendi içinde bir subagent daha çağırıyor, onun `model` alanı `inherit`. Bu üçüncü katman hangi modeli alır — ana sohbetin `fable`'ını mı, yoksa kendisini çağıran team-lead'in `opus`'unu mu?
+
+<DataTable
+  headers={["Seviye", "Tanım", "Gerçek model"]}
+  rows={[
+    ["Ana sohbet", <>fable (kullanıcı seçimi)</>, "fable"],
+    ["team-lead subagent", <><code>model: opus</code> (frontmatter'da açık)</>, "opus"],
+    ["nested subagent", <><code>model: inherit</code></>, "❓ belgelenmemiş"],
+  ]}
+/>
+
+<Callout kind="info">
+  <strong>Resmi doküman ne diyor:</strong> "If no specific model is defined, it defaults to the main conversation's model." — net, ama tek seviyeli senaryo (ana sohbet → subagent) için yazılmış. <code>code.claude.com/docs/en/sub-agents#choose-a-model</code>
+</Callout>
+
+<Callout kind="warning">
+  <strong>Çok-seviyeli zincirde belirsiz:</strong> Anthropic'in kendi dokümantasyon düzeltme sürecinde bile "main conversation" ve "parent session" birbirinin yerine kullanılıyor — ki bu ikisi 3 katmanlı bir zincirde aynı şey değil. Bu, açık kalan bir GitHub issue'da açıkça kabul ediliyor. <code>github.com/anthropics/claude-code/issues/19174</code>
+</Callout>
+
+<Callout kind="tip">
+  <strong>Pratik cevap — tahmin etme, doğrula:</strong> <code>resolvedModel</code> Agent SDK'nın alanı ama interaktif CLI session'da da yakalanabilir — bir <code>PostToolUse</code> hook, <code>Agent</code> tool'unu yakalar ve <code>tool_response.resolvedModel</code> içinde gerçek modeli verir. Aşağıda çalıştırılabilir tarif var.
+</Callout>
+
+<CodeBlock lang={<><IconFileText size={12} /> .claude/settings.json — canlı model logger</>} kind="file">
+{`{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Agent",
+        "hooks": [
+          { "type": "command", "command": "jq -c '{caller: (.agent_type // \\"main\\"), subagent: .tool_input.subagent_type, model: .tool_response.resolvedModel}' >> /tmp/subagent-models.log" }
+        ]
+      }
+    ]
+  }
+}`}
+</CodeBlock>
+
+İkinci bir terminalde `tail -f /tmp/subagent-models.log` aç, sonra normal chat'te tech-lead'i çalıştır. Hook input şemasındaki `agent_type` alanı "hook bir subagent içindeyken mevcut" olduğu için, nested çağrının hangi agent tarafından tetiklendiği de log'a düşer: önce `{"caller":"main","subagent":"tech-lead","model":"opus"}`, sonra tech-lead'in kendi nested çağrısı `{"caller":"tech-lead","subagent":"frontend-dev","model":"…"}`.
+
+<Callout kind="warning">
+  <strong>İki ön koşul:</strong> <code>resolvedModel</code> Claude Code ≥2.1.174 gerektirir (<code>claude --version</code> ile kontrol et). <code>CLAUDE_CODE_SUBAGENT_MODEL</code> set ediyorsan tüm sonuçları sessizce tek modele sabitler, transcript'te sinyal vermez — demodan önce <code>echo $CLAUDE_CODE_SUBAGENT_MODEL</code> ile boş olduğunu doğrula.
+</Callout>
+
+<Callout kind="info">
+  <strong>Belirsizliği tamamen kaldırmak istersen:</strong> <code>CLAUDE_CODE_SUBAGENT_MODEL</code> ortam değişkenini set et — zincirdeki her seviyeye, "main conversation" ne anlama gelirse gelsin, tek bir modeli zorlar.
+</Callout>
+
+</Section>
+
+<Section id="tree" num="13" title="Karar Ağacı">
+
+<DecisionTree>
+  <DecisionQuestion>
+    <strong>1. Alt görevler birbirinden bağımsız mı?</strong>
+    <TwoBoxGrid>
+      <Box tone="green" label="EVET">Paralel</Box>
+      <Box tone="neutral" label="HAYIR">Sıralı (ana thread ya da tek subagent)</Box>
+    </TwoBoxGrid>
+  </DecisionQuestion>
+  <DecisionQuestion>
+    <strong>2. İş, çalışırken kendi kendine dallanan bir karar ağacı mı gerektiriyor?</strong>
+    <TwoBoxGrid>
+      <Box tone="green" label="EVET">Nested (lead orkestre eder)</Box>
+      <Box tone="neutral" label="HAYIR">Ana thread'den doğrudan paralel çağır</Box>
+    </TwoBoxGrid>
+  </DecisionQuestion>
+  <DecisionQuestion>
+    <strong>3. Ara adımları debug etmen gerekecek mi?</strong>
+    <TwoBoxGrid>
+      <Box tone="red" label="EVET">Nested'den kaçın, ana thread'de tut</Box>
+      <Box tone="neutral" label="HAYIR">Nested güvenli</Box>
+    </TwoBoxGrid>
+  </DecisionQuestion>
+</DecisionTree>
+
+</Section>
+
+<Section id="best" num="14" title="Best Practices">
+
+<NumberedGrid>
+  <NumberedItem marker={<IconCheck />}>Bağımsızlığı önce doğrula, sonra paralelleştir</NumberedItem>
+  <NumberedItem marker={<IconCheck />}>Paralellik istediğinde açıkça söyle</NumberedItem>
+  <NumberedItem marker={<IconCheck />}>Agent tool'unu sadece lead'e ver</NumberedItem>
+  <NumberedItem marker={<IconCheck />}>Dosya yazan paralel işler için worktree kullan</NumberedItem>
+  <NumberedItem marker={<IconCheck />}>Derinlik 5'i tavan değil, uyarı sinyali say</NumberedItem>
+</NumberedGrid>
+
+</Section>
+
+<Section id="tldr" num="15" title="TL;DR">
+
+<CardGrid columns="two">
+  <InfoCard icon={IconMessage2} title="Paralel = tek mesaj.">
+    Bağımsız görevleri aynı mesajda birden fazla Agent çağrısı olarak gönder.
+  </InfoCard>
+  <InfoCard icon={IconLock} title="Nested = Agent tool'u ver ya da alma.">
+    Bir subagent'ın nest edip edemeyeceğini tek başına <code>tools</code> listesi belirler.
+  </InfoCard>
+  <InfoCard icon={IconFileStack} title="Sonuç her zaman özetlenir.">
+    Ne kadar paralel ya da derin olursa olsun, ana thread'e sadece özet döner.
+  </InfoCard>
+  <InfoCard icon={IconGauge} title="Limitleri unutma.">
+    Derinlik 5, birleşik context şişmesi ve maliyet katlanması — hepsi gerçek sınırlar.
+  </InfoCard>
+</CardGrid>
+
+<Callout kind="tip">
+  <strong>Son kural:</strong> Ara iş görünür kalmalıysa main thread. Ara iş gürültüyse subagent. Gürültü katmanlıysa (lead + alt işçiler) nested.
+</Callout>
+
+</Section>

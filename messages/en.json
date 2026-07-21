@@ -62,6 +62,15 @@
         "desc": "A practical guide to designing subagents as isolated execution environments: the main-thread vs. subagent mental model, lifecycle, system prompt design, structured output, tool permissions, model choice, and anti-patterns.",
         "tags": ["subagents", "context-isolation", "least-privilege", "structured-output"],
         "cta": "Open Document"
+      },
+      {
+        "num": "07",
+        "type": "Workshop Companion · Part 03",
+        "title": "Parallel & Nested Subagents",
+        "subtitle": "Fan-out · Nesting · Model resolution",
+        "desc": "A practical guide to running subagents in parallel and nesting them: when fan-out saves time, how nesting is gated by the Agent tool, the depth-5 limit, and how model inheritance resolves across a multi-level chain.",
+        "tags": ["parallel", "nested-subagents", "fan-out", "depth-limit"],
+        "cta": "Open Document"
       }
     ],
     "footer": "Links work when all documents are in the same folder · Claude Code Agentic Development Series"

@@ -62,6 +62,15 @@
         "desc": "Subagent'ları izole execution environment'lar olarak tasarlamak için pratik rehber: main-thread vs subagent mental model, lifecycle, system prompt tasarımı, structured output, tool permissions, model seçimi ve anti-pattern'ler.",
         "tags": ["subagents", "context-isolation", "least-privilege", "structured-output"],
         "cta": "Dokümana Git"
+      },
+      {
+        "num": "07",
+        "type": "Workshop Companion · Bölüm 03",
+        "title": "Paralel & Nested Subagents",
+        "subtitle": "Fan-out · Nesting · Model çözümleme",
+        "desc": "Subagent'ları paralel çalıştırma ve nest etme için pratik rehber: fan-out ne zaman zaman kazandırır, nesting'in Agent tool'uyla nasıl kapılandığı, derinlik 5 limiti ve çok seviyeli bir zincirde model inheritance'ının nasıl çözümlendiği.",
+        "tags": ["paralel", "nested-subagents", "fan-out", "derinlik-limiti"],
+        "cta": "Dokümana Git"
       }
     ],
     "footer": "Tüm dokümanlar aynı klasörde olduğunda linklerin çalışır · Claude Code Agentic Development Serisi"

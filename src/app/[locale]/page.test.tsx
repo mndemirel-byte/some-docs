@@ -36,7 +36,7 @@ describe("Index page", () => {
     render(ui);
 
     expect(screen.getByText("Best Practice'ler ve Takım Modeli")).toBeInTheDocument();
-    expect(screen.getAllByText("Dokümana Git")).toHaveLength(6);
+    expect(screen.getAllByText("Dokümana Git")).toHaveLength(7);
     expect(
       screen.getByText(/Tüm dokümanlar aynı klasörde olduğunda linklerin çalışır/),
     ).toBeInTheDocument();
@@ -92,6 +92,20 @@ describe("Index page", () => {
     expect(link).not.toBeNull();
     expect(link).toHaveAttribute("href", "/en/subagents-companion-guide");
     expect(link).toHaveClass(styles.card, styles.c6);
+  });
+
+  it("links the 7th card to the parallel-and-nested-subagents-guide page", async () => {
+    const ui = await Page({ params: Promise.resolve({ locale: "en" }) });
+    render(ui);
+
+    const heading = screen.getByText("Parallel & Nested Subagents");
+    const link = heading.closest("a");
+    expect(link).not.toBeNull();
+    expect(link).toHaveAttribute(
+      "href",
+      "/en/parallel-and-nested-subagents-guide",
+    );
+    expect(link).toHaveClass(styles.card, styles.c7);
   });
 
   it("shows EN as active/non-clickable and links to /tr on the en page", async () => {

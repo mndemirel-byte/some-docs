@@ -361,6 +361,30 @@
   color: #fff;
 }
 
+.c7 {
+  --card-accent: var(--blue-border);
+}
+.c7 .cardNum {
+  background: var(--blue-bg);
+  color: var(--blue-text);
+  border: 1px solid var(--blue-border);
+}
+.c7 .cardIcon {
+  background: var(--blue-bg);
+  color: var(--blue-text);
+}
+.c7 .cardSubtitle {
+  color: var(--blue-text);
+}
+.c7 .cardCta {
+  background: var(--blue-bg);
+  color: var(--blue-text);
+}
+.c7:hover .cardCta {
+  background: var(--card-cta-hover-blue);
+  color: #fff;
+}
+
 .footer {
   text-align: center;
   padding: 24px 40px 40px;
